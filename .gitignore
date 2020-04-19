@@ -1,0 +1,20 @@
+# dependency files
+*.d
+
+# bin/lib output dirs
+bin/
+lib/
+
+# compiled object files
+*.a
+*.o
+*.so
+
+# ctags
+tags
+
+# executables
+test/test-runner
+
+# build system artifacts
+src/version.hpp
