@@ -1,3 +1,4 @@
+#include "protocol/itch.hpp"
 #include "protocol/soup_bin_tcp.hpp"
 #include <filesystem>
 #include <fmt/format.h>
