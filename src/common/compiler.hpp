@@ -1,8 +1,8 @@
 #pragma once
 
 #include <fmt/format.h>
+#include <gnu/libc-version.h> // ::gnu_get_libc_version
 #include <string>
-#include <gnu/libc-version.h>   // ::gnu_get_libc_version
 
 
 std::string

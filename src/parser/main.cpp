@@ -1,8 +1,6 @@
 #include "common/compiler.hpp"
-#include "protocol/itch.hpp"
-#include "protocol/soup_bin_tcp.hpp"
+#include "parser/parser.hpp"
 #include <filesystem>
-#include <fmt/format.h>
 #include <getopt.h>
 #include <unistd.h>
 #include <cstdio>
@@ -10,7 +8,6 @@
 
 
 namespace { // unnamed
-
 
     struct Args
     {
@@ -89,5 +86,14 @@ int
 main(int argc, char** argv)
 {
     Args const args = arg_parse(argc, argv);
-    return 0;
+
+    try {
+        parser parser(args.input_file);
+        parser.parse();
+    } catch (std::exception const& e) {
+        std::fprintf(stderr, "exception caught: %s\n", e.what());
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }

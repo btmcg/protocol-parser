@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fmt/format.h>
 #include <cstdint>
 
 #define PACKED __attribute__((packed))
@@ -11,7 +12,7 @@ namespace soup_bin_tcp {
         struct header
         {
             std::uint16_t length;
-            std::uint8_t type;
+            char type;
         } PACKED;
         static_assert(sizeof(header) == 3);
 

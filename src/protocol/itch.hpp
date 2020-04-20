@@ -30,7 +30,7 @@ namespace itch {
             std::uint32_t round_lot_size;
             char round_lots_only;
             char issue_classification;
-            char issue_subtype;
+            char issue_subtype[2];
             char authenticity;
             char short_sale_threshold_indicator;
             char ipo_flag;
@@ -39,7 +39,7 @@ namespace itch {
             std::uint32_t etp_leverage_factor;
             char inverse_indicator;
         } PACKED;
-        static_assert(sizeof(stock_directory) == 38);
+        static_assert(sizeof(stock_directory) == 39);
 
         struct stock_trading_action
         {
