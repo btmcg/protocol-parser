@@ -5,11 +5,11 @@
 #include <fmt/format.h>
 
 namespace { // unnamed
-    std::uint64_t
-    from_itch_timestamp(std::uint8_t const (&timestamp)[6])
+    constexpr std::uint64_t
+    from_itch_timestamp(std::uint8_t const (&timestamp)[6]) noexcept
     {
         std::uint64_t t = 0;
-        for (std::size_t i = 0; i < 6; ++i)
+        for (std::size_t i = 0; i < sizeof(timestamp); ++i)
             t = (t << 8) + timestamp[i];
         return t;
     }
