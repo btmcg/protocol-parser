@@ -124,22 +124,39 @@ parser::parse() noexcept
 std::uint16_t
 parser::parse_itch(std::uint8_t const* buf) noexcept
 {
+    using namespace itch;
+
     std::uint16_t const len = be16toh(*reinterpret_cast<std::uint16_t const*>(buf)) + sizeof(len);
     fmt::print("len={}\n", len);
     buf += sizeof(len);
 
+    // clang-format off
     switch (*buf) {
-        case 'S':
-            fmt::print("{}\n", *reinterpret_cast<itch::system_event const*>(buf));
-            break;
+        case 'S': fmt::print("{}\n", *reinterpret_cast<system_event const*>(buf)); break;
+        case 'R': fmt::print("{}\n", *reinterpret_cast<stock_directory const*>(buf)); break;
+        case 'H': fmt::print("{}\n", *reinterpret_cast<stock_trading_action const*>(buf)); break;
+        case 'Y': fmt::print("{}\n", *reinterpret_cast<reg_sho_restriction const*>(buf)); break;
+        case 'L': fmt::print("{}\n", *reinterpret_cast<market_participant_position const*>(buf)); break;
+        case 'V': fmt::print("{}\n", *reinterpret_cast<mwcb_decline_level const*>(buf)); break;
+        case 'W': fmt::print("{}\n", *reinterpret_cast<mwcb_status const*>(buf)); break;
+        case 'K': fmt::print("{}\n", *reinterpret_cast<ipo_quoting_period_update const*>(buf)); break;
+        case 'J': fmt::print("{}\n", *reinterpret_cast<luld_auction_collar const*>(buf)); break;
+        case 'h': fmt::print("{}\n", *reinterpret_cast<operational_halt const*>(buf)); break;
+        case 'A': fmt::print("{}\n", *reinterpret_cast<add_order const*>(buf)); break;
+        case 'F': fmt::print("{}\n", *reinterpret_cast<add_order_with_mpid const*>(buf)); break;
+        case 'E': fmt::print("{}\n", *reinterpret_cast<order_executed const*>(buf)); break;
+        case 'C': fmt::print("{}\n", *reinterpret_cast<order_executed_with_price const*>(buf)); break;
+        case 'X': fmt::print("{}\n", *reinterpret_cast<order_cancel const*>(buf)); break;
+        case 'D': fmt::print("{}\n", *reinterpret_cast<order_delete const*>(buf)); break;
+        case 'U': fmt::print("{}\n", *reinterpret_cast<order_replace const*>(buf)); break;
+        case 'P': fmt::print("{}\n", *reinterpret_cast<trade_non_cross const*>(buf)); break;
+        case 'Q': fmt::print("{}\n", *reinterpret_cast<trade_cross const*>(buf)); break;
+        case 'B': fmt::print("{}\n", *reinterpret_cast<broken_trade const*>(buf)); break;
+        case 'I': fmt::print("{}\n", *reinterpret_cast<noii const*>(buf)); break;
 
-        case 'R':
-            fmt::print("{}\n", *reinterpret_cast<itch::stock_directory const*>(buf));
-            break;
-
-        default:
-            fmt::print("unknown type=[{:c}]\n", (char)*buf);
+        default: fmt::print("unknown type=[{:c}]\n", reinterpret_cast<char const*>(buf)); break;
     }
+    // clang-format on
 
     return len;
 }

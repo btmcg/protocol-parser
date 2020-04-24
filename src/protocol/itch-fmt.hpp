@@ -59,3 +59,406 @@ struct fmt::formatter<itch::stock_directory>
                 m.etp_flag, be32toh(m.etp_leverage_factor), m.inverse_indicator);
     }
 };
+
+template <>
+struct fmt::formatter<itch::stock_trading_action>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::stock_trading_action const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "stock_trading_action(message_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},trading_state={},reserved={},reason={:.{}})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), m.stock, sizeof(m.stock), m.trading_state,
+                m.reserved, m.reason, sizeof(m.reason));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::reg_sho_restriction>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::reg_sho_restriction const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "reg_sho_restriction(message_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},reg_sho_action={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), m.stock, sizeof(m.stock), m.reg_sho_action);
+    }
+};
+
+template <>
+struct fmt::formatter<itch::market_participant_position>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::market_participant_position const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "market_participant_position(message_type={},stock_locate={},tracking_number={},timestamp={},mpid={:.{}},stock={:.{}},primary_market_maker={},market_maker_mode={},market_participant_state={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), m.mpid, sizeof(m.mpid), m.stock, sizeof(m.stock),
+                m.primary_market_maker, m.market_maker_mode, m.market_participant_state);
+    }
+};
+
+template <>
+struct fmt::formatter<itch::mwcb_decline_level>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::mwcb_decline_level const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "mwcb_decline_level(message_type={},stock_locate={},tracking_number={},timestamp={},level1={},level2={},level3={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.level1), be64toh(m.level2),
+                be64toh(m.level3));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::mwcb_status>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::mwcb_status const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "mwcb_status(message_type={},stock_locate={},tracking_number={},timestamp={},breached_level={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), m.breached_level);
+    }
+};
+
+template <>
+struct fmt::formatter<itch::ipo_quoting_period_update>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::ipo_quoting_period_update const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "ipo_quoting_period_update(message_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},ipo_quotation_release_time={},ipo_quotation_release_qualifier={},ipo_price={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), sizeof(m.stock), m.stock,
+                be32toh(m.ipo_quotation_release_time), m.ipo_quotation_release_qualifier,
+                be32toh(m.ipo_price));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::luld_auction_collar>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::luld_auction_collar const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "luld_auction_collar(message_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},auction_collar_reference_price={},upper_auction_collar_price={},lower_auction_collar_price={},auction_collar_extension={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), sizeof(m.stock), m.stock,
+                be32toh(m.auction_collar_reference_price), be32toh(m.upper_auction_collar_price),
+                be32toh(m.lower_auction_collar_price), be32toh(m.auction_collar_extension));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::operational_halt>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::operational_halt const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "operational_halt(message_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},market_code={},operational_halt_action={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), sizeof(m.stock), m.stock, m.market_code,
+                m.operational_halt_action);
+    }
+};
+
+template <>
+struct fmt::formatter<itch::add_order>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::add_order const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "add_order(message_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},buy_sell_indicator={},shares={},stock={:.{}},price={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.order_reference_number),
+                m.buy_sell_indicator, be32toh(m.shares), sizeof(m.stock), m.stock,
+                be32toh(m.price));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::add_order_with_mpid>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::add_order_with_mpid const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "add_order_with_mpid(message_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},buy_sell_indicator={},shares={},stock={:.{}},price={},attribution={:.{}})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.order_reference_number),
+                m.buy_sell_indicator, be32toh(m.shares), sizeof(m.stock), m.stock, be32toh(m.price),
+                sizeof(m.attribution), m.attribution);
+    }
+};
+
+template <>
+struct fmt::formatter<itch::order_executed>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::order_executed const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "order_executed(message_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},executed_shares={},match_number={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.order_reference_number),
+                be32toh(m.executed_shares), be64toh(m.match_number));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::order_executed_with_price>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::order_executed_with_price const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "order_executed_with_price(message_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},executed_shares={},match_number={},printable={},execution_price={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.order_reference_number),
+                be32toh(m.executed_shares), be64toh(m.match_number), m.printable,
+                be32toh(m.execution_price));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::order_cancel>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::order_cancel const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "order_cancel(message_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},cancelled_shares={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.order_reference_number),
+                be32toh(m.cancelled_shares));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::order_delete>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::order_delete const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "order_delete(message_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.order_reference_number));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::order_replace>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::order_replace const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "order_replace(message_type={},stock_locate={},tracking_number={},timestamp={},original_order_reference_number={},new_order_reference_number={},shares={},price={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.original_order_reference_number),
+                be64toh(m.new_order_reference_number), be32toh(m.shares), be32toh(m.price));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::trade_non_cross>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::trade_non_cross const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "trade_non_cross(message_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},buy_sell_indicator={},shares={},stock={:.{}},price={},match_number={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.order_reference_number),
+                m.buy_sell_indicator, be32toh(m.shares), sizeof(m.stock), m.stock, be32toh(m.price),
+                be64toh(m.match_number));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::trade_cross>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::trade_cross const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "trade_cross(message_type={},stock_locate={},tracking_number={},timestamp={},shares={},stock={:.{}},cross_price={},match_number={},cross_type={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be32toh(m.shares), sizeof(m.stock), m.stock,
+                be32toh(m.cross_price), be64toh(m.match_number), m.cross_type);
+    }
+};
+
+template <>
+struct fmt::formatter<itch::broken_trade>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::broken_trade const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "broken_trade(message_type={},stock_locate={},tracking_number={},timestamp={},match_number={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.match_number));
+    }
+};
+
+template <>
+struct fmt::formatter<itch::noii>
+{
+    constexpr auto
+    parse(format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    template <typename FormatContext>
+    auto
+    format(itch::noii const& m, FormatContext& ctx)
+    {
+        return format_to(ctx.out(),
+                "noii(message_type={},stock_locate={},tracking_number={},timestamp={},paired_shares={},imbalance_shares={},imbalance_direction={},stock={:.{}},far_price={},near_price={},current_reference_price={},cross_type={},price_variation_indicator={})",
+                m.message_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
+                from_itch_timestamp(m.timestamp), be64toh(m.paired_shares),
+                be64toh(m.imbalance_shares), m.imbalance_direction, sizeof(m.stock), m.stock,
+                be32toh(m.far_price), be32toh(m.near_price), be32toh(m.current_reference_price),
+                m.cross_type, m.price_variation_indicator);
+    }
+};
