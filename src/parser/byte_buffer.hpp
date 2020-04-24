@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstring> // std::memmove
 
 
 template <std::size_t Capacity>
@@ -13,14 +14,17 @@ private:
 
 public:
     byte_buffer() noexcept;
+
     std::uint8_t const* read_ptr() const noexcept;
     std::uint8_t* write_ptr() noexcept;
+
     void bytes_read(std::size_t) noexcept;
     void bytes_written(std::size_t) noexcept;
     void shift() noexcept;
 
     constexpr std::size_t capacity() const noexcept;
     std::size_t bytes_unread() const noexcept;
+    std::size_t bytes_left() const noexcept;
 };
 
 
@@ -67,6 +71,10 @@ template <std::size_t Capacity>
 void
 byte_buffer<Capacity>::shift() noexcept
 {
+    std::size_t const unread = bytes_unread();
+    std::memmove(buf_, rptr_, unread);
+    rptr_ = buf_;
+    wptr_ = buf_ + unread;
 }
 
 template <std::size_t Capacity>
@@ -80,5 +88,12 @@ template <std::size_t Capacity>
 std::size_t
 byte_buffer<Capacity>::bytes_unread() const noexcept
 {
-    return wptr_ - rptr_;;
+    return wptr_ - rptr_;
+}
+
+template <std::size_t Capacity>
+std::size_t
+byte_buffer<Capacity>::bytes_left() const noexcept
+{
+    return (buf_ + Capacity) - wptr_;
 }
