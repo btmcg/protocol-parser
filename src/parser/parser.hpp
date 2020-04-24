@@ -11,7 +11,7 @@ public:
     bool parse() noexcept;
 
 private:
-    std::uint16_t parse_itch(std::uint8_t const*) noexcept;
+    std::uint16_t parse_itch(std::uint8_t const*, std::uint16_t) noexcept;
 
 private:
     enum

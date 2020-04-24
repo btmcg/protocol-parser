@@ -111,8 +111,16 @@ parser::parse() noexcept
                 return false;
         }
 
-        auto nbytes = parse_itch(buf);
-        nbytes = parse_itch(buf + nbytes);
+        std::uint8_t const* b_ptr = buf;
+        std::uint64_t bytes_processed = 0;
+        std::uint16_t const len
+                = be16toh(*reinterpret_cast<std::uint16_t const*>(b_ptr)) + sizeof(len);
+        while (bytes_processed + len < BufferSize) {
+            fmt::print("bytes_processed={}, len={}, BufferSize={}, total_out={}\n", bytes_processed,
+                    len, BufferSize, zstrm.total_out);
+            bytes_processed += parse_itch(b_ptr, len);
+            b_ptr += len;
+        }
 
         fmt::print("avail_out={}, total_out={}\n", zstrm.avail_out, zstrm.total_out);
     } while (ret != Z_STREAM_END);
@@ -122,13 +130,12 @@ parser::parse() noexcept
 }
 
 std::uint16_t
-parser::parse_itch(std::uint8_t const* buf) noexcept
+parser::parse_itch(std::uint8_t const* buf, std::uint16_t len) noexcept
 {
     using namespace itch;
 
-    std::uint16_t const len = be16toh(*reinterpret_cast<std::uint16_t const*>(buf)) + sizeof(len);
-    fmt::print("len={}\n", len);
-    buf += sizeof(len);
+    fmt::print("msg_type={}, len={}\n", static_cast<char>(*buf), len);
+    return len;
 
     // clang-format off
     switch (*buf) {
