@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -o errexit
+set -o nounset
+
+readonly version="2.12.1"
+readonly remote_target="https://raw.githubusercontent.com/catchorg/Catch2/v${version}/single_include/catch2/catch.hpp"
+readonly local_dir="third_party/catch/${version}"
+
+
+if [ "$(basename "$(pwd)")" != 'itch' ]; then
+    printf "ERROR: must run from top-level of repository\n" >/dev/stderr
+    exit 1
+fi
+
+mkdir --parents "${local_dir}"
+wget --no-clobber --directory-prefix="${local_dir}" "${remote_target}"
