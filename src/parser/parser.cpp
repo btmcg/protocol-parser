@@ -93,6 +93,7 @@ parser::parse() noexcept
         zstrm.avail_out = buf.bytes_left();
         zstrm.next_out = buf.write_ptr();
 
+        ++stats_.inflate_count;
         ret = ::inflate(&zstrm, Z_NO_FLUSH);
         switch (ret) {
             case Z_STREAM_ERROR:
@@ -113,6 +114,8 @@ parser::parse() noexcept
         total_bytes_inflated = zstrm.total_out;
 
         parse_itch(buf);
+
+        ++stats_.shift_count;
         buf.shift();
 
     } while (ret != Z_STREAM_END);
@@ -174,10 +177,9 @@ parser::parse_itch(byte_buffer<BufferSize>& buf) noexcept
 void
 parser::print_stats() const noexcept
 {
-    fmt::print("bytes_processed: {}\nmsgs_processed:  {}\n", stats_.byte_count, stats_.msg_count);
-
+    fmt::print("calls to shift:   {}\ncalls to inflate: {}\nbytes_processed:  {}\nmsgs_processed:   {}\n", stats_.shift_count, stats_.inflate_count, stats_.byte_count, stats_.msg_count);
     for (auto const& itr : stats_.msg_type_count) {
-        fmt::print("msg_type={}, count={}\n", itr.first, itr.second);
+        fmt::print("    count={}, msg_type={}\n", itr.second, itr.first);
     }
 }
 
