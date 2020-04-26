@@ -182,9 +182,9 @@ struct fmt::formatter<itch::ipo_quoting_period_update>
         return format_to(ctx.out(),
                 "ipo_quoting_period_update(length={},message_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},ipo_quotation_release_time={},ipo_quotation_release_qualifier={},ipo_price={})",
                 be16toh(m.length), m.message_type, be16toh(m.stock_locate),
-                be16toh(m.tracking_number), from_itch_timestamp(m.timestamp), m.stock, sizeof(m.stock),
-                be32toh(m.ipo_quotation_release_time), m.ipo_quotation_release_qualifier,
-                be32toh(m.ipo_price));
+                be16toh(m.tracking_number), from_itch_timestamp(m.timestamp), m.stock,
+                sizeof(m.stock), be32toh(m.ipo_quotation_release_time),
+                m.ipo_quotation_release_qualifier, be32toh(m.ipo_price));
     }
 };
 
@@ -204,8 +204,8 @@ struct fmt::formatter<itch::luld_auction_collar>
         return format_to(ctx.out(),
                 "luld_auction_collar(length={},message_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},auction_collar_reference_price={},upper_auction_collar_price={},lower_auction_collar_price={},auction_collar_extension={})",
                 be16toh(m.length), m.message_type, be16toh(m.stock_locate),
-                be16toh(m.tracking_number), from_itch_timestamp(m.timestamp), m.stock, sizeof(m.stock),
-                be32toh(m.auction_collar_reference_price),
+                be16toh(m.tracking_number), from_itch_timestamp(m.timestamp), m.stock,
+                sizeof(m.stock), be32toh(m.auction_collar_reference_price),
                 be32toh(m.upper_auction_collar_price), be32toh(m.lower_auction_collar_price),
                 be32toh(m.auction_collar_extension));
     }
@@ -227,8 +227,8 @@ struct fmt::formatter<itch::operational_halt>
         return format_to(ctx.out(),
                 "operational_halt(length={},message_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},market_code={},operational_halt_action={})",
                 be16toh(m.length), m.message_type, be16toh(m.stock_locate),
-                be16toh(m.tracking_number), from_itch_timestamp(m.timestamp), m.stock, sizeof(m.stock),
-                m.market_code, m.operational_halt_action);
+                be16toh(m.tracking_number), from_itch_timestamp(m.timestamp), m.stock,
+                sizeof(m.stock), m.market_code, m.operational_halt_action);
     }
 };
 

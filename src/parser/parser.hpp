@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <cstddef>
 #include <cstdint>
+#include <unordered_map>
 
 class parser
 {
@@ -17,6 +18,7 @@ private:
     {
         std::size_t byte_count = 0;
         std::size_t msg_count = 0;
+        std::unordered_map<char, std::size_t> msg_type_count;
     };
 
 private:
