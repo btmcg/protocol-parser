@@ -11,7 +11,7 @@ class parser
 private:
     enum
     {
-        BufferSize = 1024 * 1024
+        BufferSize = 10 * 1024 * 1024
     };
 
     struct stats
