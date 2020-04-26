@@ -8,12 +8,13 @@ template <std::size_t Capacity>
 class byte_buffer
 {
 private:
-    std::uint8_t buf_[Capacity];
+    std::uint8_t* buf_ = nullptr;
     std::uint8_t const* rptr_ = nullptr;
     std::uint8_t* wptr_ = nullptr;
 
 public:
     byte_buffer() noexcept;
+    ~byte_buffer() noexcept;
 
     std::uint8_t const* read_ptr() const noexcept;
     std::uint8_t* write_ptr() noexcept;
@@ -32,11 +33,17 @@ public:
 
 template <std::size_t Capacity>
 byte_buffer<Capacity>::byte_buffer() noexcept
-        : buf_()
+        : buf_(new std::uint8_t[Capacity])
         , rptr_(buf_)
         , wptr_(buf_)
 {
     // empty
+}
+
+template <std::size_t Capacity>
+byte_buffer<Capacity>::~byte_buffer() noexcept
+{
+    delete [] buf_;
 }
 
 template <std::size_t Capacity>
