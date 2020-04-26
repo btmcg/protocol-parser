@@ -22,7 +22,7 @@ public:
     void bytes_written(std::size_t) noexcept;
     void shift() noexcept;
 
-    constexpr std::size_t capacity() const noexcept;
+    std::size_t capacity() const noexcept;
     std::size_t bytes_unread() const noexcept;
     std::size_t bytes_left() const noexcept;
 };
@@ -78,7 +78,7 @@ byte_buffer<Capacity>::shift() noexcept
 }
 
 template <std::size_t Capacity>
-constexpr std::size_t
+std::size_t
 byte_buffer<Capacity>::capacity() const noexcept
 {
     return Capacity;

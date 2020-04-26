@@ -8,22 +8,26 @@
 namespace itch {
     inline namespace v5_0 {
 
-        struct system_event
+        /// synthetic msg; not strictly part of itch protocol, but
+        /// contains fields that are common to all messages.
+        struct header
         {
+            std::uint16_t length; ///< this field does not add to the message length
             char message_type;
             std::uint16_t stock_locate;
             std::uint16_t tracking_number;
             std::uint8_t timestamp[6];
+        } PACKED;
+        static_assert(sizeof(header) == 13);
+
+        struct system_event : public header
+        {
             char event_code;
         } PACKED;
-        static_assert(sizeof(system_event) == 12);
+        static_assert(sizeof(system_event) - sizeof(header::length) == 12);
 
-        struct stock_directory
+        struct stock_directory : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             char stock[8];
             char market_category;
             char financial_status_indicator;
@@ -39,127 +43,88 @@ namespace itch {
             std::uint32_t etp_leverage_factor;
             char inverse_indicator;
         } PACKED;
-        static_assert(sizeof(stock_directory) == 39);
+        static_assert(sizeof(stock_directory) - sizeof(header::length) == 39);
 
-        struct stock_trading_action
+        struct stock_trading_action : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             char stock[8];
             char trading_state;
             char reserved;
             char reason[4];
         } PACKED;
-        static_assert(sizeof(stock_trading_action) == 25);
+        static_assert(sizeof(stock_trading_action) - sizeof(header::length) == 25);
 
-        struct reg_sho_restriction
+        struct reg_sho_restriction : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             char stock[8];
             char reg_sho_action;
         } PACKED;
-        static_assert(sizeof(reg_sho_restriction) == 20);
+        static_assert(sizeof(reg_sho_restriction) - sizeof(header::length) == 20);
 
-        struct market_participant_position
+        struct market_participant_position : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             char mpid[4];
             char stock[8];
             char primary_market_maker;
             char market_maker_mode;
             char market_participant_state;
         } PACKED;
-        static_assert(sizeof(market_participant_position) == 26);
+        static_assert(sizeof(market_participant_position) - sizeof(header::length) == 26);
 
-        struct mwcb_decline_level
+        struct mwcb_decline_level : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t level1;
             std::uint64_t level2;
             std::uint64_t level3;
         } PACKED;
-        static_assert(sizeof(mwcb_decline_level) == 35);
+        static_assert(sizeof(mwcb_decline_level) - sizeof(header::length) == 35);
 
-        struct mwcb_status
+        struct mwcb_status : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             char breached_level;
         } PACKED;
-        static_assert(sizeof(mwcb_status) == 12);
+        static_assert(sizeof(mwcb_status) - sizeof(header::length) == 12);
 
-        struct ipo_quoting_period_update
+        struct ipo_quoting_period_update : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             char stock[8];
             std::uint32_t ipo_quotation_release_time;
             char ipo_quotation_release_qualifier;
             std::uint32_t ipo_price;
         } PACKED;
-        static_assert(sizeof(ipo_quoting_period_update) == 28);
+        static_assert(sizeof(ipo_quoting_period_update) - sizeof(header::length) == 28);
 
-        struct luld_auction_collar
+        struct luld_auction_collar : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             char stock[8];
             std::uint32_t auction_collar_reference_price;
             std::uint32_t upper_auction_collar_price;
             std::uint32_t lower_auction_collar_price;
             std::uint32_t auction_collar_extension;
         } PACKED;
-        static_assert(sizeof(luld_auction_collar) == 35);
+        static_assert(sizeof(luld_auction_collar) - sizeof(header::length) == 35);
 
-        struct operational_halt
+        struct operational_halt : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             char stock[8];
             char market_code;
             char operational_halt_action;
         } PACKED;
-        static_assert(sizeof(operational_halt) == 21);
+        static_assert(sizeof(operational_halt) - sizeof(header::length) == 21);
 
-        struct add_order
+        /// message_type='A'
+        struct add_order : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t order_reference_number;
             char buy_sell_indicator;
             std::uint32_t shares;
             char stock[8];
             std::uint32_t price;
         } PACKED;
-        static_assert(sizeof(add_order) == 36);
+        static_assert(sizeof(add_order) - sizeof(header::length) == 36);
 
-        struct add_order_with_mpid
+        struct add_order_with_mpid : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t order_reference_number;
             char buy_sell_indicator;
             std::uint32_t shares;
@@ -167,74 +132,51 @@ namespace itch {
             std::uint32_t price;
             char attribution[4];
         } PACKED;
-        static_assert(sizeof(add_order_with_mpid) == 40);
+        static_assert(sizeof(add_order_with_mpid) - sizeof(header::length) == 40);
 
-        struct order_executed
+        struct order_executed : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t order_reference_number;
             std::uint32_t executed_shares;
             std::uint64_t match_number;
         } PACKED;
-        static_assert(sizeof(order_executed) == 31);
+        static_assert(sizeof(order_executed) - sizeof(header::length) == 31);
 
-        struct order_executed_with_price
+        struct order_executed_with_price : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t order_reference_number;
             std::uint32_t executed_shares;
             std::uint64_t match_number;
             char printable;
             std::uint32_t execution_price;
         } PACKED;
-        static_assert(sizeof(order_executed_with_price) == 36);
+        static_assert(sizeof(order_executed_with_price) - sizeof(header::length) == 36);
 
-        struct order_cancel
+        struct order_cancel : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t order_reference_number;
             std::uint32_t cancelled_shares;
         } PACKED;
-        static_assert(sizeof(order_cancel) == 23);
+        static_assert(sizeof(order_cancel) - sizeof(header::length) == 23);
 
-        struct order_delete
+        struct order_delete : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t order_reference_number;
         } PACKED;
-        static_assert(sizeof(order_delete) == 19);
+        static_assert(sizeof(order_delete) - sizeof(header::length) == 19);
 
-        struct order_replace
+        struct order_replace : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t original_order_reference_number;
             std::uint64_t new_order_reference_number;
             std::uint32_t shares;
             std::uint32_t price;
         } PACKED;
-        static_assert(sizeof(order_replace) == 35);
+        static_assert(sizeof(order_replace) - sizeof(header::length) == 35);
 
-        struct trade_non_cross
+        /// message_type='P'
+        struct trade_non_cross : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t order_reference_number;
             char buy_sell_indicator;
             std::uint32_t shares;
@@ -242,38 +184,26 @@ namespace itch {
             std::uint32_t price;
             std::uint64_t match_number;
         } PACKED;
-        static_assert(sizeof(trade_non_cross) == 44);
+        static_assert(sizeof(trade_non_cross) - sizeof(header::length) == 44);
 
-        struct trade_cross
+        struct trade_cross : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t shares;
             char stock[8];
             std::uint32_t cross_price;
             std::uint64_t match_number;
             char cross_type;
         } PACKED;
-        static_assert(sizeof(trade_cross) == 40);
+        static_assert(sizeof(trade_cross) - sizeof(header::length) == 40);
 
-        struct broken_trade
+        struct broken_trade : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t match_number;
         } PACKED;
-        static_assert(sizeof(broken_trade) == 19);
+        static_assert(sizeof(broken_trade) - sizeof(header::length) == 19);
 
-        struct noii
+        struct noii : public header
         {
-            char message_type;
-            std::uint16_t stock_locate;
-            std::uint16_t tracking_number;
-            std::uint8_t timestamp[6];
             std::uint64_t paired_shares;
             std::uint64_t imbalance_shares;
             char imbalance_direction;
@@ -284,7 +214,7 @@ namespace itch {
             char cross_type;
             char price_variation_indicator;
         } PACKED;
-        static_assert(sizeof(noii) == 50);
+        static_assert(sizeof(noii) - sizeof(header::length) == 50);
 
     } // namespace v5_0
 } // namespace itch

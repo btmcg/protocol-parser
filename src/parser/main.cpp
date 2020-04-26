@@ -90,6 +90,7 @@ main(int argc, char** argv)
     try {
         parser parser(args.input_file);
         parser.parse();
+        parser.print_stats();
     } catch (std::exception const& e) {
         std::fprintf(stderr, "exception caught: %s\n", e.what());
         return EXIT_FAILURE;
