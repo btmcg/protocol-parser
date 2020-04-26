@@ -43,7 +43,7 @@ byte_buffer<Capacity>::byte_buffer() noexcept
 template <std::size_t Capacity>
 byte_buffer<Capacity>::~byte_buffer() noexcept
 {
-    delete [] buf_;
+    delete[] buf_;
 }
 
 template <std::size_t Capacity>

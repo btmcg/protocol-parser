@@ -37,5 +37,7 @@ public:
     void print_stats() const noexcept;
 
 private:
-    void parse_itch(byte_buffer<BufferSize>&) noexcept;
+    bool parse_raw() noexcept;
+    bool parse_gz() noexcept;
+    std::size_t parse_itch(std::uint8_t const*, std::size_t) noexcept;
 };

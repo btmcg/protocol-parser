@@ -68,6 +68,22 @@ parser::~parser() noexcept
 bool
 parser::parse() noexcept
 {
+    return input_file_.extension() == ".gz" ? parse_gz() : parse_raw();
+}
+
+bool
+parser::parse_raw() noexcept
+{
+    fmt::print("file_size_={}\n", file_size_);
+
+    std::uint8_t const* ptr = reinterpret_cast<decltype(ptr)>(f_ptr_);
+    parse_itch(ptr, file_size_);
+    return true;
+}
+
+bool
+parser::parse_gz() noexcept
+{
     fmt::print("file_size_={}\n", file_size_);
 
     ::z_stream zstrm;
@@ -113,7 +129,8 @@ parser::parse() noexcept
         buf.bytes_written(zstrm.total_out - total_bytes_inflated);
         total_bytes_inflated = zstrm.total_out;
 
-        parse_itch(buf);
+        std::size_t const bytes_processed = parse_itch(buf.read_ptr(), buf.bytes_unread());
+        buf.bytes_read(bytes_processed);
 
         ++stats_.shift_count;
         ++stats_.bytes_shifted += buf.shift();
@@ -124,17 +141,19 @@ parser::parse() noexcept
     return true;
 }
 
-void
-parser::parse_itch(byte_buffer<BufferSize>& buf) noexcept
+std::size_t
+parser::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 {
     using namespace itch;
 
-    while (buf.bytes_unread() > sizeof(header)) {
-        header const* hdr = reinterpret_cast<decltype(hdr)>(buf.read_ptr());
+    std::size_t bytes_processed = 0;
+    std::uint8_t const* end = buf + bytes_to_read;
+    while (buf + sizeof(header) < end) {
+        header const* hdr = reinterpret_cast<decltype(hdr)>(buf);
         std::uint16_t const msg_len = be16toh(hdr->length) + sizeof(hdr->length);
 
         // not enough bytes for the full msg, read nothing
-        if (buf.bytes_unread() < msg_len)
+        if (buf + msg_len > end)
             break;
 
         // fmt::print(stderr, "parse_itch(): msg_type={}, len={}\n", hdr->message_type, msg_len);
@@ -170,8 +189,10 @@ parser::parse_itch(byte_buffer<BufferSize>& buf) noexcept
         ++stats_.msg_type_count[hdr->message_type];
         stats_.byte_count += msg_len;
         ++stats_.msg_count;
-        buf.bytes_read(msg_len);
+        buf += msg_len;
+        bytes_processed += msg_len;
     }
+    return bytes_processed;
 }
 
 void
