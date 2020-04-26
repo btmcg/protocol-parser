@@ -1,6 +1,6 @@
 #pragma once
 
-#include "byte_buffer.hpp"
+#include "common/byte_buffer.hpp"
 #include <filesystem>
 #include <cstddef>
 #include <cstdint>

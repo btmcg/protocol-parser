@@ -1,4 +1,4 @@
-#include "parser/byte_buffer.hpp"
+#include "common/byte_buffer.hpp"
 #include <catch.hpp>
 #include <cstdint>
 #include <cstring> // std::memcmp, std::memcpy
