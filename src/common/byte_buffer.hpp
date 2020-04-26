@@ -20,7 +20,7 @@ public:
 
     void bytes_read(std::size_t) noexcept;
     void bytes_written(std::size_t) noexcept;
-    void shift() noexcept;
+    std::size_t shift() noexcept;
 
     std::size_t capacity() const noexcept;
     std::size_t bytes_unread() const noexcept;
@@ -68,13 +68,22 @@ byte_buffer<Capacity>::bytes_written(std::size_t nbytes) noexcept
 }
 
 template <std::size_t Capacity>
-void
+std::size_t
 byte_buffer<Capacity>::shift() noexcept
 {
     std::size_t const unread = bytes_unread();
+
+    // if there are no bytes unread, then there's nothing to shift and
+    // we can cheat and just reset everything to beginning of the buffer
+    if (unread == 0) {
+        rptr_ = wptr_ = buf_;
+        return 0;
+    }
+
     std::memmove(buf_, rptr_, unread);
     rptr_ = buf_;
     wptr_ = buf_ + unread;
+    return unread;
 }
 
 template <std::size_t Capacity>

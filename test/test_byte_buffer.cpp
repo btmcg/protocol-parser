@@ -25,7 +25,7 @@ TEST_CASE("basic usage", "[byte_buffer]")
         REQUIRE(buf.bytes_unread() == 0);
         REQUIRE(buf.bytes_left() == 10);
 
-        buf.shift();
+        REQUIRE(buf.shift() == 0);
         REQUIRE(buf.capacity() == 10);
         REQUIRE(buf.bytes_unread() == 0);
         REQUIRE(buf.bytes_left() == 10);
@@ -75,7 +75,7 @@ TEST_CASE("basic usage", "[byte_buffer]")
         REQUIRE(buf.bytes_unread() == 3);
         REQUIRE(buf.bytes_left() == 0);
 
-        buf.shift();
+        REQUIRE(buf.shift() == 3);
 
         REQUIRE(buf.bytes_unread() == 3);
         REQUIRE(buf.bytes_left() == 7);
