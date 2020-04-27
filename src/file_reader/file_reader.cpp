@@ -78,7 +78,8 @@ file_reader::process_raw() noexcept
     fmt::print("file_size_={}\n", file_size_);
 
     std::uint8_t const* ptr = reinterpret_cast<decltype(ptr)>(f_ptr_);
-    parse_itch(ptr, file_size_);
+    std::size_t const bytes_processed = parse_itch(ptr, file_size_);
+    stats_.byte_count += bytes_processed;
     return true;
 }
 
@@ -135,6 +136,7 @@ file_reader::process_gz() noexcept
 
         ++stats_.shift_count;
         ++stats_.bytes_shifted += buf.shift();
+        stats_.byte_count += bytes_processed;
 
     } while (ret != Z_STREAM_END);
 
@@ -188,7 +190,6 @@ file_reader::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noex
         // clang-format on
 
         ++stats_.msg_type_count[hdr->message_type];
-        stats_.byte_count += msg_len;
         ++stats_.msg_count;
         buf += msg_len;
         bytes_processed += msg_len;
