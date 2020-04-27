@@ -14,7 +14,7 @@ lib/
 tags
 
 # executables
-src/parser/parser
+src/file_reader/file_reader
 test/test-runner
 
 # build system artifacts
