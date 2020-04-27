@@ -89,7 +89,7 @@ main(int argc, char** argv)
 
     try {
         file_reader reader(args.input_file);
-        reader.parse();
+        reader.run();
         reader.print_stats();
     } catch (std::exception const& e) {
         std::fprintf(stderr, "exception caught: %s\n", e.what());

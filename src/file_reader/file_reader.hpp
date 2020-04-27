@@ -33,11 +33,11 @@ private:
 public:
     file_reader(std::filesystem::path const&);
     ~file_reader() noexcept;
-    bool parse() noexcept;
+    bool run() noexcept;
     void print_stats() const noexcept;
 
 private:
-    bool parse_raw() noexcept;
-    bool parse_gz() noexcept;
+    bool process_raw() noexcept;
+    bool process_gz() noexcept;
     std::size_t parse_itch(std::uint8_t const*, std::size_t) noexcept;
 };

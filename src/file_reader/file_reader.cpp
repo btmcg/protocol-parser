@@ -67,13 +67,13 @@ file_reader::~file_reader() noexcept
 }
 
 bool
-file_reader::parse() noexcept
+file_reader::run() noexcept
 {
-    return input_file_.extension() == ".gz" ? parse_gz() : parse_raw();
+    return input_file_.extension() == ".gz" ? process_gz() : process_raw();
 }
 
 bool
-file_reader::parse_raw() noexcept
+file_reader::process_raw() noexcept
 {
     fmt::print("file_size_={}\n", file_size_);
 
@@ -83,7 +83,7 @@ file_reader::parse_raw() noexcept
 }
 
 bool
-file_reader::parse_gz() noexcept
+file_reader::process_gz() noexcept
 {
     fmt::print("file_size_={}\n", file_size_);
 
