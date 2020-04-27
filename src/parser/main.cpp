@@ -1,5 +1,5 @@
 #include "common/compiler.hpp"
-#include "file_parser/file_parser.hpp"
+#include "parser/parser.hpp"
 #include <filesystem>
 #include <getopt.h>
 #include <unistd.h>
@@ -88,7 +88,7 @@ main(int argc, char** argv)
     Args const args = arg_parse(argc, argv);
 
     try {
-        file_parser parser(args.input_file);
+        parser parser(args.input_file);
         parser.parse();
         parser.print_stats();
     } catch (std::exception const& e) {

@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <unordered_map>
 
-class file_parser
+class parser
 {
 private:
     enum
@@ -31,8 +31,8 @@ private:
     stats stats_;
 
 public:
-    file_parser(std::filesystem::path const&);
-    ~file_parser() noexcept;
+    parser(std::filesystem::path const&);
+    ~parser() noexcept;
     bool parse() noexcept;
     void print_stats() const noexcept;
 
