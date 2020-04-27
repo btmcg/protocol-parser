@@ -21,7 +21,6 @@ private:
         std::size_t inflate_count = 0;
         std::size_t byte_count = 0;
         std::size_t msg_count = 0;
-        std::unordered_map<char, std::size_t> msg_type_count;
     };
 
 private:

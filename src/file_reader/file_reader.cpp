@@ -189,7 +189,6 @@ file_reader::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noex
         // }
         // clang-format on
 
-        ++stats_.msg_type_count[hdr->message_type];
         ++stats_.msg_count;
         buf += msg_len;
         bytes_processed += msg_len;
@@ -204,9 +203,6 @@ file_reader::print_stats() const noexcept
             "bytes shifted:    {}\ncalls to shift:   {}\ncalls to inflate: {}\nbytes_processed:  {}\nmsgs_processed:   {}\n",
             stats_.bytes_shifted, stats_.shift_count, stats_.inflate_count, stats_.byte_count,
             stats_.msg_count);
-    for (auto const& itr : stats_.msg_type_count) {
-        fmt::print("    count={}, msg_type={}\n", itr.second, itr.first);
-    }
 }
 
 // for (int i = 0; i < 10; ++i) {
