@@ -1,6 +1,5 @@
-#include "file_parser.hpp"
 #include "common/compiler.hpp"
-#include "itch_parser/itch_parser.hpp"
+#include "file_parser/file_parser.hpp"
 #include <filesystem>
 #include <getopt.h>
 #include <unistd.h>
@@ -89,7 +88,7 @@ main(int argc, char** argv)
     Args const args = arg_parse(argc, argv);
 
     try {
-        file_parser<itch_parser> parser(args.input_file);
+        file_parser parser(args.input_file);
         parser.parse();
         parser.print_stats();
     } catch (std::exception const& e) {
