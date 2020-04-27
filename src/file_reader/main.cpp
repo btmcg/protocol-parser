@@ -1,5 +1,5 @@
-#include "common/compiler.hpp"
 #include "file_reader.hpp"
+#include "common/compiler.hpp"
 #include <filesystem>
 #include <getopt.h>
 #include <unistd.h>
