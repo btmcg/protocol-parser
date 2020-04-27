@@ -1,4 +1,4 @@
-#include "parser.hpp"
+#include "file_reader.hpp"
 #include "protocol/itch-fmt.hpp"
 #include "protocol/itch.hpp"
 #include <endian.h>
@@ -49,7 +49,7 @@ namespace { // unnamed
 
 } // namespace
 
-parser::parser(std::filesystem::path const& input_file)
+file_reader::file_reader(std::filesystem::path const& input_file)
         : input_file_(input_file)
         , f_ptr_(nullptr)
         , file_size_(0)
@@ -60,20 +60,20 @@ parser::parser(std::filesystem::path const& input_file)
         throw std::runtime_error(fmt::format("failed to mmap file: {}", input_file_.c_str()));
 }
 
-parser::~parser() noexcept
+file_reader::~file_reader() noexcept
 {
     if (::munmap(f_ptr_, file_size_) == -1)
         fmt::print(stderr, "ERROR: munmap [{}]\n", std::strerror(errno));
 }
 
 bool
-parser::parse() noexcept
+file_reader::parse() noexcept
 {
     return input_file_.extension() == ".gz" ? parse_gz() : parse_raw();
 }
 
 bool
-parser::parse_raw() noexcept
+file_reader::parse_raw() noexcept
 {
     fmt::print("file_size_={}\n", file_size_);
 
@@ -83,7 +83,7 @@ parser::parse_raw() noexcept
 }
 
 bool
-parser::parse_gz() noexcept
+file_reader::parse_gz() noexcept
 {
     fmt::print("file_size_={}\n", file_size_);
 
@@ -142,7 +142,7 @@ parser::parse_gz() noexcept
 }
 
 std::size_t
-parser::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
+file_reader::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 {
     using namespace itch;
 
@@ -197,7 +197,7 @@ parser::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 }
 
 void
-parser::print_stats() const noexcept
+file_reader::print_stats() const noexcept
 {
     fmt::print(
             "bytes shifted:    {}\ncalls to shift:   {}\ncalls to inflate: {}\nbytes_processed:  {}\nmsgs_processed:   {}\n",

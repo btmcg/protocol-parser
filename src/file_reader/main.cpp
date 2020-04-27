@@ -1,5 +1,5 @@
 #include "common/compiler.hpp"
-#include "parser/parser.hpp"
+#include "file_reader.hpp"
 #include <filesystem>
 #include <getopt.h>
 #include <unistd.h>
@@ -88,9 +88,9 @@ main(int argc, char** argv)
     Args const args = arg_parse(argc, argv);
 
     try {
-        parser parser(args.input_file);
-        parser.parse();
-        parser.print_stats();
+        file_reader reader(args.input_file);
+        reader.parse();
+        reader.print_stats();
     } catch (std::exception const& e) {
         std::fprintf(stderr, "exception caught: %s\n", e.what());
         return EXIT_FAILURE;
