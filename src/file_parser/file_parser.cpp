@@ -1,4 +1,4 @@
-#include "parser.hpp"
+#include "file_parser.hpp"
 #include "protocol/itch-fmt.hpp"
 #include "protocol/itch.hpp"
 #include <endian.h>
@@ -49,7 +49,7 @@ namespace { // unnamed
 
 } // namespace
 
-parser::parser(std::filesystem::path const& input_file)
+file_parser::file_parser(std::filesystem::path const& input_file)
         : input_file_(input_file)
         , f_ptr_(nullptr)
         , file_size_(0)
@@ -60,20 +60,20 @@ parser::parser(std::filesystem::path const& input_file)
         throw std::runtime_error(fmt::format("failed to mmap file: {}", input_file_.c_str()));
 }
 
-parser::~parser() noexcept
+file_parser::~file_parser() noexcept
 {
     if (::munmap(f_ptr_, file_size_) == -1)
         fmt::print(stderr, "ERROR: munmap [{}]\n", std::strerror(errno));
 }
 
 bool
-parser::parse() noexcept
+file_parser::parse() noexcept
 {
     return input_file_.extension() == ".gz" ? parse_gz() : parse_raw();
 }
 
 bool
-parser::parse_raw() noexcept
+file_parser::parse_raw() noexcept
 {
     fmt::print("file_size_={}\n", file_size_);
 
@@ -83,7 +83,7 @@ parser::parse_raw() noexcept
 }
 
 bool
-parser::parse_gz() noexcept
+file_parser::parse_gz() noexcept
 {
     fmt::print("file_size_={}\n", file_size_);
 
@@ -142,7 +142,7 @@ parser::parse_gz() noexcept
 }
 
 std::size_t
-parser::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
+file_parser::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 {
     using namespace itch;
 
@@ -159,32 +159,47 @@ parser::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
         // fmt::print(stderr, "parse_itch(): msg_type={}, len={}\n", hdr->message_type, msg_len);
 
         // clang-format off
-        // switch (hdr->message_type) {
-        //     case 'A': fmt::print(stderr, "{}\n", *reinterpret_cast<add_order const*>(hdr)); break;
-        //     case 'D': fmt::print(stderr, "{}\n", *reinterpret_cast<order_delete const*>(hdr)); break;
-        //     case 'U': fmt::print(stderr, "{}\n", *reinterpret_cast<order_replace const*>(hdr)); break;
-        //     case 'E': fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed const*>(hdr)); break;
-        //     case 'X': fmt::print(stderr, "{}\n", *reinterpret_cast<order_cancel const*>(hdr)); break;
-        //     case 'I': fmt::print(stderr, "{}\n", *reinterpret_cast<noii const*>(hdr)); break;
-        //     case 'F': fmt::print(stderr, "{}\n", *reinterpret_cast<add_order_with_mpid const*>(hdr)); break;
-        //     case 'P': fmt::print(stderr, "{}\n", *reinterpret_cast<trade_non_cross const*>(hdr)); break;
-        //     case 'L': fmt::print(stderr, "{}\n", *reinterpret_cast<market_participant_position const*>(hdr)); break;
-        //     case 'C': fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed_with_price const*>(hdr)); break;
-        //     case 'Q': fmt::print(stderr, "{}\n", *reinterpret_cast<trade_cross const*>(hdr)); break;
-        //     case 'Y': fmt::print(stderr, "{}\n", *reinterpret_cast<reg_sho_restriction const*>(hdr)); break;
-        //     case 'H': fmt::print(stderr, "{}\n", *reinterpret_cast<stock_trading_action const*>(hdr)); break;
-        //     case 'R': fmt::print(stderr, "{}\n", *reinterpret_cast<stock_directory const*>(hdr)); break;
-        //     case 'S': fmt::print(stderr, "{}\n", *reinterpret_cast<system_event const*>(hdr)); break;
-        //     case 'J': fmt::print(stderr, "{}\n", *reinterpret_cast<luld_auction_collar const*>(hdr)); break;
-        //     case 'K': fmt::print(stderr, "{}\n", *reinterpret_cast<ipo_quoting_period_update const*>(hdr)); break;
-        //     case 'V': fmt::print(stderr, "{}\n", *reinterpret_cast<mwcb_decline_level const*>(hdr)); break;
-        //
-        //     case 'W': fmt::print(stderr, "{}\n", *reinterpret_cast<mwcb_status const*>(hdr)); break;
-        //     case 'h': fmt::print(stderr, "{}\n", *reinterpret_cast<operational_halt const*>(hdr)); break;
-        //     case 'B': fmt::print(stderr, "{}\n", *reinterpret_cast<broken_trade const*>(hdr)); break;
+         switch (hdr->message_type) {
+             case 'A': // fmt::print(stderr, "{}\n", *reinterpret_cast<add_order const*>(hdr));
+                break;
+             case 'D': // fmt::print(stderr, "{}\n", *reinterpret_cast<order_delete const*>(hdr));
+                break;
+             case 'U': // fmt::print(stderr, "{}\n", *reinterpret_cast<order_replace const*>(hdr));
+                break;
+             case 'E': // fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed const*>(hdr));
+                break;
+             case 'X': // fmt::print(stderr, "{}\n", *reinterpret_cast<order_cancel const*>(hdr));
+                break;
+             case 'F': // fmt::print(stderr, "{}\n", *reinterpret_cast<add_order_with_mpid const*>(hdr));
+                break;
+             case 'P': // fmt::print(stderr, "{}\n", *reinterpret_cast<trade_non_cross const*>(hdr));
+                break;
+             case 'C': // fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed_with_price const*>(hdr));
+                break;
+             case 'Q': // fmt::print(stderr, "{}\n", *reinterpret_cast<trade_cross const*>(hdr));
+                break;
+             case 'S': // fmt::print(stderr, "{}\n", *reinterpret_cast<system_event const*>(hdr));
+                break;
+             case 'R': fmt::print("{}\n", *reinterpret_cast<stock_directory const*>(hdr));
+                break;
 
-        //     default: fmt::print("parse_itch(): unknown type=[{:c}]\n", hdr->message_type); std::exit(1); break;
-        // }
+             case 'Y':
+             case 'H':
+             case 'L':
+             case 'I':
+             case 'J':
+             case 'K':
+             case 'V':
+             case 'W':
+             case 'h':
+             case 'B':
+                break;
+
+             default:
+                fmt::print("parse_itch(): unknown type=[{:c}]\n", hdr->message_type);
+                std::exit(1);
+                break;
+         }
         // clang-format on
 
         ++stats_.msg_type_count[hdr->message_type];
@@ -197,7 +212,7 @@ parser::parse_itch(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 }
 
 void
-parser::print_stats() const noexcept
+file_parser::print_stats() const noexcept
 {
     fmt::print(
             "bytes shifted:    {}\ncalls to shift:   {}\ncalls to inflate: {}\nbytes_processed:  {}\nmsgs_processed:   {}\n",
