@@ -1,9 +1,10 @@
 #include "file_reader.hpp"
 #include "common/compiler.hpp"
+#include "itch_parser/itch_parser.hpp"
 #include <filesystem>
 #include <getopt.h>
-#include <unistd.h>
-#include <cstdio>
+#include <cstdio> // std::fprintf
+#include <cstdlib> // std::exit
 #include <string>
 
 
@@ -88,8 +89,9 @@ main(int argc, char** argv)
     Args const args = arg_parse(argc, argv);
 
     try {
+        itch_parser parser;
         file_reader reader(args.input_file);
-        reader.run();
+        reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
         reader.print_stats();
     } catch (std::exception const& e) {
         std::fprintf(stderr, "exception caught: %s\n", e.what());

@@ -2,9 +2,11 @@
 
 #include "common/byte_buffer.hpp"
 #include <filesystem>
+#include <fmt/format.h>
+#include <zlib.h>
 #include <cstddef>
 #include <cstdint>
-#include <unordered_map>
+
 
 class file_reader
 {
@@ -32,11 +34,97 @@ private:
 public:
     file_reader(std::filesystem::path const&);
     ~file_reader() noexcept;
-    bool run() noexcept;
     void print_stats() const noexcept;
 
+    template <typename Callable>
+    bool process_file(Callable&& fn) noexcept;
+
 private:
-    bool process_raw() noexcept;
-    bool process_gz() noexcept;
-    std::size_t parse_itch(std::uint8_t const*, std::size_t) noexcept;
+    template <typename Callable>
+    bool process_raw(Callable&& fn) noexcept;
+
+    template <typename Callable>
+    bool process_gz(Callable&& fn) noexcept;
 };
+
+/**********************************************************************/
+
+template <typename Callable>
+bool
+file_reader::process_file(Callable&& fn) noexcept
+{
+    return input_file_.extension() == ".gz" ? process_gz(fn) : process_raw(fn);
+}
+
+template <typename Callable>
+bool
+file_reader::process_raw(Callable&& fn) noexcept
+{
+    fmt::print("file_size_={}\n", file_size_);
+
+    std::uint8_t const* ptr = reinterpret_cast<decltype(ptr)>(f_ptr_);
+    std::size_t const bytes_processed = fn(ptr, file_size_);
+    stats_.byte_count += bytes_processed;
+    return true;
+}
+
+template <typename Callable>
+bool
+file_reader::process_gz(Callable&& fn) noexcept
+{
+    fmt::print("file_size_={}\n", file_size_);
+
+    ::z_stream zstrm;
+    zstrm.zalloc = nullptr;
+    zstrm.zfree = nullptr;
+    zstrm.opaque = nullptr;
+    zstrm.avail_in = 0;
+    zstrm.next_in = nullptr;
+
+    if (int const rv = ::inflateInit2(&zstrm, 32); rv != Z_OK) {
+        fmt::print(stderr, "ERROR: inflateInit returned error {}\n", rv);
+        return false;
+    }
+
+    byte_buffer<BufferSize> buf;
+    std::size_t total_bytes_inflated = 0;
+
+    zstrm.avail_in = file_size_;
+    zstrm.next_in = reinterpret_cast<decltype(zstrm.next_in)>(f_ptr_);
+
+    int ret = 0;
+    do {
+        zstrm.avail_out = buf.bytes_left();
+        zstrm.next_out = buf.write_ptr();
+
+        ++stats_.inflate_count;
+        ret = ::inflate(&zstrm, Z_NO_FLUSH);
+        switch (ret) {
+            case Z_STREAM_ERROR:
+                fmt::print(stderr, "Z_NEED_DICT\n");
+                return false;
+            case Z_NEED_DICT:
+                fmt::print(stderr, "Z_NEED_DICT\n");
+                return false;
+            case Z_DATA_ERROR:
+                fmt::print(stderr, "Z_DATA_ERROR\n");
+                return false;
+            case Z_MEM_ERROR:
+                fmt::print(stderr, "Z_MEM_ERROR\n");
+                (void)inflateEnd(&zstrm);
+                return false;
+        }
+        buf.bytes_written(zstrm.total_out - total_bytes_inflated);
+        total_bytes_inflated = zstrm.total_out;
+
+        std::size_t const bytes_processed = fn(buf.read_ptr(), buf.bytes_unread());
+        buf.bytes_read(bytes_processed);
+
+        ++stats_.shift_count;
+        ++stats_.bytes_shifted += buf.shift();
+        stats_.byte_count += bytes_processed;
+
+    } while (ret != Z_STREAM_END);
+
+    return true;
+}
