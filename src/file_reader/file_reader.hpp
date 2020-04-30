@@ -55,7 +55,11 @@ template <typename Callable>
 bool
 file_reader::process_file(Callable&& fn) noexcept
 {
-    return input_file_.extension() == ".gz" ? process_gz(fn) : process_raw(fn);
+    // FIXME: in clang 10, extension() seems to get optimized out
+    if (input_file_.string().substr(input_file_.string().size() - 3) == ".gz")
+        return process_gz(fn);
+
+    return process_raw(fn);
 }
 
 template <typename Callable>
