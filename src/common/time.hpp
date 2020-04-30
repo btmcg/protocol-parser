@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <ctime>
+#include <string>
+#include <fmt/chrono.h>
 
 
 // constants
@@ -11,6 +13,7 @@ constexpr std::uint64_t NanosInSec = 1'000'000'000;
 constexpr inline timespec ts_diff(timespec const& t1, timespec const& t2);
 constexpr inline timespec to_timespec(std::uint64_t nsecs);
 constexpr inline std::uint64_t to_nsecs(timespec const&);
+inline std::string to_datetime(std::uint64_t nsecs);
 
 
 /// FIXME
@@ -146,4 +149,11 @@ constexpr inline std::uint64_t
 to_nsecs(timespec const& ts)
 {
     return ts.tv_nsec + (ts.tv_sec * NanosInSec);
+}
+
+inline std::string
+to_utc_str(std::uint64_t nsecs)
+{
+    std::time_t const t = nsecs /= NanosInSec;
+    return fmt::format("{:%Y%m%d-%H:%M:%S}.{}", *std::gmtime(&t), nsecs);
 }

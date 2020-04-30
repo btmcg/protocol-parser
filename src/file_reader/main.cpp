@@ -1,5 +1,6 @@
 #include "file_reader.hpp"
 #include "common/compiler.hpp"
+#include "common/time.hpp"
 #include "itch_parser/itch_parser.hpp"
 #include <filesystem>
 #include <getopt.h>
@@ -87,6 +88,8 @@ int
 main(int argc, char** argv)
 {
     Args const args = arg_parse(argc, argv);
+
+    tsc::init();
 
     try {
         itch_parser parser;

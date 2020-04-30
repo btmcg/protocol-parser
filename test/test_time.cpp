@@ -2,6 +2,8 @@
 #include <catch.hpp>
 #include <cstdint>
 #include <ctime>
+#include <string>
+#include <fmt/format.h>
 
 
 TEST_CASE("init", "[tsc]")
@@ -79,5 +81,11 @@ TEST_CASE("free functions", "[time]")
         ts.tv_sec = 0;
         ts.tv_nsec = 0;
         REQUIRE(to_nsecs(ts) == 0);
+    }
+
+    SECTION("to_str")
+    {
+        REQUIRE(to_utc_str(0) == "19700101-00:00:00.0");
+        REQUIRE(to_utc_str(420018999 * NanosInSec) == "19830424-07:56:39.420018999");
     }
 }
