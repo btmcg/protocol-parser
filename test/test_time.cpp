@@ -83,7 +83,7 @@ TEST_CASE("free functions", "[time]")
         REQUIRE(to_nsecs(ts) == 0);
     }
 
-    SECTION("to_str")
+    SECTION("to_utc_str")
     {
         REQUIRE(to_utc_str(0) == "19700101-00:00:00.0");
         REQUIRE(to_utc_str(420018999 * NanosInSec) == "19830424-07:56:39.420018999");
