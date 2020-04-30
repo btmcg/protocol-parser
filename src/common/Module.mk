@@ -1,8 +1,6 @@
 LOCAL_PATH := $(call my-dir)
 LOCAL_SOURCE_FILES := $(wildcard *.cpp)
-LOCAL_LDLIBS := -lz
-LOCAL_LIBRARIES := common
 
 $(call use-fmt)
 
-$(call add-executable-module)
+$(call add-static-library-module)
