@@ -4,6 +4,7 @@
 #include <ctime>
 #include <string>
 #include <fmt/format.h>
+#include <iostream>
 
 
 TEST_CASE("init", "[tsc]")
@@ -85,7 +86,13 @@ TEST_CASE("free functions", "[time]")
 
     SECTION("to_utc_str")
     {
-        REQUIRE(to_utc_str(0) == "19700101-00:00:00.0");
-        REQUIRE(to_utc_str(420018999 * NanosInSec) == "19830424-07:56:39.420018999");
+        REQUIRE(to_utc_str(0) == "19700101-00:00:00.000000000");
+        REQUIRE(to_utc_str(420'021'409'000'000'123) == "19830424-08:36:49.420021409");
+    }
+
+    SECTION("to_time_str")
+    {
+        REQUIRE(to_time_str(0) == "00:00:00.000000000");
+        REQUIRE(to_time_str(37921286412345) == "10:32:01.286412345");
     }
 }

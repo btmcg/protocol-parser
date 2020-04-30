@@ -14,6 +14,7 @@ constexpr inline timespec ts_diff(timespec const& t1, timespec const& t2);
 constexpr inline timespec to_timespec(std::uint64_t nsecs);
 constexpr inline std::uint64_t to_nsecs(timespec const&);
 inline std::string to_utc_str(std::uint64_t nsecs);
+inline std::string to_time_str(std::uint64_t nsecs);
 
 
 /// FIXME
@@ -155,5 +156,17 @@ inline std::string
 to_utc_str(std::uint64_t nsecs)
 {
     std::time_t const t = nsecs /= NanosInSec;
-    return fmt::format("{:%Y%m%d-%H:%M:%S}.{}", *std::gmtime(&t), nsecs);
+    return fmt::format("{:%Y%m%d-%H:%M:%S}.{:09}", *std::gmtime(&t), nsecs);
+}
+
+inline std::string
+to_time_str(std::uint64_t nsecs)
+{
+    std::uint64_t s = nsecs / NanosInSec;
+    nsecs %= NanosInSec;
+    std::uint64_t m = s / 60;
+    s %= 60;
+    std::uint64_t h = m / 60;
+    m %= 60;
+    return fmt::format("{:02}:{:02}:{:02}.{:09}", h, m, s, nsecs);
 }
