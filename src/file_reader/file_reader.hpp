@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/byte_buffer.hpp"
+#include "common/time.hpp"
 #include <filesystem>
 #include <fmt/format.h>
 #include <zlib.h>
@@ -23,6 +24,7 @@ private:
         std::size_t inflate_count = 0;
         std::size_t byte_count = 0;
         std::size_t msg_count = 0;
+        std::uint64_t nsec_count = 0;
     };
 
 private:
@@ -63,7 +65,9 @@ file_reader::process_raw(Callable&& fn) noexcept
     fmt::print("file_size_={}\n", file_size_);
 
     std::uint8_t const* ptr = reinterpret_cast<decltype(ptr)>(f_ptr_);
+    stats_.nsec_count += tsc::get_nsecs();
     std::size_t const bytes_processed = fn(ptr, file_size_);
+    stats_.nsec_count = tsc::get_nsecs() - stats_.nsec_count;
     stats_.byte_count += bytes_processed;
     return true;
 }
@@ -73,6 +77,7 @@ bool
 file_reader::process_gz(Callable&& fn) noexcept
 {
     fmt::print("file_size_={}\n", file_size_);
+    stats_.nsec_count += tsc::get_nsecs();
 
     ::z_stream zstrm;
     zstrm.zalloc = nullptr;
@@ -126,5 +131,6 @@ file_reader::process_gz(Callable&& fn) noexcept
 
     } while (ret != Z_STREAM_END);
 
+    stats_.nsec_count = tsc::get_nsecs() - stats_.nsec_count;
     return true;
 }

@@ -64,7 +64,7 @@ void
 file_reader::print_stats() const noexcept
 {
     fmt::print(
-            "bytes shifted:    {}\ncalls to shift:   {}\ncalls to inflate: {}\nbytes_processed:  {}\nmsgs_processed:   {}\n",
+            "bytes shifted:    {}\ncalls to shift:   {}\ncalls to inflate: {}\nbytes_processed:  {}\nmsgs_processed:   {}\ntime:             {}\n",
             stats_.bytes_shifted, stats_.shift_count, stats_.inflate_count, stats_.byte_count,
-            stats_.msg_count);
+            stats_.msg_count, to_time_str(stats_.nsec_count));
 }
