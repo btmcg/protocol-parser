@@ -13,7 +13,7 @@ constexpr std::uint64_t NanosInSec = 1'000'000'000;
 constexpr inline timespec ts_diff(timespec const& t1, timespec const& t2);
 constexpr inline timespec to_timespec(std::uint64_t nsecs);
 constexpr inline std::uint64_t to_nsecs(timespec const&);
-inline std::string to_datetime(std::uint64_t nsecs);
+inline std::string to_utc_str(std::uint64_t nsecs);
 
 
 /// FIXME
