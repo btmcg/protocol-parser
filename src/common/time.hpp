@@ -19,8 +19,9 @@ std::string to_time_str(std::uint64_t nsecs);
 class tsc
 {
 private:
-    static inline double ticks_per_nsec_ = 0.0;    ///< initialized by init(), should match cpu clock speed
-    static inline std::uint64_t init_ticks_ = 0;   ///< ticks recorded at rdtscp init()
+    static inline double ticks_per_nsec_
+            = 0.0; ///< initialized by init(), should match cpu clock speed
+    static inline std::uint64_t init_ticks_ = 0; ///< ticks recorded at rdtscp init()
 
 public:
     enum : std::uint64_t

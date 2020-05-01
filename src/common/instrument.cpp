@@ -4,8 +4,7 @@
 instrument::instrument() noexcept
         : locate(0)
         , name{}
-        , bids()
-        , asks()
+        , book()
 {
     // empty
 }
@@ -14,8 +13,7 @@ instrument::instrument() noexcept
 instrument::instrument(std::uint16_t l, char const (&nm)[8]) noexcept
         : locate(l)
         , name()
-        , bids()
-        , asks()
+        , book()
 {
     set_name(nm);
 }
@@ -32,4 +30,3 @@ instrument::set_name(char const (&nm)[8]) noexcept
         name[i] = nm[i];
     }
 }
-

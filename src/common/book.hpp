@@ -4,6 +4,12 @@
 #include <list>
 #include <unordered_map>
 
+enum Side
+{
+    Bid = 0,
+    Ask = 1
+};
+
 
 struct price_level
 {
@@ -18,21 +24,29 @@ struct price_level
     }
 };
 
+struct order
+{
+    Side side = Side::Bid;
+    std::uint32_t price = 0;
+    std::uint32_t qty = 0;
+    price_level* pl = nullptr;
+};
 
-class book
+/// Two-sided book
+class tsbook
 {
 private:
-    std::unordered_map<std::uint64_t, price_level> orders_; ///< order num to pl
-    std::list<price_level> levels_;
+    std::unordered_map<std::uint64_t, order> orders_; ///< order num to pl
+    std::list<price_level> bids_;
+    std::list<price_level> asks_;
 
 public:
-    enum Side
-    {
-        Buy = 0,
-        Ask = 1
-    };
-
-public:
-    book() noexcept;
+    tsbook() noexcept;
     void add_order(std::uint64_t order_num, Side, std::uint32_t price, std::uint32_t qty);
+    void delete_order(std::uint64_t order_num) noexcept;
+
+public:
+    std::unordered_map<std::uint64_t, order> const& order_list() const noexcept;
+    std::list<price_level> const& bids() const noexcept;
+    std::list<price_level> const& asks() const noexcept;
 };

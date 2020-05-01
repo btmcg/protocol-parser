@@ -94,57 +94,36 @@ itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
 void
 itch_parser::handle_add_order(itch::add_order const* m) noexcept
 {
+    fmt::print(stderr, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
-    instrument inst = instruments_[index];
-
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const price = be32toh(m->price);
     std::uint32_t const qty = be32toh(m->shares);
 
-    if (m->buy_sell_indicator == 'B') {
-        inst.bids.add_order(order_number, book::Side::Buy, price, qty);
-    } else { // (m->buy_sell_indicator == 'S')
-        inst.asks.add_order(order_number, book::Side::Ask, price, qty);
-    }
+    instruments_[index].book.add_order(
+            order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
 }
 
 void
 itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
 {
+    fmt::print(stderr, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
-    instrument inst = instruments_[index];
+    std::uint64_t const order_number = be64toh(m->order_reference_number);
 
-    // std::uint64_t const order_number = be64toh(m->order_reference_number);
-
-    // TODO: delete order
+    instruments_[index].book.delete_order(order_number);
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void
 itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
 {
+    fmt::print(stderr, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
-    instrument inst = instruments_[index];
-
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const price = be32toh(m->price);
     std::uint32_t const qty = be32toh(m->shares);
 
-    if (m->buy_sell_indicator == 'B') {
-        inst.bids.add_order(order_number, book::Side::Buy, price, qty);
-    } else { // (m->buy_sell_indicator == 'S')
-        inst.asks.add_order(order_number, book::Side::Ask, price, qty);
-    }
+    instruments_[index].book.add_order(
+            order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
 }
