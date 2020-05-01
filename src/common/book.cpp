@@ -79,6 +79,13 @@ tsbook::delete_order(std::uint64_t order_num) noexcept
     orders_.erase(o_itr);
 }
 
+void
+tsbook::replace_order(std::uint64_t orig_order_num, std::uint64_t new_order_num, std::uint32_t price, std::uint32_t qty) noexcept
+{
+    auto order = orders_.find(orig_order_num)->second;
+    delete_order(orig_order_num);
+    add_order(new_order_num, order.side, price, qty);
+}
 
 std::unordered_map<std::uint64_t, order> const&
 tsbook::order_list() const noexcept

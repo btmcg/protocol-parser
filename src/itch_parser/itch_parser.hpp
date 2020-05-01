@@ -4,8 +4,7 @@
 #include "protocol/itch-fmt.hpp"
 #include "protocol/itch.hpp"
 #include <endian.h>
-#include <unistd.h> // ::close
-#include <cstdio> // std::fopen
+#include <cstdio> // std::fclose, std::fopen
 
 
 class itch_parser
@@ -23,6 +22,7 @@ private:
     void handle_stock_directory(itch::stock_directory const*) noexcept;
     void handle_add_order(itch::add_order const*) noexcept;
     void handle_order_delete(itch::order_delete const*) noexcept;
+    void handle_order_replace(itch::order_replace const*) noexcept;
     void handle_add_order_with_mpid(itch::add_order_with_mpid const*) noexcept;
 };
 
@@ -37,7 +37,7 @@ itch_parser::itch_parser() noexcept
 
 itch_parser::~itch_parser() noexcept
 {
-    ::close(log_);
+    std::fclose(log_);
     log_ = nullptr;
 }
 
@@ -60,7 +60,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
         switch (hdr->message_type) {
             case 'A': handle_add_order(reinterpret_cast<add_order const*>(hdr)); break;
             case 'D': handle_order_delete(reinterpret_cast<order_delete const*>(hdr)); break;
-        //     case 'U': fmt::print(stderr, "{}\n", *reinterpret_cast<order_replace const*>(hdr)); break;
+            case 'U': handle_order_replace(reinterpret_cast<order_replace const*>(hdr)); break;
         //     case 'E': fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed const*>(hdr)); break;
         //     case 'X': fmt::print(stderr, "{}\n", *reinterpret_cast<order_cancel const*>(hdr)); break;
         //     case 'I': fmt::print(stderr, "{}\n", *reinterpret_cast<noii const*>(hdr)); break;
@@ -126,6 +126,18 @@ itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
     instruments_[index].book.delete_order(order_number);
 }
 
+void
+itch_parser::handle_order_replace(itch::order_replace const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+    std::uint16_t const index = be16toh(m->stock_locate);
+    std::uint64_t const orig_order_number = be64toh(m->original_order_reference_number);
+    std::uint64_t const new_order_number = be64toh(m->new_order_reference_number);
+    std::uint32_t const price = be32toh(m->price);
+    std::uint32_t const qty = be32toh(m->shares);
+
+    instruments_[index].book.replace_order(orig_order_number, new_order_number, price, qty);
+}
 
 void
 itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
