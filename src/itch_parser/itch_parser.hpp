@@ -4,15 +4,19 @@
 #include "protocol/itch-fmt.hpp"
 #include "protocol/itch.hpp"
 #include <endian.h>
+#include <unistd.h> // ::close
+#include <cstdio> // std::fopen
 
 
 class itch_parser
 {
 private:
     instrument instruments_[9000];
+    FILE* log_ = nullptr;
 
 public:
     itch_parser() noexcept;
+    ~itch_parser() noexcept;
     std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
 
 private:
@@ -26,8 +30,15 @@ private:
 
 itch_parser::itch_parser() noexcept
         : instruments_()
+        , log_(nullptr)
 {
-    // empty
+    log_ = std::fopen("itch.log", "w");
+}
+
+itch_parser::~itch_parser() noexcept
+{
+    ::close(log_);
+    log_ = nullptr;
 }
 
 std::size_t
@@ -70,7 +81,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
         //     case 'h': fmt::print(stderr, "{}\n", *reinterpret_cast<operational_halt const*>(hdr)); break;
         //     case 'B': fmt::print(stderr, "{}\n", *reinterpret_cast<broken_trade const*>(hdr)); break;
 
-        //     default: fmt::print("parse_itch(): unknown type=[{:c}]\n", hdr->message_type); std::exit(1); break;
+            // default: fmt::print(stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->message_type); std::exit(1); break;
         }
         // clang-format on
 
@@ -86,6 +97,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 void
 itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
 {
+    fmt::print(log_, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
     instruments_[index].locate = index;
     instruments_[index].set_name(m->stock);
@@ -94,7 +106,7 @@ itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
 void
 itch_parser::handle_add_order(itch::add_order const* m) noexcept
 {
-    fmt::print(stderr, "{}\n", *m);
+    fmt::print(log_, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const price = be32toh(m->price);
@@ -107,7 +119,7 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
 void
 itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
 {
-    fmt::print(stderr, "{}\n", *m);
+    fmt::print(log_, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
 
@@ -118,7 +130,7 @@ itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
 void
 itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
 {
-    fmt::print(stderr, "{}\n", *m);
+    fmt::print(log_, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const price = be32toh(m->price);
