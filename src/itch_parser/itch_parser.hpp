@@ -23,6 +23,7 @@ private:
     void handle_add_order_with_mpid(itch::add_order_with_mpid const*) noexcept;
     void handle_order_cancel(itch::order_cancel const*) noexcept;
     void handle_order_delete(itch::order_delete const*) noexcept;
+    void handle_order_executed(itch::order_executed const*) noexcept;
     void handle_order_replace(itch::order_replace const*) noexcept;
     void handle_stock_directory(itch::stock_directory const*) noexcept;
 };
@@ -62,7 +63,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'A': handle_add_order(reinterpret_cast<add_order const*>(hdr)); break;
             case 'D': handle_order_delete(reinterpret_cast<order_delete const*>(hdr)); break;
             case 'U': handle_order_replace(reinterpret_cast<order_replace const*>(hdr)); break;
-        //     case 'E': fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed const*>(hdr)); break;
+            case 'E': handle_order_executed(reinterpret_cast<order_executed const*>(hdr)); break;
             case 'X': handle_order_cancel(reinterpret_cast<order_cancel const*>(hdr)); break;
         //     case 'I': fmt::print(stderr, "{}\n", *reinterpret_cast<noii const*>(hdr)); break;
             case 'F': handle_add_order_with_mpid(reinterpret_cast<add_order_with_mpid const*>(hdr)); break;
@@ -136,6 +137,17 @@ itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
     std::uint64_t const order_number = be64toh(m->order_reference_number);
 
     instruments_[index].book.delete_order(order_number);
+}
+
+void
+itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+    std::uint16_t const index = be16toh(m->stock_locate);
+    std::uint64_t const order_number = be64toh(m->order_reference_number);
+    std::uint32_t const executed_qty = be32toh(m->executed_shares);
+
+    instruments_[index].book.cancel_order(order_number, executed_qty);
 }
 
 void
