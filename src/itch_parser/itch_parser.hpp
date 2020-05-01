@@ -27,6 +27,7 @@ private:
     void handle_order_executed(itch::order_executed const*) noexcept;
     void handle_order_replace(itch::order_replace const*) noexcept;
     void handle_stock_directory(itch::stock_directory const*) noexcept;
+    void handle_trade_non_cross(itch::trade_non_cross const*) noexcept;
 };
 
 /**********************************************************************/
@@ -68,7 +69,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'X': handle_order_cancel(reinterpret_cast<order_cancel const*>(hdr)); break;
             case 'I': handle_noii(reinterpret_cast<noii const*>(hdr)); break;
             case 'F': handle_add_order_with_mpid(reinterpret_cast<add_order_with_mpid const*>(hdr)); break;
-        //     case 'P': fmt::print(stderr, "{}\n", *reinterpret_cast<trade_non_cross const*>(hdr)); break;
+            case 'P': handle_trade_non_cross(reinterpret_cast<trade_non_cross const*>(hdr)); break;
         //     case 'L': fmt::print(stderr, "{}\n", *reinterpret_cast<market_participant_position const*>(hdr)); break;
         //     case 'C': fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed_with_price const*>(hdr)); break;
         //     case 'Q': fmt::print(stderr, "{}\n", *reinterpret_cast<trade_cross const*>(hdr)); break;
@@ -95,15 +96,6 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
         bytes_processed += msg_len;
     }
     return bytes_processed;
-}
-
-void
-itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
-{
-    fmt::print(log_, "{}\n", *m);
-    std::uint16_t const index = be16toh(m->stock_locate);
-    instruments_[index].locate = index;
-    instruments_[index].set_name(m->stock);
 }
 
 void
@@ -181,4 +173,19 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
 
     instruments_[index].book.add_order(
             order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
+}
+
+void
+itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+    std::uint16_t const index = be16toh(m->stock_locate);
+    instruments_[index].locate = index;
+    instruments_[index].set_name(m->stock);
+}
+
+void
+itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
 }
