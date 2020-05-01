@@ -1,9 +1,9 @@
 #pragma once
 
+#include <fmt/chrono.h>
 #include <cstdint>
 #include <ctime>
 #include <string>
-#include <fmt/chrono.h>
 
 
 // constants
@@ -135,10 +135,8 @@ ts_diff(timespec const& t1, timespec const& t2)
 constexpr inline timespec
 to_timespec(std::uint64_t nsecs)
 {
-    timespec ts = {
-        static_cast<std::time_t>(nsecs / NanosInSec),
-        static_cast<std::int64_t>(nsecs % NanosInSec)
-    };
+    timespec ts = {static_cast<std::time_t>(nsecs / NanosInSec),
+            static_cast<std::int64_t>(nsecs % NanosInSec)};
     return ts;
 }
 

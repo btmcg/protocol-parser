@@ -1,10 +1,10 @@
 #include "common/time.hpp"
 #include <catch.hpp>
+#include <fmt/format.h>
 #include <cstdint>
 #include <ctime>
-#include <string>
-#include <fmt/format.h>
 #include <iostream>
+#include <string>
 
 
 TEST_CASE("init", "[tsc]")
