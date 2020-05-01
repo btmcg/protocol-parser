@@ -11,14 +11,6 @@ TEST_CASE("init", "[tsc]")
 {
     tsc::init();
 
-    REQUIRE(tsc::gettime_nsec() != 0);
-    timespec ts = tsc::gettime_ts();
-    REQUIRE(ts.tv_sec != 0);
-    REQUIRE(ts.tv_nsec != 0);
-    REQUIRE(tsc::get_ticks_per_nsec() != Approx(0.0));
-    REQUIRE(tsc::get_nsecs() != 0);
-
-
     SECTION("gettime_nsec", "[tsc]")
     {
         std::time_t const control = std::time(nullptr);
@@ -60,9 +52,9 @@ TEST_CASE("free functions", "[time]")
 {
     SECTION("ts_diff")
     {
-        timespec t1 = {10, 1000};
-        timespec t2 = {10, 1500};
-        timespec diff = {0, 0};
+        std::timespec t1 = {10, 1000};
+        std::timespec t2 = {10, 1500};
+        std::timespec diff = {0, 0};
 
         // invalid diff
         diff = ts_diff(t2, t1);
@@ -83,7 +75,7 @@ TEST_CASE("free functions", "[time]")
 
     SECTION("to_timespec")
     {
-        timespec ts = {0, 0};
+        std::timespec ts = {0, 0};
 
         // nsecs
         ts = to_timespec(1000);
@@ -103,7 +95,7 @@ TEST_CASE("free functions", "[time]")
 
     SECTION("to_nsecs")
     {
-        timespec ts = {0, 0};
+        std::timespec ts = {0, 0};
 
         // nsecs
         ts.tv_sec = 0;

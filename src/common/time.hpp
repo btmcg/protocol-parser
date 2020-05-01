@@ -6,13 +6,10 @@
 #include <string>
 
 
-// constants
-constexpr std::uint64_t NanosInSec = 1'000'000'000;
-
 // free functions
-constexpr inline timespec ts_diff(timespec const& t1, timespec const& t2);
-constexpr inline timespec to_timespec(std::uint64_t nsecs);
-constexpr inline std::uint64_t to_nsecs(timespec const&);
+constexpr inline std::timespec ts_diff(std::timespec const& t1, std::timespec const& t2);
+constexpr inline std::timespec to_timespec(std::uint64_t nsecs);
+constexpr inline std::uint64_t to_nsecs(std::timespec const&);
 inline std::string to_utc_str(std::uint64_t nsecs);
 inline std::string to_time_str(std::uint64_t nsecs);
 
@@ -22,7 +19,6 @@ class tsc
 {
 private:
     static double ticks_per_nsec_; ///< initialized by init(), should match cpu clock speed
-    static std::uint64_t last_nsec_; ///< current nsecs since epoch at last calculation
     static std::uint64_t init_ticks_; ///< ticks recorded at rdtscp init()
 
 public:
@@ -38,7 +34,7 @@ public:
     static inline std::uint64_t gettime_nsec();
 
     /// return current time (nsec since epoch) in the form of a timespec
-    static inline timespec gettime_ts();
+    static inline std::timespec gettime_ts();
 
     /// return number of ticks per nsec for this cpu
     static inline double get_ticks_per_nsec();
@@ -57,8 +53,8 @@ private:
 void
 tsc::init()
 {
-    timespec begin_ts = {0, 0};
-    timespec end_ts = {0, 0};
+    std::timespec begin_ts = {0, 0};
+    std::timespec end_ts = {0, 0};
 
     ::clock_gettime(CLOCK_REALTIME, &begin_ts);
     auto const begin = rdtscp();
@@ -69,29 +65,26 @@ tsc::init()
     auto const end = rdtscp();
     ::clock_gettime(CLOCK_REALTIME, &end_ts);
 
-    timespec const diff = ts_diff(begin_ts, end_ts);
-    auto const elapsed = (diff.tv_sec * NanosInSec) + diff.tv_nsec;
+    std::timespec const diff = ts_diff(begin_ts, end_ts);
+    auto const elapsed = (diff.tv_sec * tsc::NsecInSec) + diff.tv_nsec;
     ticks_per_nsec_ = static_cast<double>(end - begin) / static_cast<double>(elapsed);
     init_ticks_ = begin;
-    last_nsec_ = (begin_ts.tv_sec * NanosInSec) + begin_ts.tv_nsec;
 }
 
 std::uint64_t
 tsc::gettime_nsec()
 {
-    std::uint64_t const ticks = rdtscp();
-    last_nsec_ += (ticks - init_ticks_) / ticks_per_nsec_;
-    return last_nsec_;
+    return (rdtscp() - init_ticks_) / ticks_per_nsec_;
 }
 
-timespec
+std::timespec
 tsc::gettime_ts()
 {
     std::uint64_t const now_nsec = gettime_nsec();
 
-    timespec const ts = {
-        static_cast<std::time_t>(now_nsec / NsecInSec),
-        static_cast<long>(now_nsec % NsecInSec)
+    std::timespec const ts = {
+        static_cast<std::time_t>(now_nsec / tsc::NsecInSec),
+        static_cast<long>(now_nsec % tsc::NsecInSec)
     };
     return ts;
 }
@@ -128,43 +121,45 @@ tsc::rdtscp()
 /**********************************************************************/
 // free functions
 
-constexpr inline timespec
-ts_diff(timespec const& t1, timespec const& t2)
+constexpr inline std::timespec
+ts_diff(std::timespec const& t1, std::timespec const& t2)
 {
-    std::uint64_t n1 = to_nsecs(t1);
-    std::uint64_t n2 = to_nsecs(t2);
+    std::uint64_t const n1 = to_nsecs(t1);
+    std::uint64_t const n2 = to_nsecs(t2);
     if (n1 > n2)
-        return timespec{0, 0};
+        return std::timespec{0, 0};
 
     return to_timespec(n2 - n1);
 }
 
-constexpr inline timespec
+constexpr inline std::timespec
 to_timespec(std::uint64_t nsecs)
 {
-    timespec ts = {static_cast<std::time_t>(nsecs / NanosInSec),
-            static_cast<std::int64_t>(nsecs % NanosInSec)};
+    std::timespec const ts = {
+        static_cast<std::time_t>(nsecs / tsc::NsecInSec),
+        static_cast<long>(nsecs % tsc::NsecInSec)
+    };
     return ts;
 }
 
 constexpr inline std::uint64_t
-to_nsecs(timespec const& ts)
+to_nsecs(std::timespec const& ts)
 {
-    return ts.tv_nsec + (ts.tv_sec * NanosInSec);
+    return ts.tv_nsec + (ts.tv_sec * tsc::NsecInSec);
 }
 
 inline std::string
 to_utc_str(std::uint64_t nsecs)
 {
-    std::time_t const t = nsecs /= NanosInSec;
+    std::time_t const t = nsecs /= tsc::NsecInSec;
     return fmt::format("{:%Y-%m-%d %H:%M:%S}.{:09}", *std::gmtime(&t), nsecs);
 }
 
 inline std::string
 to_time_str(std::uint64_t nsecs)
 {
-    std::uint64_t s = nsecs / NanosInSec;
-    nsecs %= NanosInSec;
+    std::uint64_t s = nsecs / tsc::NsecInSec;
+    nsecs %= tsc::NsecInSec;
     std::uint64_t m = s / 60;
     s %= 60;
     std::uint64_t h = m / 60;
