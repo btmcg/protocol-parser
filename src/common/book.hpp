@@ -44,7 +44,8 @@ public:
     tsbook() noexcept;
     void add_order(std::uint64_t order_num, Side, std::uint32_t price, std::uint32_t qty);
     void delete_order(std::uint64_t order_num) noexcept;
-    void replace_order(std::uint64_t orig_order_num, std::uint64_t new_order_num, std::uint32_t price, std::uint32_t qty) noexcept;
+    void replace_order(std::uint64_t orig_order_num, std::uint64_t new_order_num,
+            std::uint32_t price, std::uint32_t qty) noexcept;
     void cancel_order(std::uint64_t order_num, std::uint32_t cancelled_qty) noexcept;
 
     // accessors

@@ -66,8 +66,6 @@ template <typename Callable>
 bool
 file_reader::process_raw(Callable&& fn) noexcept
 {
-    fmt::print("file_size_={}\n", file_size_);
-
     std::uint8_t const* ptr = reinterpret_cast<decltype(ptr)>(f_ptr_);
     stats_.nsec_count += tsc::get_nsecs();
     std::size_t const bytes_processed = fn(ptr, file_size_);
@@ -80,7 +78,6 @@ template <typename Callable>
 bool
 file_reader::process_gz(Callable&& fn) noexcept
 {
-    fmt::print("file_size_={}\n", file_size_);
     stats_.nsec_count += tsc::get_nsecs();
 
     ::z_stream zstrm;

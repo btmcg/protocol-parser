@@ -63,8 +63,11 @@ file_reader::~file_reader() noexcept
 void
 file_reader::print_stats() const noexcept
 {
-    fmt::print(
-            "bytes shifted:    {}\ncalls to shift:   {}\ncalls to inflate: {}\nbytes_processed:  {}\nmsgs_processed:   {}\ntime:             {}\n",
-            stats_.bytes_shifted, stats_.shift_count, stats_.inflate_count, stats_.byte_count,
-            stats_.msg_count, to_time_str(stats_.nsec_count));
+    fmt::print("reader stats\n");
+    fmt::print("  file size:       {}\n", file_size_);
+    fmt::print("  bytes processed: {}\n", stats_.byte_count);
+    fmt::print("  shift count:     {}\n", stats_.shift_count);
+    fmt::print("  bytes shifted:   {}\n", stats_.bytes_shifted);
+    fmt::print("  inflate count:   {}\n", stats_.inflate_count);
+    fmt::print("  time:            {}\n", to_time_str(stats_.nsec_count));
 }

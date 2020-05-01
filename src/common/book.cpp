@@ -80,7 +80,8 @@ tsbook::delete_order(std::uint64_t order_num) noexcept
 }
 
 void
-tsbook::replace_order(std::uint64_t orig_order_num, std::uint64_t new_order_num, std::uint32_t price, std::uint32_t qty) noexcept
+tsbook::replace_order(std::uint64_t orig_order_num, std::uint64_t new_order_num,
+        std::uint32_t price, std::uint32_t qty) noexcept
 {
     auto itr = orders_.find(orig_order_num);
     if (itr == orders_.end()) {

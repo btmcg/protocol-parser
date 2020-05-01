@@ -96,6 +96,7 @@ main(int argc, char** argv)
         file_reader reader(args.input_file);
         reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
         reader.print_stats();
+        parser.print_stats();
     } catch (std::exception const& e) {
         std::fprintf(stderr, "exception caught: %s\n", e.what());
         return EXIT_FAILURE;

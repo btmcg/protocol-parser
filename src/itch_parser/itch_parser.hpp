@@ -10,13 +10,26 @@
 class itch_parser
 {
 private:
+    struct stats
+    {
+        std::size_t msg_count = 0;
+        std::size_t add_count = 0;
+        std::size_t cancel_count = 0;
+        std::size_t delete_count = 0;
+        std::size_t executed_count = 0;
+        std::size_t trade_count = 0;
+    };
+
+private:
     instrument instruments_[9000];
     FILE* log_ = nullptr;
+    stats stats_;
 
 public:
     itch_parser() noexcept;
     ~itch_parser() noexcept;
     std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
+    void print_stats() const noexcept;
 
 private:
     void handle_add_order(itch::add_order const*) noexcept;
@@ -96,14 +109,16 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'W': handle_mwcb_status(reinterpret_cast<mwcb_status const*>(hdr)); break;
             case 'h': handle_operational_halt(reinterpret_cast<operational_halt const*>(hdr)); break;
             case 'B': handle_broken_trade(reinterpret_cast<broken_trade const*>(hdr)); break;
+                // clang-format on
 
-            default: fmt::print(stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->message_type); std::exit(1); break;
+            default:
+                fmt::print(
+                        stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->message_type);
+                std::exit(1);
+                break;
         }
-        // clang-format on
 
-        // ++stats_.msg_type_count[hdr->message_type];
-        // stats_.byte_count += msg_len;
-        // ++stats_.msg_count;
+        ++stats_.msg_count;
         buf += msg_len;
         bytes_processed += msg_len;
     }
@@ -111,9 +126,22 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 }
 
 void
+itch_parser::print_stats() const noexcept
+{
+    fmt::print("parser stats\n");
+    fmt::print("  msgs processed:  {}\n", stats_.msg_count);
+    fmt::print("  add_orders:      {}\n", stats_.add_count);
+    fmt::print("  cancel_orders:   {}\n", stats_.cancel_count);
+    fmt::print("  delete_orders:   {}\n", stats_.delete_count);
+    fmt::print("  executed_orders: {}\n", stats_.executed_count);
+    fmt::print("  trades:          {}\n", stats_.trade_count);
+}
+
+void
 itch_parser::handle_add_order(itch::add_order const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
+    ++stats_.add_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const price = be32toh(m->price);
@@ -127,6 +155,7 @@ void
 itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
+    ++stats_.add_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const price = be32toh(m->price);
@@ -188,6 +217,7 @@ void
 itch_parser::handle_order_cancel(itch::order_cancel const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
+    ++stats_.cancel_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const cancelled_shares = be32toh(m->cancelled_shares);
@@ -199,6 +229,7 @@ void
 itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
+    ++stats_.delete_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
 
@@ -209,6 +240,7 @@ void
 itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
+    ++stats_.executed_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const executed_qty = be32toh(m->executed_shares);
@@ -220,6 +252,7 @@ void
 itch_parser::handle_order_executed_with_price(itch::order_executed_with_price const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
+    ++stats_.executed_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const executed_qty = be32toh(m->executed_shares);
@@ -271,10 +304,12 @@ void
 itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
+    ++stats_.trade_count;
 }
 
 void
 itch_parser::handle_trade_cross(itch::trade_cross const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
+    ++stats_.trade_count;
 }
