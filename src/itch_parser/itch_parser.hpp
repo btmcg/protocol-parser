@@ -19,11 +19,12 @@ public:
     std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
 
 private:
-    void handle_stock_directory(itch::stock_directory const*) noexcept;
     void handle_add_order(itch::add_order const*) noexcept;
+    void handle_add_order_with_mpid(itch::add_order_with_mpid const*) noexcept;
+    void handle_order_cancel(itch::order_cancel const*) noexcept;
     void handle_order_delete(itch::order_delete const*) noexcept;
     void handle_order_replace(itch::order_replace const*) noexcept;
-    void handle_add_order_with_mpid(itch::add_order_with_mpid const*) noexcept;
+    void handle_stock_directory(itch::stock_directory const*) noexcept;
 };
 
 /**********************************************************************/
@@ -62,7 +63,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'D': handle_order_delete(reinterpret_cast<order_delete const*>(hdr)); break;
             case 'U': handle_order_replace(reinterpret_cast<order_replace const*>(hdr)); break;
         //     case 'E': fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed const*>(hdr)); break;
-        //     case 'X': fmt::print(stderr, "{}\n", *reinterpret_cast<order_cancel const*>(hdr)); break;
+            case 'X': handle_order_cancel(reinterpret_cast<order_cancel const*>(hdr)); break;
         //     case 'I': fmt::print(stderr, "{}\n", *reinterpret_cast<noii const*>(hdr)); break;
             case 'F': handle_add_order_with_mpid(reinterpret_cast<add_order_with_mpid const*>(hdr)); break;
         //     case 'P': fmt::print(stderr, "{}\n", *reinterpret_cast<trade_non_cross const*>(hdr)); break;
@@ -114,6 +115,17 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
 
     instruments_[index].book.add_order(
             order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
+}
+
+void
+itch_parser::handle_order_cancel(itch::order_cancel const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+    std::uint16_t const index = be16toh(m->stock_locate);
+    std::uint64_t const order_number = be64toh(m->order_reference_number);
+    std::uint32_t const cancelled_shares = be32toh(m->cancelled_shares);
+
+    instruments_[index].book.cancel_order(order_number, cancelled_shares);
 }
 
 void
