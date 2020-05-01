@@ -30,6 +30,7 @@ private:
     void handle_order_replace(itch::order_replace const*) noexcept;
     void handle_stock_directory(itch::stock_directory const*) noexcept;
     void handle_trade_non_cross(itch::trade_non_cross const*) noexcept;
+    void handle_trade_cross(itch::trade_cross const*) noexcept;
 };
 
 /**********************************************************************/
@@ -74,7 +75,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'P': handle_trade_non_cross(reinterpret_cast<trade_non_cross const*>(hdr)); break;
             case 'L': handle_market_participant_position(reinterpret_cast<market_participant_position const*>(hdr)); break;
             case 'C': handle_order_executed_with_price(reinterpret_cast<order_executed_with_price const*>(hdr)); break;
-        //     case 'Q': fmt::print(stderr, "{}\n", *reinterpret_cast<trade_cross const*>(hdr)); break;
+            case 'Q': handle_trade_cross(reinterpret_cast<trade_cross const*>(hdr)); break;
         //     case 'Y': fmt::print(stderr, "{}\n", *reinterpret_cast<reg_sho_restriction const*>(hdr)); break;
         //     case 'H': fmt::print(stderr, "{}\n", *reinterpret_cast<stock_trading_action const*>(hdr)); break;
             case 'R': handle_stock_directory(reinterpret_cast<stock_directory const*>(hdr)); break;
@@ -205,6 +206,12 @@ itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
 
 void
 itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+}
+
+void
+itch_parser::handle_trade_cross(itch::trade_cross const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
 }
