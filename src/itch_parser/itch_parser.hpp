@@ -21,6 +21,7 @@ public:
 private:
     void handle_add_order(itch::add_order const*) noexcept;
     void handle_add_order_with_mpid(itch::add_order_with_mpid const*) noexcept;
+    void handle_market_participant_position(itch::market_participant_position const*) noexcept;
     void handle_noii(itch::noii const*) noexcept;
     void handle_order_cancel(itch::order_cancel const*) noexcept;
     void handle_order_delete(itch::order_delete const*) noexcept;
@@ -70,7 +71,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'I': handle_noii(reinterpret_cast<noii const*>(hdr)); break;
             case 'F': handle_add_order_with_mpid(reinterpret_cast<add_order_with_mpid const*>(hdr)); break;
             case 'P': handle_trade_non_cross(reinterpret_cast<trade_non_cross const*>(hdr)); break;
-        //     case 'L': fmt::print(stderr, "{}\n", *reinterpret_cast<market_participant_position const*>(hdr)); break;
+            case 'L': handle_market_participant_position(reinterpret_cast<market_participant_position const*>(hdr)); break;
         //     case 'C': fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed_with_price const*>(hdr)); break;
         //     case 'Q': fmt::print(stderr, "{}\n", *reinterpret_cast<trade_cross const*>(hdr)); break;
         //     case 'Y': fmt::print(stderr, "{}\n", *reinterpret_cast<reg_sho_restriction const*>(hdr)); break;
@@ -109,6 +110,25 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
 
     instruments_[index].book.add_order(
             order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
+}
+
+void
+itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+    std::uint16_t const index = be16toh(m->stock_locate);
+    std::uint64_t const order_number = be64toh(m->order_reference_number);
+    std::uint32_t const price = be32toh(m->price);
+    std::uint32_t const qty = be32toh(m->shares);
+
+    instruments_[index].book.add_order(
+            order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
+}
+
+void
+itch_parser::handle_market_participant_position(itch::market_participant_position const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
 }
 
 void
@@ -160,19 +180,6 @@ itch_parser::handle_order_replace(itch::order_replace const* m) noexcept
     std::uint32_t const qty = be32toh(m->shares);
 
     instruments_[index].book.replace_order(orig_order_number, new_order_number, price, qty);
-}
-
-void
-itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
-{
-    fmt::print(log_, "{}\n", *m);
-    std::uint16_t const index = be16toh(m->stock_locate);
-    std::uint64_t const order_number = be64toh(m->order_reference_number);
-    std::uint32_t const price = be32toh(m->price);
-    std::uint32_t const qty = be32toh(m->shares);
-
-    instruments_[index].book.add_order(
-            order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
 }
 
 void
