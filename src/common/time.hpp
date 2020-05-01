@@ -21,9 +21,14 @@ inline std::string to_time_str(std::uint64_t nsecs);
 class tsc
 {
 private:
-    static double cycles_per_nsec_; ///< initialized by init(), should match cpu clock speed
+    static double ticks_per_nsec_; ///< initialized by init(), should match cpu clock speed
     static std::uint64_t last_nsec_; ///< current nsecs since epoch at last calculation
-    static std::uint64_t init_cycles_; ///< cycles recorded at rdtscp init()
+    static std::uint64_t init_ticks_; ///< ticks recorded at rdtscp init()
+
+public:
+    static constexpr std::uint64_t NsecInUsec = 1'000;
+    static constexpr std::uint64_t NsecInMsec = 1'000'000;
+    static constexpr std::uint64_t NsecInSec  = 1'000'000'000;
 
 public:
     /// initialize rdtsc. should be called from a cpu-pinned process
@@ -32,17 +37,17 @@ public:
     /// return nanoseconds since epoch
     static inline std::uint64_t gettime_nsec();
 
-    /// return current time in the form of a timespec
+    /// return current time (nsec since epoch) in the form of a timespec
     static inline timespec gettime_ts();
 
-    /// return number of cycles per nsec for this cpu
-    static inline double get_cycles_per_nsec();
+    /// return number of ticks per nsec for this cpu
+    static inline double get_ticks_per_nsec();
 
     /// return nanoseconds since system start
     static inline std::uint64_t get_nsecs();
 
 private:
-    /// return number of cycles since system start
+    /// return number of ticks since system start
     static inline std::uint64_t rdtscp();
 
 }; // class tsc
@@ -66,16 +71,16 @@ tsc::init()
 
     timespec const diff = ts_diff(begin_ts, end_ts);
     auto const elapsed = (diff.tv_sec * NanosInSec) + diff.tv_nsec;
-    cycles_per_nsec_ = static_cast<double>(end - begin) / static_cast<double>(elapsed);
-    init_cycles_ = begin;
+    ticks_per_nsec_ = static_cast<double>(end - begin) / static_cast<double>(elapsed);
+    init_ticks_ = begin;
     last_nsec_ = (begin_ts.tv_sec * NanosInSec) + begin_ts.tv_nsec;
 }
 
 std::uint64_t
 tsc::gettime_nsec()
 {
-    std::uint64_t const cycles = rdtscp();
-    last_nsec_ += (cycles - init_cycles_) / cycles_per_nsec_;
+    std::uint64_t const ticks = rdtscp();
+    last_nsec_ += (ticks - init_ticks_) / ticks_per_nsec_;
     return last_nsec_;
 }
 
@@ -84,23 +89,25 @@ tsc::gettime_ts()
 {
     std::uint64_t const now_nsec = gettime_nsec();
 
-    timespec ts = {static_cast<time_t>(now_nsec / NanosInSec),
-            static_cast<int64_t>(now_nsec % NanosInSec)};
+    timespec const ts = {
+        static_cast<std::time_t>(now_nsec / NsecInSec),
+        static_cast<long>(now_nsec % NsecInSec)
+    };
     return ts;
 }
 
-/// return number of cycles per nsec for this cpu
+/// return number of ticks per nsec for this cpu
 double
-tsc::get_cycles_per_nsec()
+tsc::get_ticks_per_nsec()
 {
-    return cycles_per_nsec_;
+    return ticks_per_nsec_;
 }
 
 /// return nanoseconds since system start
 std::uint64_t
 tsc::get_nsecs()
 {
-    return rdtscp() / cycles_per_nsec_;
+    return rdtscp() / ticks_per_nsec_;
 }
 
 std::uint64_t
@@ -150,7 +157,7 @@ inline std::string
 to_utc_str(std::uint64_t nsecs)
 {
     std::time_t const t = nsecs /= NanosInSec;
-    return fmt::format("{:%Y%m%d-%H:%M:%S}.{:09}", *std::gmtime(&t), nsecs);
+    return fmt::format("{:%Y-%m-%d %H:%M:%S}.{:09}", *std::gmtime(&t), nsecs);
 }
 
 inline std::string

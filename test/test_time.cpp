@@ -15,8 +15,27 @@ TEST_CASE("init", "[tsc]")
     timespec ts = tsc::gettime_ts();
     REQUIRE(ts.tv_sec != 0);
     REQUIRE(ts.tv_nsec != 0);
-    REQUIRE(tsc::get_cycles_per_nsec() != Approx(0.0));
+    REQUIRE(tsc::get_ticks_per_nsec() != Approx(0.0));
     REQUIRE(tsc::get_nsecs() != 0);
+
+
+    SECTION("gettime_nsec", "[tsc]")
+    {
+        std::time_t const control = std::time(nullptr);
+        std::time_t const variable = tsc::gettime_nsec() / tsc::NsecInSec; // convert to secs
+
+        std::tm* tm_c = std::gmtime(&control);
+        std::tm* tm_v = std::gmtime(&variable);
+
+        char buf_c[32];
+        char buf_v[32];
+
+        std::size_t const sz_c = std::strftime(buf_c, sizeof(buf_c), "%Y-%m-%d %H:%M:%S", tm_c);
+        std::size_t const sz_v = std::strftime(buf_v, sizeof(buf_v), "%Y-%m-%d %H:%M:%S", tm_v);
+        REQUIRE(sz_v == sz_c);
+
+        REQUIRE(std::string(buf_c, sz_c) == std::string(buf_v, sz_v));
+    }
 }
 
 TEST_CASE("free functions", "[time]")
@@ -86,13 +105,13 @@ TEST_CASE("free functions", "[time]")
 
     SECTION("to_utc_str")
     {
-        REQUIRE(to_utc_str(0) == "19700101-00:00:00.000000000");
-        REQUIRE(to_utc_str(420'021'409'000'000'123) == "19830424-08:36:49.420021409");
+        REQUIRE(to_utc_str(0) == "1970-01-01 00:00:00.000000000");
+        REQUIRE(to_utc_str(420'021'409'000'000'123) == "1983-04-24 08:36:49.420021409");
     }
 
     SECTION("to_time_str")
     {
         REQUIRE(to_time_str(0) == "00:00:00.000000000");
-        REQUIRE(to_time_str(37921286412345) == "10:32:01.286412345");
+        REQUIRE(to_time_str(37'921'286'412'345) == "10:32:01.286412345");
     }
 }
