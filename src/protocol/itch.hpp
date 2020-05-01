@@ -2,8 +2,6 @@
 
 #include <cstdint>
 
-#define PACKED __attribute__((packed))
-
 
 namespace itch {
     inline namespace v5_0 {
@@ -237,5 +235,3 @@ namespace itch {
 
     } // namespace v5_0
 } // namespace itch
-
-#undef PACKED

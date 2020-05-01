@@ -5,7 +5,11 @@
 #include <string>
 
 
-std::string
+#define ALWAYS_INLINE __attribute__((always_inline))
+#define PACKED __attribute__((packed))
+
+
+inline std::string
 get_compiler_version()
 {
 #if (defined(__GNUC__) && !defined(__clang__))
@@ -15,7 +19,8 @@ get_compiler_version()
 #endif
 }
 
-std::string
+
+inline std::string
 get_version_info_multiline()
 {
     return fmt::format("compiler_version={}\n"
