@@ -21,6 +21,7 @@ public:
 private:
     void handle_add_order(itch::add_order const*) noexcept;
     void handle_add_order_with_mpid(itch::add_order_with_mpid const*) noexcept;
+    void handle_noii(itch::noii const*) noexcept;
     void handle_order_cancel(itch::order_cancel const*) noexcept;
     void handle_order_delete(itch::order_delete const*) noexcept;
     void handle_order_executed(itch::order_executed const*) noexcept;
@@ -65,7 +66,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'U': handle_order_replace(reinterpret_cast<order_replace const*>(hdr)); break;
             case 'E': handle_order_executed(reinterpret_cast<order_executed const*>(hdr)); break;
             case 'X': handle_order_cancel(reinterpret_cast<order_cancel const*>(hdr)); break;
-        //     case 'I': fmt::print(stderr, "{}\n", *reinterpret_cast<noii const*>(hdr)); break;
+            case 'I': handle_noii(reinterpret_cast<noii const*>(hdr)); break;
             case 'F': handle_add_order_with_mpid(reinterpret_cast<add_order_with_mpid const*>(hdr)); break;
         //     case 'P': fmt::print(stderr, "{}\n", *reinterpret_cast<trade_non_cross const*>(hdr)); break;
         //     case 'L': fmt::print(stderr, "{}\n", *reinterpret_cast<market_participant_position const*>(hdr)); break;
@@ -116,6 +117,12 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
 
     instruments_[index].book.add_order(
             order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
+}
+
+void
+itch_parser::handle_noii(itch::noii const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
 }
 
 void
