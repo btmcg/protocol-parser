@@ -21,8 +21,14 @@ public:
 private:
     void handle_add_order(itch::add_order const*) noexcept;
     void handle_add_order_with_mpid(itch::add_order_with_mpid const*) noexcept;
+    void handle_broken_trade(itch::broken_trade const*) noexcept;
+    void handle_ipo_quoting_period_update(itch::ipo_quoting_period_update const*) noexcept;
+    void handle_luld_auction_collar(itch::luld_auction_collar const*) noexcept;
     void handle_market_participant_position(itch::market_participant_position const*) noexcept;
+    void handle_mwcb_decline_level(itch::mwcb_decline_level const*) noexcept;
+    void handle_mwcb_status(itch::mwcb_status const*) noexcept;
     void handle_noii(itch::noii const*) noexcept;
+    void handle_operational_halt(itch::operational_halt const*) noexcept;
     void handle_order_cancel(itch::order_cancel const*) noexcept;
     void handle_order_delete(itch::order_delete const*) noexcept;
     void handle_order_executed(itch::order_executed const*) noexcept;
@@ -30,6 +36,7 @@ private:
     void handle_order_replace(itch::order_replace const*) noexcept;
     void handle_reg_sho_restriction(itch::reg_sho_restriction const*) noexcept;
     void handle_stock_directory(itch::stock_directory const*) noexcept;
+    void handle_system_event(itch::system_event const*) noexcept;
     void handle_stock_trading_action(itch::stock_trading_action const*) noexcept;
     void handle_trade_non_cross(itch::trade_non_cross const*) noexcept;
     void handle_trade_cross(itch::trade_cross const*) noexcept;
@@ -81,16 +88,16 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'Y': handle_reg_sho_restriction(reinterpret_cast<reg_sho_restriction const*>(hdr)); break;
             case 'H': handle_stock_trading_action(reinterpret_cast<stock_trading_action const*>(hdr)); break;
             case 'R': handle_stock_directory(reinterpret_cast<stock_directory const*>(hdr)); break;
-        //     case 'S': fmt::print(stderr, "{}\n", *reinterpret_cast<system_event const*>(hdr)); break;
-        //     case 'J': fmt::print(stderr, "{}\n", *reinterpret_cast<luld_auction_collar const*>(hdr)); break;
-        //     case 'K': fmt::print(stderr, "{}\n", *reinterpret_cast<ipo_quoting_period_update const*>(hdr)); break;
-        //     case 'V': fmt::print(stderr, "{}\n", *reinterpret_cast<mwcb_decline_level const*>(hdr)); break;
-        //
-        //     case 'W': fmt::print(stderr, "{}\n", *reinterpret_cast<mwcb_status const*>(hdr)); break;
-        //     case 'h': fmt::print(stderr, "{}\n", *reinterpret_cast<operational_halt const*>(hdr)); break;
-        //     case 'B': fmt::print(stderr, "{}\n", *reinterpret_cast<broken_trade const*>(hdr)); break;
+            case 'S': handle_system_event(reinterpret_cast<system_event const*>(hdr)); break;
+            case 'J': handle_luld_auction_collar(reinterpret_cast<luld_auction_collar const*>(hdr)); break;
+            case 'K': handle_ipo_quoting_period_update(reinterpret_cast<ipo_quoting_period_update const*>(hdr)); break;
+            case 'V': handle_mwcb_decline_level(reinterpret_cast<mwcb_decline_level const*>(hdr)); break;
 
-            // default: fmt::print(stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->message_type); std::exit(1); break;
+            case 'W': handle_mwcb_status(reinterpret_cast<mwcb_status const*>(hdr)); break;
+            case 'h': handle_operational_halt(reinterpret_cast<operational_halt const*>(hdr)); break;
+            case 'B': handle_broken_trade(reinterpret_cast<broken_trade const*>(hdr)); break;
+
+            default: fmt::print(stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->message_type); std::exit(1); break;
         }
         // clang-format on
 
@@ -130,13 +137,49 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
 }
 
 void
+itch_parser::handle_broken_trade(itch::broken_trade const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+}
+
+void
+itch_parser::handle_ipo_quoting_period_update(itch::ipo_quoting_period_update const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+}
+
+void
+itch_parser::handle_luld_auction_collar(itch::luld_auction_collar const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+}
+
+void
 itch_parser::handle_market_participant_position(itch::market_participant_position const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
 }
 
 void
+itch_parser::handle_mwcb_decline_level(itch::mwcb_decline_level const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+}
+
+void
+itch_parser::handle_mwcb_status(itch::mwcb_status const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+}
+
+void
 itch_parser::handle_noii(itch::noii const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+}
+
+void
+itch_parser::handle_operational_halt(itch::operational_halt const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
 }
@@ -210,6 +253,12 @@ itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
     std::uint16_t const index = be16toh(m->stock_locate);
     instruments_[index].locate = index;
     instruments_[index].set_name(m->stock);
+}
+
+void
+itch_parser::handle_system_event(itch::system_event const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
 }
 
 void
