@@ -26,6 +26,7 @@ private:
     void handle_order_cancel(itch::order_cancel const*) noexcept;
     void handle_order_delete(itch::order_delete const*) noexcept;
     void handle_order_executed(itch::order_executed const*) noexcept;
+    void handle_order_executed_with_price(itch::order_executed_with_price const*) noexcept;
     void handle_order_replace(itch::order_replace const*) noexcept;
     void handle_stock_directory(itch::stock_directory const*) noexcept;
     void handle_trade_non_cross(itch::trade_non_cross const*) noexcept;
@@ -72,7 +73,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'F': handle_add_order_with_mpid(reinterpret_cast<add_order_with_mpid const*>(hdr)); break;
             case 'P': handle_trade_non_cross(reinterpret_cast<trade_non_cross const*>(hdr)); break;
             case 'L': handle_market_participant_position(reinterpret_cast<market_participant_position const*>(hdr)); break;
-        //     case 'C': fmt::print(stderr, "{}\n", *reinterpret_cast<order_executed_with_price const*>(hdr)); break;
+            case 'C': handle_order_executed_with_price(reinterpret_cast<order_executed_with_price const*>(hdr)); break;
         //     case 'Q': fmt::print(stderr, "{}\n", *reinterpret_cast<trade_cross const*>(hdr)); break;
         //     case 'Y': fmt::print(stderr, "{}\n", *reinterpret_cast<reg_sho_restriction const*>(hdr)); break;
         //     case 'H': fmt::print(stderr, "{}\n", *reinterpret_cast<stock_trading_action const*>(hdr)); break;
@@ -160,6 +161,17 @@ itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
 
 void
 itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
+{
+    fmt::print(log_, "{}\n", *m);
+    std::uint16_t const index = be16toh(m->stock_locate);
+    std::uint64_t const order_number = be64toh(m->order_reference_number);
+    std::uint32_t const executed_qty = be32toh(m->executed_shares);
+
+    instruments_[index].book.cancel_order(order_number, executed_qty);
+}
+
+void
+itch_parser::handle_order_executed_with_price(itch::order_executed_with_price const* m) noexcept
 {
     fmt::print(log_, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
