@@ -98,3 +98,20 @@ tsbook::asks() const noexcept
     return asks_;
 }
 
+price_level
+tsbook::best_bid() const noexcept
+{
+    if (bids_.empty())
+        return {0, 0};
+
+    return bids_.front();
+}
+
+price_level
+tsbook::best_ask() const noexcept
+{
+    if (asks_.empty())
+        return {0, 0};
+
+    return asks_.front();
+}

@@ -45,8 +45,11 @@ public:
     void add_order(std::uint64_t order_num, Side, std::uint32_t price, std::uint32_t qty);
     void delete_order(std::uint64_t order_num) noexcept;
 
+    // accessors
 public:
     std::unordered_map<std::uint64_t, order> const& order_list() const noexcept;
     std::list<price_level> const& bids() const noexcept;
     std::list<price_level> const& asks() const noexcept;
+    price_level best_bid() const noexcept;
+    price_level best_ask() const noexcept;
 };
