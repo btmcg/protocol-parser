@@ -36,6 +36,24 @@ TEST_CASE("init", "[tsc]")
 
         REQUIRE(std::string(buf_c, sz_c) == std::string(buf_v, sz_v));
     }
+
+    SECTION("gettime_ts", "[tsc]")
+    {
+        std::time_t const control = std::time(nullptr);
+        std::timespec const variable = tsc::gettime_ts();
+
+        std::tm* tm_c = std::gmtime(&control);
+        std::tm* tm_v = std::gmtime(&variable.tv_sec);
+
+        char buf_c[32];
+        char buf_v[32];
+
+        std::size_t const sz_c = std::strftime(buf_c, sizeof(buf_c), "%Y-%m-%d %H:%M:%S", tm_c);
+        std::size_t const sz_v = std::strftime(buf_v, sizeof(buf_v), "%Y-%m-%d %H:%M:%S", tm_v);
+        REQUIRE(sz_v == sz_c);
+
+        REQUIRE(std::string(buf_c, sz_c) == std::string(buf_v, sz_v));
+    }
 }
 
 TEST_CASE("free functions", "[time]")
