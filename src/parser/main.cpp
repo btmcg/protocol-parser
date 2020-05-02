@@ -15,6 +15,7 @@ namespace { // unnamed
     {
         std::string input_file;
         bool logging = false;
+        std::filesystem::path stats_fp;
     };
 
     Args
@@ -22,12 +23,13 @@ namespace { // unnamed
     {
         auto usage = [](FILE* outerr, std::filesystem::path const& app) {
             std::fprintf(outerr,
-                    "usage: %s [-hlv] <input_file>\n"
+                    "usage: %s [-hlv] [-s <stats_file>] <input_file>\n"
                     "arguments:\n"
                     "   input_file              input file\n"
                     "options:\n"
                     "  -h, --help               this output\n"
                     "  -l, --log                log protocol msgs to <protocol>.log\n"
+                    "  -s, --stats <filepath>   record instrument stats to file\n"
                     "  -v, --version            version\n",
                     app.string().c_str());
             std::exit(outerr == stdout ? EXIT_SUCCESS : EXIT_FAILURE);
@@ -42,11 +44,12 @@ namespace { // unnamed
             static option long_options[] = {
                     {"help", no_argument, nullptr, 'h'},
                     {"log", no_argument, nullptr, 'l'},
+                    {"stats", required_argument, nullptr, 's'},
                     {"version", no_argument, nullptr, 'v'},
                     {nullptr, 0, nullptr, 0},
             };
 
-            int const c = ::getopt_long(argc, argv, "hlv", long_options, nullptr);
+            int const c = ::getopt_long(argc, argv, "hls:v", long_options, nullptr);
             if (c == -1)
                 break;
 
@@ -57,6 +60,10 @@ namespace { // unnamed
 
                 case 'l':
                     args.logging = true;
+                    break;
+
+                case 's':
+                    args.stats_fp = optarg;
                     break;
 
                 case 'v':
@@ -99,7 +106,7 @@ main(int argc, char** argv)
     tsc::init();
 
     try {
-        itch_parser parser(args.logging);
+        itch_parser parser(args.logging, args.stats_fp);
         file_reader reader(args.input_file);
         reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
         reader.print_stats();

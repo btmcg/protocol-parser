@@ -4,6 +4,8 @@
 #include "protocol/itch-fmt.hpp"
 #include "protocol/itch.hpp"
 #include <endian.h>
+#include <filesystem>
+#include <algorithm> // std::max, std::min
 #include <cstdio> // std::fclose, std::fopen
 
 
@@ -24,10 +26,12 @@ private:
     instrument instruments_[9000];
     bool logging_enabled_ = false;
     FILE* log_ = nullptr;
+    std::filesystem::path stats_filepath_;
+    FILE* stats_file_ = nullptr;
     stats stats_;
 
 public:
-    explicit itch_parser(bool log) noexcept;
+    itch_parser(bool log, std::filesystem::path const& stats_file) noexcept;
     ~itch_parser() noexcept;
     std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
     void print_stats() const noexcept;
@@ -58,14 +62,18 @@ private:
 
 /**********************************************************************/
 
-itch_parser::itch_parser(bool enable_logging) noexcept
+itch_parser::itch_parser(bool enable_logging, std::filesystem::path const& stats_fp) noexcept
         : instruments_()
         , logging_enabled_(enable_logging)
         , log_(nullptr)
+        , stats_filepath_(stats_fp)
+        , stats_file_(nullptr)
         , stats_()
 {
     if (logging_enabled_)
         log_ = std::fopen("itch.log", "w");
+    if (!stats_filepath_.empty())
+        stats_file_ = std::fopen(stats_filepath_.c_str(), "w");
 }
 
 itch_parser::~itch_parser() noexcept
@@ -73,6 +81,11 @@ itch_parser::~itch_parser() noexcept
     if (log_ != nullptr) {
         std::fclose(log_);
         log_ = nullptr;
+    }
+
+    if (stats_file_ != nullptr) {
+        std::fclose(stats_file_);
+        stats_file_ = nullptr;
     }
 }
 
@@ -149,6 +162,18 @@ itch_parser::print_stats() const noexcept
         stats_.executed_count,
         stats_.trade_count);
     // clang-format on
+
+    if (stats_file_ != nullptr) {
+        fmt::print(stats_file_, "name,locate,hi_price,lo_price,num_trades,trade_vol,num_orders\n");
+
+        int const num_inst = sizeof(instruments_) / sizeof(instruments_[0]);
+        for (int i = 0; i < num_inst; ++i) {
+            if (instruments_[i].locate == 0)
+                continue;
+
+            fmt::print(stats_file_, "{}\n", instruments_[i].stats_csv());
+        }
+    }
 }
 
 void
@@ -164,6 +189,9 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
 
     instruments_[index].book.add_order(
             order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
+    ++instruments_[index].num_orders;
+    instruments_[index].lo_price = std::min(instruments_[index].lo_price, price);
+    instruments_[index].hi_price = std::max(instruments_[index].hi_price, price);
 }
 
 void
@@ -179,6 +207,10 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
 
     instruments_[index].book.add_order(
             order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
+
+    ++instruments_[index].num_orders;
+    instruments_[index].lo_price = std::min(instruments_[index].lo_price, price);
+    instruments_[index].hi_price = std::max(instruments_[index].hi_price, price);
 }
 
 void
@@ -338,6 +370,11 @@ itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
+
+    std::uint16_t const index = be16toh(m->stock_locate);
+    std::uint32_t const qty = be32toh(m->shares);
+    ++instruments_[index].num_trades;
+    instruments_[index].trade_qty += qty;
     ++stats_.trade_count;
 }
 
@@ -346,5 +383,10 @@ itch_parser::handle_trade_cross(itch::trade_cross const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
+
+    std::uint16_t const index = be16toh(m->stock_locate);
+    std::uint32_t const qty = be32toh(m->shares);
+    ++instruments_[index].num_trades;
+    instruments_[index].trade_qty += qty;
     ++stats_.trade_count;
 }
