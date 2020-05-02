@@ -5,4 +5,4 @@ LOCAL_LIBRARIES := common
 
 $(call use-fmt)
 
-$(call add-executable-module)
+$(call add-static-library-module)

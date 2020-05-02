@@ -22,11 +22,12 @@ private:
 
 private:
     instrument instruments_[9000];
+    bool logging_enabled_ = false;
     FILE* log_ = nullptr;
     stats stats_;
 
 public:
-    itch_parser() noexcept;
+    explicit itch_parser(bool log) noexcept;
     ~itch_parser() noexcept;
     std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
     void print_stats() const noexcept;
@@ -57,17 +58,22 @@ private:
 
 /**********************************************************************/
 
-itch_parser::itch_parser() noexcept
+itch_parser::itch_parser(bool enable_logging) noexcept
         : instruments_()
+        , logging_enabled_(enable_logging)
         , log_(nullptr)
+        , stats_()
 {
-    log_ = std::fopen("itch.log", "w");
+    if (logging_enabled_)
+        log_ = std::fopen("itch.log", "w");
 }
 
 itch_parser::~itch_parser() noexcept
 {
-    std::fclose(log_);
-    log_ = nullptr;
+    if (log_ != nullptr) {
+        std::fclose(log_);
+        log_ = nullptr;
+    }
 }
 
 std::size_t
@@ -148,7 +154,8 @@ itch_parser::print_stats() const noexcept
 void
 itch_parser::handle_add_order(itch::add_order const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     ++stats_.add_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -162,7 +169,8 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
 void
 itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     ++stats_.add_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -176,55 +184,64 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
 void
 itch_parser::handle_broken_trade(itch::broken_trade const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_ipo_quoting_period_update(itch::ipo_quoting_period_update const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_luld_auction_collar(itch::luld_auction_collar const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_market_participant_position(itch::market_participant_position const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_mwcb_decline_level(itch::mwcb_decline_level const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_mwcb_status(itch::mwcb_status const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_noii(itch::noii const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_operational_halt(itch::operational_halt const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_order_cancel(itch::order_cancel const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     ++stats_.cancel_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -236,7 +253,8 @@ itch_parser::handle_order_cancel(itch::order_cancel const* m) noexcept
 void
 itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     ++stats_.delete_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -247,7 +265,8 @@ itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
 void
 itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     ++stats_.executed_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -259,7 +278,8 @@ itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
 void
 itch_parser::handle_order_executed_with_price(itch::order_executed_with_price const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     ++stats_.executed_count;
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -271,7 +291,8 @@ itch_parser::handle_order_executed_with_price(itch::order_executed_with_price co
 void
 itch_parser::handle_order_replace(itch::order_replace const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const orig_order_number = be64toh(m->original_order_reference_number);
     std::uint64_t const new_order_number = be64toh(m->new_order_reference_number);
@@ -284,13 +305,15 @@ itch_parser::handle_order_replace(itch::order_replace const* m) noexcept
 void
 itch_parser::handle_reg_sho_restriction(itch::reg_sho_restriction const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     std::uint16_t const index = be16toh(m->stock_locate);
     instruments_[index].locate = index;
     instruments_[index].set_name(m->stock);
@@ -299,25 +322,29 @@ itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
 void
 itch_parser::handle_system_event(itch::system_event const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_stock_trading_action(itch::stock_trading_action const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
 }
 
 void
 itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     ++stats_.trade_count;
 }
 
 void
 itch_parser::handle_trade_cross(itch::trade_cross const* m) noexcept
 {
-    fmt::print(log_, "{}\n", *m);
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
     ++stats_.trade_count;
 }
