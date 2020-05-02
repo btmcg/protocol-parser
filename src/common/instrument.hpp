@@ -21,6 +21,9 @@ struct instrument
     instrument() noexcept;
     instrument(std::uint16_t locate, char const (&name)[8]) noexcept;
     void set_name(char const (&name)[8]) noexcept;
+
+    // stats
     std::string stats_str() const noexcept;
+    static std::string stats_csv_header() noexcept;
     std::string stats_csv() const noexcept;
 };

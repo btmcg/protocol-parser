@@ -56,6 +56,12 @@ instrument::stats_str() const noexcept
 }
 
 std::string
+instrument::stats_csv_header() noexcept
+{
+    return "name,locate,high_price,low_price,num_trades,trade_vol,num_orders";
+}
+
+std::string
 instrument::stats_csv() const noexcept
 {
     return fmt::format("{},{},{},{},{},{},{}", name, locate, hi_price, lo_price, num_trades,

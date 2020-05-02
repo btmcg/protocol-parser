@@ -164,7 +164,7 @@ itch_parser::print_stats() const noexcept
     // clang-format on
 
     if (stats_file_ != nullptr) {
-        fmt::print(stats_file_, "name,locate,hi_price,lo_price,num_trades,trade_vol,num_orders\n");
+        fmt::print(stats_file_, "{}\n", instrument::stats_csv_header());
 
         int const num_inst = sizeof(instruments_) / sizeof(instruments_[0]);
         for (int i = 0; i < num_inst; ++i) {
