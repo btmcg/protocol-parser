@@ -22,7 +22,7 @@ namespace { // unnamed
     {
         auto usage = [](FILE* outerr, std::filesystem::path const& app) {
             std::fprintf(outerr,
-                    "usage: %s [-hv] <input_file>\n"
+                    "usage: %s [-hlv] <input_file>\n"
                     "arguments:\n"
                     "   input_file              input file\n"
                     "options:\n"
