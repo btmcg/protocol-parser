@@ -36,7 +36,7 @@ struct order
 class tsbook
 {
 private:
-    std::unordered_map<std::uint64_t, order> orders_; ///< order num to pl
+    std::unordered_map<std::uint64_t, order> orders_;
     std::list<price_level> bids_;
     std::list<price_level> asks_;
 
