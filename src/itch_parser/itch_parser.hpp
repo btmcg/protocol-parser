@@ -128,13 +128,21 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 void
 itch_parser::print_stats() const noexcept
 {
-    fmt::print("parser stats\n");
-    fmt::print("  msgs processed:  {}\n", stats_.msg_count);
-    fmt::print("  add_orders:      {}\n", stats_.add_count);
-    fmt::print("  cancel_orders:   {}\n", stats_.cancel_count);
-    fmt::print("  delete_orders:   {}\n", stats_.delete_count);
-    fmt::print("  executed_orders: {}\n", stats_.executed_count);
-    fmt::print("  trades:          {}\n", stats_.trade_count);
+    // clang-format off
+    fmt::print("parser stats\n"
+               "  msgs processed:  {}\n"
+               "  add_orders:      {}\n"
+               "  cancel_orders:   {}\n"
+               "  delete_orders:   {}\n"
+               "  executed_orders: {}\n"
+               "  trades:          {}\n",
+        stats_.msg_count,
+        stats_.add_count,
+        stats_.cancel_count,
+        stats_.delete_count,
+        stats_.executed_count,
+        stats_.trade_count);
+    // clang-format on
 }
 
 void
