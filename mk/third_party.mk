@@ -1,7 +1,7 @@
 # third party libs
 # ----------------------------------------------------------------------
 
-CATCH := third_party/catch/2.12.1
+CATCH := third_party/catch2/2.12.1/single_include
 use-catch =\
   $(eval LOCAL_CPPFLAGS += -isystem $(CATCH))
 
