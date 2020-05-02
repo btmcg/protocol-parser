@@ -1,7 +1,9 @@
 #pragma once
 
+#include <fmt/format.h>
 #include <cstddef>
 #include <cstdlib>
+#include <utility> // std::forward
 
 
 template <typename T>
@@ -20,6 +22,10 @@ public:
     ~pool_allocator() noexcept;
     [[nodiscard]] constexpr value_type* allocate(size_type) noexcept;
     constexpr void deallocate(value_type*, size_type);
+    template <typename U, class... Args>
+    void construct(U*, Args&&...);
+    template <typename U>
+    void destroy(U*);
 };
 
 
@@ -49,7 +55,8 @@ template <typename T>
 constexpr typename pool_allocator<T>::value_type*
 pool_allocator<T>::allocate(pool_allocator<T>::size_type n) noexcept
 {
-    return static_cast<value_type*>(::malloc(n));
+    // fmt::print(stderr, "malloc({})\n", n * sizeof(T));
+    return static_cast<value_type*>(::malloc(n * sizeof(T)));
 }
 
 template <typename T>
@@ -59,9 +66,27 @@ pool_allocator<T>::deallocate(pool_allocator<T>::value_type* ptr, pool_allocator
     ::free(ptr);
 }
 
+template <typename T>
+template <typename U, typename... Args>
+void
+pool_allocator<T>::construct(U* ptr, Args&&... args)
+{
+    ::new (ptr) U(std::forward<Args>(args)...);
+}
+
+template <typename T>
+template <typename U>
+void
+pool_allocator<T>::destroy(U* ptr)
+{
+    ptr->~U();
+}
+
+/**********************************************************************/
+
 template <typename T, typename U>
 constexpr bool
-operator==(pool_allocator<T> const& lhs, pool_allocator<U> const& rhs) noexcept
+operator==(pool_allocator<T> const&, pool_allocator<U> const&) noexcept
 {
     return false;
 }
