@@ -15,6 +15,7 @@ public:
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
+    /// Needed for certain std containers since there are two template parameters
     template <typename U>
     struct rebind
     {
@@ -34,6 +35,9 @@ public:
     template <typename U>
     void destroy(U*);
     constexpr std::size_t capacity() const noexcept;
+    constexpr std::size_t capacity_in_bytes() const noexcept;
+    constexpr std::size_t size() const noexcept;
+    constexpr std::size_t max_size_reached() const noexcept;
 
 private:
     void allocate_block();
@@ -49,6 +53,8 @@ private:
     std::byte* block_end_ = nullptr;
     node* curr_node_ = nullptr;
     node* last_node_ = nullptr;
+    std::size_t sz_ = 0;
+    std::size_t max_size_reached_ = 0;
 };
 
 
@@ -86,6 +92,8 @@ constexpr typename pool_allocator<T, NumElements>::value_type*
     if (curr_node_ == nullptr)
         throw std::bad_alloc();
 
+    ++sz_;
+    max_size_reached_ = std::max(sz_, max_size_reached_);
     value_type* ptr = (&curr_node_->element);
     curr_node_ = curr_node_->next;
     return ptr;
@@ -98,6 +106,7 @@ pool_allocator<T, NumElements>::deallocate(
 {
     if (ptr == nullptr)
         return;
+    --sz_;
     reinterpret_cast<node*>(ptr)->next = curr_node_;
     curr_node_ = reinterpret_cast<node*>(ptr);
 }
@@ -122,7 +131,28 @@ template <typename T, std::size_t NumElements>
 constexpr std::size_t
 pool_allocator<T, NumElements>::capacity() const noexcept
 {
+    return std::distance(block_begin_, block_end_) / sizeof(node);
+}
+
+template <typename T, std::size_t NumElements>
+constexpr std::size_t
+pool_allocator<T, NumElements>::capacity_in_bytes() const noexcept
+{
     return std::distance(block_begin_, block_end_);
+}
+
+template <typename T, std::size_t NumElements>
+constexpr std::size_t
+pool_allocator<T, NumElements>::size() const noexcept
+{
+    return sz_;
+}
+
+template <typename T, std::size_t NumElements>
+constexpr std::size_t
+pool_allocator<T, NumElements>::max_size_reached() const noexcept
+{
+    return max_size_reached_;
 }
 
 template <typename T, std::size_t NumElements>

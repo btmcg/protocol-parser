@@ -41,7 +41,10 @@ TEST_CASE("pool allocator", "[pool_allocator]")
     SECTION("allocate and deallocate")
     {
         pool_allocator<int, 10> alloc;
-        REQUIRE(alloc.capacity() == sizeof(int*) * 10);
+        REQUIRE(alloc.capacity() == 10);
+        REQUIRE(alloc.capacity_in_bytes() == sizeof(int*) * 10);
+        REQUIRE(alloc.size() == 0);
+        REQUIRE(alloc.max_size_reached() == 0);
 
         // ensure array starts with all nullptrs
         int* ptrs[10] = {};
@@ -58,10 +61,15 @@ TEST_CASE("pool allocator", "[pool_allocator]")
         for (int i = 0; i < 10; ++i)
             REQUIRE(*ptrs[i] == i);
 
+        REQUIRE(alloc.size() == 10);
+        REQUIRE(alloc.max_size_reached() == 10);
+
         // deallocate 5th ptr and reallocate and set to 500
         alloc.deallocate(ptrs[5], 1);
+        REQUIRE(alloc.size() == 9);
         int* ptr = alloc.allocate(1);
         *ptr = 500;
+        REQUIRE(alloc.size() == 10);
 
         for (int i = 0; i < 10; ++i) {
             if (i == 5) {
@@ -73,8 +81,10 @@ TEST_CASE("pool allocator", "[pool_allocator]")
 
         // deallocate 9th ptr and reallocate and set to 900
         alloc.deallocate(ptrs[9], 1);
+        REQUIRE(alloc.size() == 9);
         ptr = alloc.allocate(1);
         *ptr = 900;
+        REQUIRE(alloc.size() == 10);
 
         for (int i = 0; i < 10; ++i) {
             if (i == 5 || i == 9) {
@@ -87,6 +97,7 @@ TEST_CASE("pool allocator", "[pool_allocator]")
         alloc.deallocate(ptrs[0], 1);
         alloc.deallocate(ptrs[2], 1);
         alloc.deallocate(ptrs[4], 1);
+        REQUIRE(alloc.size() == 7);
 
         ptr = alloc.allocate(1);
         *ptr = 400;
@@ -94,6 +105,7 @@ TEST_CASE("pool allocator", "[pool_allocator]")
         *ptr = 200;
         ptr = alloc.allocate(1);
         *ptr = 0;
+        REQUIRE(alloc.size() == 10);
 
         for (int i = 0; i < 10; ++i) {
             if (i == 0 || i == 2 || i == 4 || i == 5 || i == 9) {
@@ -104,13 +116,16 @@ TEST_CASE("pool allocator", "[pool_allocator]")
         }
 
         // attempt to allocate when no mem left
+        REQUIRE(alloc.size() == alloc.capacity());
         REQUIRE_THROWS_AS(alloc.allocate(1), std::bad_alloc);
+        REQUIRE(alloc.max_size_reached() == 10);
     }
 
     SECTION("allocate custom object")
     {
         pool_allocator<object, 10> alloc;
-        REQUIRE(alloc.capacity() == 160);
+        REQUIRE(alloc.capacity() == 10);
+        REQUIRE(alloc.capacity_in_bytes() == 160);
 
         object* obj = alloc.allocate(1);
         REQUIRE(obj != nullptr);
@@ -120,6 +135,7 @@ TEST_CASE("pool allocator", "[pool_allocator]")
         REQUIRE(obj->c == 3);
         alloc.destroy(obj);
         alloc.deallocate(obj, 1);
+        REQUIRE(alloc.max_size_reached() == 1);
     }
 
     SECTION("int list")
