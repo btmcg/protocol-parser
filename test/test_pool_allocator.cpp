@@ -156,6 +156,8 @@ TEST_CASE("pool allocator", "[pool_allocator]")
         for (auto itr : intlist) {
             REQUIRE(itr == i++);
         }
+        REQUIRE(intlist.get_allocator().size() == 10);
+        REQUIRE(intlist.get_allocator().max_size_reached() == 10);
     }
 
     SECTION("custom object in list")
@@ -181,5 +183,7 @@ TEST_CASE("pool allocator", "[pool_allocator]")
             REQUIRE(itr.b == i++);
             REQUIRE(itr.c == i++);
         }
+        REQUIRE(objlist.get_allocator().size() == 10);
+        REQUIRE(objlist.get_allocator().max_size_reached() == 10);
     }
 }

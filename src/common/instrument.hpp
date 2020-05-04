@@ -26,4 +26,5 @@ struct instrument
     std::string stats_str() const noexcept;
     static std::string stats_csv_header() noexcept;
     std::string stats_csv() const noexcept;
+    std::size_t allocator_stats() const noexcept;
 };

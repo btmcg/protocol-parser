@@ -147,20 +147,26 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 void
 itch_parser::print_stats() const noexcept
 {
+    std::size_t max_price_levels = 0;
+    for (auto const& itr : instruments_)
+        max_price_levels = std::max(max_price_levels, itr.allocator_stats());
+
     // clang-format off
     fmt::print("parser stats\n"
-               "  msgs processed:  {}\n"
-               "  add_orders:      {}\n"
-               "  cancel_orders:   {}\n"
-               "  delete_orders:   {}\n"
-               "  executed_orders: {}\n"
-               "  trades:          {}\n",
+               "  msgs processed:   {}\n"
+               "  add_orders:       {}\n"
+               "  cancel_orders:    {}\n"
+               "  delete_orders:    {}\n"
+               "  executed_orders:  {}\n"
+               "  trades:           {}\n"
+               "  max_price_levels: {}\n",
         stats_.msg_count,
         stats_.add_count,
         stats_.cancel_count,
         stats_.delete_count,
         stats_.executed_count,
-        stats_.trade_count);
+        stats_.trade_count,
+        max_price_levels);
     // clang-format on
 
     if (stats_file_ != nullptr) {

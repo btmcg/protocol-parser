@@ -27,7 +27,7 @@ public:
     constexpr pool_allocator(pool_allocator const&) noexcept = delete;
     constexpr pool_allocator(pool_allocator&&) noexcept;
     template <typename U, std::size_t NumU>
-    constexpr pool_allocator(pool_allocator<U, NumU> const&) noexcept = delete;
+    constexpr pool_allocator(pool_allocator<U, NumU> const&) noexcept;
     ~pool_allocator() noexcept;
     [[nodiscard]] constexpr value_type* allocate(size_type);
     constexpr void deallocate(value_type*, size_type);
@@ -79,6 +79,19 @@ constexpr pool_allocator<T, NumElements>::pool_allocator() noexcept
         , max_size_reached_(0)
 {
     allocate_block();
+}
+
+template <typename T, std::size_t NumElements>
+template <typename U, std::size_t NumU>
+constexpr pool_allocator<T, NumElements>::pool_allocator(pool_allocator<U, NumU> const& rhs) noexcept
+        : block_begin_(nullptr)
+        , block_end_(nullptr)
+        , curr_node_(nullptr)
+        , last_node_(nullptr)
+        , sz_(rhs.size())
+        , max_size_reached_(rhs.max_size_reached())
+{
+    // empty
 }
 
 template <typename T, std::size_t NumElements>

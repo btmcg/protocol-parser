@@ -67,3 +67,9 @@ instrument::stats_csv() const noexcept
     return fmt::format("{},{},{},{},{},{},{}", name, locate, hi_price, lo_price, num_trades,
             trade_qty, num_orders);
 }
+
+std::size_t
+instrument::allocator_stats() const noexcept
+{
+    return std::max(book.bids().get_allocator().max_size_reached(), book.asks().get_allocator().max_size_reached());
+}
