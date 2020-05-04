@@ -32,10 +32,8 @@ TEST_CASE("pool allocator", "[pool_allocator]")
         REQUIRE(alloc1 != alloc2);
         REQUIRE_FALSE(alloc1 == alloc2);
 
-        // pool_allocator<int> alloc3(alloc1);
-        // pool_allocator<int> alloc4 = alloc1;
-        // pool_allocator<int> alloc5(std::move(alloc1));
-        // pool_allocator<int> alloc6 = std::move(alloc1);
+        pool_allocator<int, 10> alloc3(std::move(alloc1));
+        pool_allocator<int, 10> alloc4 = std::move(alloc2);
     }
 
     SECTION("allocate and deallocate")
