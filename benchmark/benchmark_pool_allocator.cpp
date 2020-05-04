@@ -11,9 +11,22 @@ public:
             , b_(b)
             , c_(c)
     {}
-    int get_a() const { return a_; }
-    int get_b() const { return b_; }
-    int get_c() const { return c_; }
+    int
+    get_a() const
+    {
+        return a_;
+    }
+    int
+    get_b() const
+    {
+        return b_;
+    }
+    int
+    get_c() const
+    {
+        return c_;
+    }
+
 private:
     int a_;
     int b_;
