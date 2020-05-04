@@ -14,6 +14,10 @@ public:
     using value_type = T;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
+    using propagate_on_container_copy_assignment = std::true_type; // for consistency
+    using propagate_on_container_move_assignment = std::true_type; // to avoid the pessimization
+    using propagate_on_container_swap = std::true_type; // to avoid the undefined behavior
+    using is_always_equal = std::true_type;
 
     /// Needed for certain std containers since there are two template parameters
     template <typename U>
@@ -24,7 +28,7 @@ public:
 
 public:
     constexpr pool_allocator() noexcept;
-    constexpr pool_allocator(pool_allocator const&) noexcept = delete;
+    constexpr pool_allocator(pool_allocator const&) noexcept;
     constexpr pool_allocator(pool_allocator&&) noexcept;
     template <typename U, std::size_t NumU>
     constexpr pool_allocator(pool_allocator<U, NumU> const&) noexcept;
@@ -46,7 +50,7 @@ private:
 private:
     union node
     {
-        value_type element;
+        typename std::aligned_storage<sizeof(value_type), alignof(value_type)>::type element;
         node* next;
     };
 
@@ -82,6 +86,19 @@ constexpr pool_allocator<T, NumElements>::pool_allocator() noexcept
 }
 
 template <typename T, std::size_t NumElements>
+constexpr pool_allocator<T, NumElements>::pool_allocator(pool_allocator const& rhs) noexcept
+        : block_begin_(nullptr)
+        , block_end_(nullptr)
+        , curr_node_(nullptr)
+        , last_node_(nullptr)
+        , sz_(rhs.sz_)
+        , max_size_reached_(rhs.max_size_reached_)
+{
+    // fmt::print("pool_allocator::{}() copy ctor\n", __func__);
+    // empty
+}
+
+template <typename T, std::size_t NumElements>
 template <typename U, std::size_t NumU>
 constexpr pool_allocator<T, NumElements>::pool_allocator(pool_allocator<U, NumU> const& rhs) noexcept
         : block_begin_(nullptr)
@@ -91,6 +108,7 @@ constexpr pool_allocator<T, NumElements>::pool_allocator(pool_allocator<U, NumU>
         , sz_(rhs.size())
         , max_size_reached_(rhs.max_size_reached())
 {
+    // fmt::print("pool_allocator::{}() conversion\n", __func__);
     // empty
 }
 
@@ -122,7 +140,7 @@ constexpr typename pool_allocator<T, NumElements>::value_type*
 
     ++sz_;
     max_size_reached_ = std::max(sz_, max_size_reached_);
-    value_type* ptr = (&curr_node_->element);
+    value_type* ptr = reinterpret_cast<decltype(ptr)>(&curr_node_->element);
     curr_node_ = curr_node_->next;
     return ptr;
 }
@@ -211,12 +229,12 @@ template <typename T, std::size_t NumElements, typename U, std::size_t NumU>
 constexpr bool
 operator==(pool_allocator<T, NumElements> const&, pool_allocator<U, NumU> const&) noexcept
 {
-    return false;
+    return true;
 }
 
 template <typename T, std::size_t NumElements, typename U, std::size_t NumU>
 constexpr bool
 operator!=(pool_allocator<T, NumElements> const&, pool_allocator<U, NumU> const&) noexcept
 {
-    return true;
+    return false;
 }

@@ -2,6 +2,7 @@
 #include <catch2/catch.hpp>
 #include <cstring>
 #include <list>
+#include <unordered_map>
 
 
 // void*
@@ -29,8 +30,8 @@ TEST_CASE("pool allocator", "[pool_allocator]")
         pool_allocator<int, 10> alloc1;
         pool_allocator<int, 10> alloc2;
 
-        REQUIRE(alloc1 != alloc2);
-        REQUIRE_FALSE(alloc1 == alloc2);
+        REQUIRE_FALSE(alloc1 != alloc2);
+        REQUIRE(alloc1 == alloc2);
 
         pool_allocator<int, 10> alloc3(std::move(alloc1));
         pool_allocator<int, 10> alloc4 = std::move(alloc2);
@@ -186,4 +187,15 @@ TEST_CASE("pool allocator", "[pool_allocator]")
         REQUIRE(objlist.get_allocator().size() == 10);
         REQUIRE(objlist.get_allocator().max_size_reached() == 10);
     }
+
+    SECTION("object in unordered_map")
+    {
+        // std::unordered_map<int, object, std::hash<int>, std::equal_to<int>, pool_allocator<std::pair<const int, object>, 10>> objmap;
+        // std::unordered_map<int, object> objmap;
+        // object o(0, 0, 0);
+        // objmap.emplace(0, o);
+        // objmap[1] = object(1, 1, 1);
+        // objmap.insert(std::make_pair(0, object(0, 0, 0)));
+    }
+
 }
