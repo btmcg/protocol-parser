@@ -16,7 +16,7 @@ tsbook::add_order(std::uint64_t order_num, Side side, std::uint32_t price, std::
 {
     order order{side, price, qty, nullptr};
 
-    std::list<price_level>* book = (side == Bid) ? &bids_ : &asks_;
+    auto* book = (side == Bid) ? &bids_ : &asks_;
 
     if (book->empty()) {
         order.pl = &book->emplace_front(price, qty);
@@ -121,13 +121,13 @@ tsbook::order_list() const noexcept
     return orders_;
 }
 
-std::list<price_level> const&
+decltype(tsbook::bids_) const&
 tsbook::bids() const noexcept
 {
     return bids_;
 }
 
-std::list<price_level> const&
+decltype(tsbook::asks_) const&
 tsbook::asks() const noexcept
 {
     return asks_;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pool_allocator/pool_allocator.hpp"
 #include <cstdint>
 #include <list>
 #include <unordered_map>
@@ -37,8 +38,8 @@ class tsbook
 {
 private:
     std::unordered_map<std::uint64_t, order> orders_;
-    std::list<price_level> bids_;
-    std::list<price_level> asks_;
+    std::list<price_level, pool_allocator<price_level, 10000>> bids_;
+    std::list<price_level, pool_allocator<price_level, 10000>> asks_;
 
 public:
     tsbook() noexcept;
@@ -51,8 +52,8 @@ public:
     // accessors
 public:
     std::unordered_map<std::uint64_t, order> const& order_list() const noexcept;
-    std::list<price_level> const& bids() const noexcept;
-    std::list<price_level> const& asks() const noexcept;
+    decltype(bids_) const& bids() const noexcept;
+    decltype(asks_) const& asks() const noexcept;
     price_level best_bid() const noexcept;
     price_level best_ask() const noexcept;
 };
