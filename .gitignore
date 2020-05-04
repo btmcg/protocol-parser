@@ -15,6 +15,7 @@ tags
 
 # executables
 src/parser/parser
+benchmark/benchmark-runner
 test/test-runner
 
 # build system artifacts
