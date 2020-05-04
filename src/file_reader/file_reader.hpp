@@ -132,6 +132,8 @@ file_reader::process_gz(Callable&& fn) noexcept
 
     } while (ret != Z_STREAM_END);
 
+    ::inflateEnd(&zstrm);
+
     stats_.nsec_count = tsc::get_nsecs() - stats_.nsec_count;
     return true;
 }
