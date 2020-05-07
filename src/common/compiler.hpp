@@ -8,14 +8,22 @@
 #define ALWAYS_INLINE __attribute__((always_inline))
 #define PACKED __attribute__((packed))
 
+#if (defined(__GNUC__) && !defined(__clang__))
+#    define COMPILER_GCC
+#else
+#    define COMPILER_CLANG
+#endif
+
 
 inline std::string
 get_compiler_version()
 {
-#if (defined(__GNUC__) && !defined(__clang__))
+#if (defined(COMPILER_GCC))
     return fmt::format("gcc-{}.{}.{}", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
-#else
+#elif(defined(COMPILER_CLANG))
     return fmt::format("clang-{}.{}.{}", __clang_major__, __clang_minor__, __clang_patchlevel__);
+#else
+    return fmt::format("unknown_compiler");
 #endif
 }
 
