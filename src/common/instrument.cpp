@@ -71,5 +71,6 @@ instrument::stats_csv() const noexcept
 std::size_t
 instrument::allocator_stats() const noexcept
 {
-    return std::max(book.bids().get_allocator().max_size_reached(), book.asks().get_allocator().max_size_reached());
+    return std::max(book.bids().get_allocator().max_size_reached(),
+            book.asks().get_allocator().max_size_reached());
 }
