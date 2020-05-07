@@ -100,7 +100,8 @@ constexpr pool_allocator<T, NumElements>::pool_allocator(pool_allocator const& r
 
 template <typename T, std::size_t NumElements>
 template <typename U, std::size_t NumU>
-constexpr pool_allocator<T, NumElements>::pool_allocator(pool_allocator<U, NumU> const& rhs) noexcept
+constexpr pool_allocator<T, NumElements>::pool_allocator(
+        pool_allocator<U, NumU> const& rhs) noexcept
         : block_begin_(nullptr)
         , block_end_(nullptr)
         , curr_node_(nullptr)

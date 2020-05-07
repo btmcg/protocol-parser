@@ -27,7 +27,6 @@ TEST_CASE("free_list", "[free_list]")
             REQUIRE(fl.capacity() == static_cast<std::size_t>(5 - i - 1));
         }
         REQUIRE(fl.capacity() == 0);
-        REQUIRE(fl.allocate() == nullptr);
 
         // verify object values
         for (int i = 0; i < 5; ++i) {

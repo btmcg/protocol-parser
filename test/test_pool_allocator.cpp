@@ -190,12 +190,9 @@ TEST_CASE("pool allocator", "[pool_allocator]")
 
     SECTION("object in unordered_map")
     {
-        // std::unordered_map<int, object, std::hash<int>, std::equal_to<int>, pool_allocator<std::pair<const int, object>, 10>> objmap;
-        // std::unordered_map<int, object> objmap;
-        // object o(0, 0, 0);
-        // objmap.emplace(0, o);
-        // objmap[1] = object(1, 1, 1);
+        // std::unordered_map<int, object, std::hash<int>, std::equal_to<int>,
+        // pool_allocator<std::pair<const int, object>, 10>> objmap; std::unordered_map<int, object>
+        // objmap; object o(0, 0, 0); objmap.emplace(0, o); objmap[1] = object(1, 1, 1);
         // objmap.insert(std::make_pair(0, object(0, 0, 0)));
     }
-
 }
