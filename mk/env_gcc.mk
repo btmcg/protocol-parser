@@ -14,7 +14,3 @@ CXX_WARN := \
   -Winline \
   -Wsuggest-override \
   -Wuseless-cast
-
-CPPFLAGS += $(WARN)
-CFLAGS   += $(CC_WARN)
-CXXFLAGS += $(CXX_WARN)

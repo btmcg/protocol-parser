@@ -14,9 +14,7 @@ CXX_WARN := \
   -Wsuggest-final-methods \
   -Wsuggest-final-types \
 
-CPPFLAGS += $(WARN)
-CFLAGS   += $(CC_WARN)
-CXXFLAGS += -stdlib=libc++ $(CXX_WARN)
+CXXFLAGS += -stdlib=libc++
 
 # use the clang linker
 LDFLAGS += -rtlib=compiler-rt -fuse-ld=lld
