@@ -20,7 +20,7 @@ struct memory_block
 
 /**********************************************************************/
 
-template <class LLAllocator = lowlevel_allocator<malloc_allocator>, std::uint16_t Num = 2,
+template <typename LLAllocator = lowlevel_allocator<malloc_allocator>, std::uint16_t Num = 2,
         std::uint16_t Den = 1>
 class growing_block_allocator : LLAllocator
 {
@@ -121,7 +121,7 @@ private:
 
 /**********************************************************************/
 
-template <class BlockAllocator>
+template <typename BlockAllocator>
 class memory_arena : BlockAllocator
 {
 public:

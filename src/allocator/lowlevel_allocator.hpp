@@ -21,7 +21,7 @@ public:
 };
 
 
-template <class Functor>
+template <typename Functor>
 class lowlevel_allocator
 {
 public:
