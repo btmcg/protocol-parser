@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 LOCAL_MODULE := test-runner
 LOCAL_CPPFLAGS := -I.
 LOCAL_SOURCE_FILES := $(call rwildcard,$(LOCAL_PATH),*.cpp)
-LOCAL_LIBRARIES := allocator common
+LOCAL_LIBRARIES := allocator common itch_parser
 
 $(call use-catch)
 $(call use-fmt)

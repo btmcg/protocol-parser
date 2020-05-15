@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/instrument.hpp"
+#include "instrument.hpp"
 #include "protocol/itch-fmt.hpp"
 #include "protocol/itch.hpp"
 #include <endian.h>
