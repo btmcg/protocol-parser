@@ -201,14 +201,13 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
     o.price = be32toh(m->price);
     o.qty = be32toh(m->shares);
     o.side = m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask;
+    o.ts = to_local_nsecs(from_itch_timestamp(m->timestamp));
 
     instruments_[index].book.add_order(o);
 
-    if (instruments_[index].lo_price == InvalidLoPrice
-            || o.price < instruments_[index].lo_price)
+    if (instruments_[index].lo_price == InvalidLoPrice || o.price < instruments_[index].lo_price)
         instruments_[index].lo_price = o.price;
-    if (instruments_[index].hi_price == InvalidHiPrice
-            || o.price > instruments_[index].hi_price)
+    if (instruments_[index].hi_price == InvalidHiPrice || o.price > instruments_[index].hi_price)
         instruments_[index].hi_price = o.price;
 
     ++instruments_[index].num_orders;
@@ -228,6 +227,7 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
     o.price = be32toh(m->price);
     o.qty = be32toh(m->shares);
     o.side = m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask;
+    o.ts = to_local_nsecs(from_itch_timestamp(m->timestamp));
 
     instruments_[index].book.add_order(o);
 

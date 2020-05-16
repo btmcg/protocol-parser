@@ -33,6 +33,7 @@ struct order
     std::uint32_t price = 0;
     std::uint32_t qty = 0;
     price_level* pl = nullptr;
+    std::uint64_t ts = 0;
 
     void
     clear() noexcept
@@ -41,6 +42,7 @@ struct order
         price = 0;
         qty = 0;
         pl = nullptr;
+        ts = 0;
     }
 };
 
@@ -49,7 +51,5 @@ struct order
 constexpr inline double
 to_hr_price(std::uint32_t p)
 {
-    return (p == InvalidHiPrice || p == InvalidLoPrice)
-            ? 0.0
-            : static_cast<double>(p) / 10000.0;
+    return (p == InvalidHiPrice || p == InvalidLoPrice) ? 0.0 : static_cast<double>(p) / 10000.0;
 }
