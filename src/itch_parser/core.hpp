@@ -3,6 +3,11 @@
 #include <cstdint>
 
 
+constexpr std::uint32_t InvalidPrice = 1'999'999'900;
+constexpr std::uint32_t InvalidHiPrice = 1'999'990'000;
+constexpr std::uint32_t InvalidLoPrice = 1;
+
+
 enum Side
 {
     Bid = 0,
@@ -38,3 +43,13 @@ struct order
         pl = nullptr;
     }
 };
+
+/**********************************************************************/
+
+constexpr inline double
+to_hr_price(std::uint32_t p)
+{
+    return (p == InvalidHiPrice || p == InvalidLoPrice)
+            ? 0.0
+            : static_cast<double>(p) / 10000.0;
+}

@@ -204,10 +204,10 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
 
     instruments_[index].book.add_order(o);
 
-    if (instruments_[index].lo_price == instrument::InvalidLoPrice
+    if (instruments_[index].lo_price == InvalidLoPrice
             || o.price < instruments_[index].lo_price)
         instruments_[index].lo_price = o.price;
-    if (instruments_[index].hi_price == instrument::InvalidHiPrice
+    if (instruments_[index].hi_price == InvalidHiPrice
             || o.price > instruments_[index].hi_price)
         instruments_[index].hi_price = o.price;
 
@@ -231,14 +231,14 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
 
     instruments_[index].book.add_order(o);
 
-    if (o.side == Side::Ask && o.price == instrument::InvalidPrice) {
+    if (o.side == Side::Ask && o.price == InvalidPrice) {
         // add_order_with_mpid(length=40,message_type=F,stock_locate=13,tracking_number=0,timestamp=27801211937238,order_reference_number=3653101,buy_sell_indicator=S,shares=100,stock=AAPL
         // ,price=1999999900,attribution=NITE) fmt::print(stderr, "{}\n", *m);
     } else {
-        if (instruments_[index].lo_price == instrument::InvalidLoPrice
+        if (instruments_[index].lo_price == InvalidLoPrice
                 || o.price < instruments_[index].lo_price)
             instruments_[index].lo_price = o.price;
-        if (instruments_[index].hi_price == instrument::InvalidHiPrice
+        if (instruments_[index].hi_price == InvalidHiPrice
                 || o.price > instruments_[index].hi_price)
             instruments_[index].hi_price = o.price;
     }
