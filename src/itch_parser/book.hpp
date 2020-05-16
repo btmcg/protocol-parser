@@ -1,38 +1,12 @@
 #pragma once
 
+#include "core.hpp"
 #include "allocator/memory_pool.hpp"
 #include "allocator/std_allocator.hpp"
 #include <cstdint>
 #include <list>
 #include <unordered_map>
 
-enum Side
-{
-    Bid = 0,
-    Ask = 1
-};
-
-
-struct price_level
-{
-    std::uint32_t price = 0;
-    std::uint32_t qty = 0;
-
-    price_level(std::uint32_t p, std::uint32_t q)
-            : price(p)
-            , qty(q)
-    {
-        // empty
-    }
-};
-
-struct order
-{
-    Side side = Side::Bid;
-    std::uint32_t price = 0;
-    std::uint32_t qty = 0;
-    price_level* pl = nullptr;
-};
 
 /// Two-sided book
 class tsbook

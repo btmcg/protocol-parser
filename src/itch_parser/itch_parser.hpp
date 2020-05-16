@@ -1,11 +1,14 @@
 #pragma once
 
+#include "core.hpp"
 #include "instrument.hpp"
 #include "protocol/itch-fmt.hpp"
 #include "protocol/itch.hpp"
 #include <endian.h>
 #include <filesystem>
 #include <algorithm> // std::max, std::min
+#include <cstddef> // std::size_t
+#include <cstdint>
 #include <cstdio> // std::fclose, std::fopen
 
 
