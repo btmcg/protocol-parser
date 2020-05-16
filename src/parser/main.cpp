@@ -29,7 +29,7 @@ namespace { // unnamed
                     "options:\n"
                     "  -h, --help               this output\n"
                     "  -l, --log                log protocol msgs to <protocol>.log\n"
-                    "  -s, --stats <filepath>   record instrument stats to file\n"
+                    "  -s, --stats=<filepath>   record instrument stats to file\n"
                     "  -v, --version            version\n",
                     app.string().c_str());
             std::exit(outerr == stdout ? EXIT_SUCCESS : EXIT_FAILURE);
