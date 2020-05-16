@@ -6,8 +6,8 @@ instrument::instrument() noexcept
         : locate(0)
         , name{}
         , book()
-        , hi_price(0)
-        , lo_price(std::numeric_limits<std::uint32_t>::max())
+        , hi_price(InvalidHiPrice)
+        , lo_price(InvalidLoPrice)
         , num_trades(0)
         , trade_qty(0)
         , num_orders(0)
@@ -20,8 +20,8 @@ instrument::instrument(std::uint16_t l, char const (&nm)[8]) noexcept
         : locate(l)
         , name()
         , book()
-        , hi_price(0)
-        , lo_price(std::numeric_limits<std::uint32_t>::max())
+        , hi_price(InvalidHiPrice)
+        , lo_price(InvalidLoPrice)
         , num_trades(0)
         , trade_qty(0)
         , num_orders(0)
@@ -47,12 +47,13 @@ instrument::stats_str() const noexcept
 {
     return fmt::format("{}\n"
                        "  locate:    {}\n"
-                       "  high:      {}\n"
-                       "  low:       {}\n"
+                       "  high:      {:.4f}\n"
+                       "  low:       {:.4f}\n"
                        "  trades:    {}\n"
                        "  trade vol: {}\n"
                        "  orders:    {}\n",
-            name, locate, hi_price, lo_price, num_trades, trade_qty, num_orders);
+            name, locate, to_hr_price(hi_price), to_hr_price(lo_price), num_trades, trade_qty,
+            num_orders);
 }
 
 std::string
@@ -64,8 +65,8 @@ instrument::stats_csv_header() noexcept
 std::string
 instrument::stats_csv() const noexcept
 {
-    return fmt::format("{},{},{},{},{},{},{}", name, locate, hi_price, lo_price, num_trades,
-            trade_qty, num_orders);
+    return fmt::format("{},{},{:.4f},{:.4f},{},{},{}", name, locate, to_hr_price(hi_price),
+            to_hr_price(lo_price), num_trades, trade_qty, num_orders);
 }
 
 std::size_t

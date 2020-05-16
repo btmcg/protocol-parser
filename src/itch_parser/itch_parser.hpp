@@ -192,12 +192,17 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const price = be32toh(m->price);
     std::uint32_t const qty = be32toh(m->shares);
+    Side const side = m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask;
 
-    instruments_[index].book.add_order(
-            order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
+    instruments_[index].book.add_order(order_number, side, price, qty);
     ++instruments_[index].num_orders;
-    instruments_[index].lo_price = std::min(instruments_[index].lo_price, price);
-    instruments_[index].hi_price = std::max(instruments_[index].hi_price, price);
+
+    if (instruments_[index].lo_price == instrument::InvalidLoPrice
+            || price < instruments_[index].lo_price)
+        instruments_[index].lo_price = price;
+    if (instruments_[index].hi_price == instrument::InvalidHiPrice
+            || price > instruments_[index].hi_price)
+        instruments_[index].hi_price = price;
 }
 
 void
@@ -210,13 +215,23 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
     std::uint64_t const order_number = be64toh(m->order_reference_number);
     std::uint32_t const price = be32toh(m->price);
     std::uint32_t const qty = be32toh(m->shares);
+    Side const side = m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask;
 
-    instruments_[index].book.add_order(
-            order_number, m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask, price, qty);
-
+    instruments_[index].book.add_order(order_number, side, price, qty);
     ++instruments_[index].num_orders;
-    instruments_[index].lo_price = std::min(instruments_[index].lo_price, price);
-    instruments_[index].hi_price = std::max(instruments_[index].hi_price, price);
+
+    if (side == Side::Ask && price == instrument::InvalidPrice) {
+        // add_order_with_mpid(length=40,message_type=F,stock_locate=13,tracking_number=0,timestamp=27801211937238,order_reference_number=3653101,buy_sell_indicator=S,shares=100,stock=AAPL
+        // ,price=1999999900,attribution=NITE) fmt::print(stderr, "{}\n", *m);
+        return;
+    }
+
+    if (instruments_[index].lo_price == instrument::InvalidLoPrice
+            || price < instruments_[index].lo_price)
+        instruments_[index].lo_price = price;
+    if (instruments_[index].hi_price == instrument::InvalidHiPrice
+            || price > instruments_[index].hi_price)
+        instruments_[index].hi_price = price;
 }
 
 void
