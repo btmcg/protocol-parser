@@ -30,10 +30,10 @@ namespace { // unnamed
         return std::mktime(&midnight_tm) * 1000 * 1000 * 1000;
     }
 
-    const std::uint64_t MidnightNsec = get_midnight_nsecs();
+    std::uint64_t const MidnightNsec = get_midnight_nsecs();
 
     /// returns nsecs (since epoch) of time given
-    constexpr inline std::uint64_t
+    inline std::uint64_t
     to_local_nsecs(std::uint64_t nsecs_since_midnight)
     {
         return MidnightNsec + nsecs_since_midnight;
