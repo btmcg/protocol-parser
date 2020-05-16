@@ -5,8 +5,8 @@
 
 tsbook::tsbook() noexcept
         : orders_()
-        , bid_pool_(sizeof(price_level) + 16, (sizeof(price_level) + 16) * 10000)
-        , ask_pool_(sizeof(price_level) + 16, (sizeof(price_level) + 16) * 10000)
+        , bid_pool_(sizeof(price_level) + 16, 1000)
+        , ask_pool_(sizeof(price_level) + 16, 1000)
         , bids_(bid_pool_)
         , asks_(ask_pool_)
         // , bids_()
