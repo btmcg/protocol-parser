@@ -4,125 +4,86 @@
 
 
 tsbook::tsbook() noexcept
-        : orders_()
-        , bid_pool_(sizeof(price_level) + 16, 1000)
-        , ask_pool_(sizeof(price_level) + 16, 1000)
+        : bid_pool_(sizeof(price_level) + 16, 10000)
+        , ask_pool_(sizeof(price_level) + 16, 10000)
         , bids_(bid_pool_)
         , asks_(ask_pool_)
-        // , bids_()
-        // , asks_()
 {
     // empty
 }
 
 void
-tsbook::add_order(std::uint64_t order_num, Side side, std::uint32_t price, std::uint32_t qty)
+tsbook::add_order(order& o) noexcept
 {
-    order order{side, price, qty, nullptr};
-
-    auto* book = (side == Bid) ? &bids_ : &asks_;
+    auto* book = (o.side == Bid) ? &bids_ : &asks_;
 
     if (book->empty()) {
-        order.pl = &book->emplace_front(price, qty);
+        o.pl = &book->emplace_front(o.price, o.qty);
     } else {
         // find location in book
-        auto o_itr = std::find_if(book->begin(), book->end(), [price, side](price_level const& pl) {
-            return (side == Bid) ? pl.price <= price : pl.price >= price;
+        auto o_itr = std::find_if(book->begin(), book->end(), [&o](price_level const& pl) {
+            return (o.side == Bid) ? pl.price <= o.price : pl.price >= o.price;
         });
 
-        if (o_itr->price == price) {
+        if (o_itr == book->end()) {
+            o.pl = &book->emplace_back(o.price, o.qty);
+        } else if (o_itr->price == o.price) {
             // price exists, adjust qty
-            o_itr->qty += qty;
-            order.pl = &(*o_itr);
+            o_itr->qty += o.qty;
+            o.pl = &(*o_itr);
         } else {
             // new price level
-            auto i_itr = book->emplace(o_itr, price, qty);
-            order.pl = &(*i_itr);
+            auto i_itr = book->emplace(o_itr, o.price, o.qty);
+            o.pl = &(*i_itr);
         }
-    }
-
-    // record the order
-    if (orders_.emplace(order_num, order).second == false) {
-        fmt::print(stderr, "[ERROR] add_order(): order_num={} already exists\n", order_num);
     }
 }
 
 
 void
-tsbook::delete_order(std::uint64_t order_num) noexcept
+tsbook::delete_order(order& order) noexcept
 {
-    auto itr = orders_.find(order_num);
-    if (itr == orders_.end()) {
-        fmt::print(stderr, "[ERROR] delete_order(): order number {} not found\n", order_num);
+    if (order.pl == nullptr) {
+        fmt::print(stderr, "[ERROR] delete_order(): price level not found\n");
         return;
     }
-    order& order = itr->second;
 
     // decrease qty on price level, if it goes to zero, delete the level
-    if (order.pl->qty < order.qty) {
+    if (order.pl->qty <= order.qty) {
         order.pl->qty = 0;
         if (order.side == Side::Bid) {
             auto found = std::find_if(bids_.begin(), bids_.end(),
                     [&order](auto& pl) { return order.pl->price == pl.price; });
-            auto d_itr = bids_.erase(found);
-            if (d_itr == bids_.end()) {
-                fmt::print(stderr, "[ERROR] delete_order(): can't find pl");
-            }
+            bids_.erase(found);
         } else {
             auto found = std::find_if(asks_.begin(), asks_.end(),
                     [&order](auto& pl) { return order.pl->price == pl.price; });
-            auto d_itr = asks_.erase(found);
-            if (d_itr == asks_.end()) {
-                fmt::print(stderr, "[ERROR] delete_order(): can't find pl");
-            }
+            asks_.erase(found);
         }
     } else {
         order.pl->qty -= order.qty;
     }
 
-    orders_.erase(itr);
+    order.clear();
 }
 
 void
-tsbook::replace_order(std::uint64_t orig_order_num, std::uint64_t new_order_num,
-        std::uint32_t price, std::uint32_t qty) noexcept
+tsbook::replace_order(order& old_order, order& new_order) noexcept
 {
-    auto itr = orders_.find(orig_order_num);
-    if (itr == orders_.end()) {
-        fmt::print(stderr, "[ERROR] replace_order(): order number {} not found\n", orig_order_num);
-        return;
-    }
-
-    Side s = itr->second.side;
-
-    delete_order(orig_order_num);
-    add_order(new_order_num, s, price, qty);
+    delete_order(old_order);
+    add_order(new_order);
 }
 
 void
-tsbook::cancel_order(std::uint64_t order_num, std::uint32_t cancelled_qty) noexcept
+tsbook::cancel_order(order& order, std::uint32_t remove_qty) noexcept
 {
-    auto itr = orders_.find(order_num);
-    if (itr == orders_.end()) {
-        fmt::print(stderr, "[ERROR] cancel_order(): order number {} not found\n", order_num);
-        return;
-    }
-
-    order& order = itr->second;
-
-    if (cancelled_qty >= order.qty) {
+    if (remove_qty >= order.qty) {
         // this cancel will remove the order
-        delete_order(order_num);
+        delete_order(order);
     } else {
-        order.qty -= cancelled_qty;
-        order.pl->qty -= cancelled_qty;
+        order.qty -= remove_qty;
+        order.pl->qty -= remove_qty;
     }
-}
-
-std::unordered_map<std::uint64_t, order> const&
-tsbook::order_list() const noexcept
-{
-    return orders_;
 }
 
 decltype(tsbook::bids_) const&

@@ -8,66 +8,72 @@ TEST_CASE("tsbook", "[book]")
 
     SECTION("add_order")
     {
-        {
-            book.add_order(1, Side::Bid, 100, 100);
-            auto const& orders = book.order_list();
-            REQUIRE(orders.contains(1));
-            order const& o = orders.find(1)->second;
-            REQUIRE(o.price == 100);
-            REQUIRE(o.qty == 100);
-        }
+        order o1{Side::Bid, 100, 100, nullptr};
+        order o2{Side::Bid, 200, 200, nullptr};
+        order o3{Side::Bid, 300, 300, nullptr};
 
-        {
-            book.add_order(2, Side::Bid, 200, 200);
-            auto const& orders = book.order_list();
-            REQUIRE(orders.contains(2));
-            order const& o = orders.find(2)->second;
-            REQUIRE(o.price == 200);
-            REQUIRE(o.qty == 200);
-        }
+        book.add_order(o1);
+        REQUIRE(book.best_bid().price == o1.price);
+        REQUIRE(book.best_bid().qty == o1.qty);
 
-        {
-            book.add_order(3, Side::Bid, 300, 300);
-            auto const& orders = book.order_list();
-            REQUIRE(orders.contains(3));
-            order const& o = orders.find(3)->second;
-            REQUIRE(o.price == 300);
-            REQUIRE(o.qty == 300);
-        }
+        book.add_order(o2);
+        REQUIRE(book.best_bid().price == o2.price);
+        REQUIRE(book.best_bid().qty == o2.qty);
+
+        book.add_order(o3);
+        REQUIRE(book.best_bid().price == o3.price);
+        REQUIRE(book.best_bid().qty == o3.qty);
+
+        REQUIRE(book.bids().size() == 3);
     }
 
     SECTION("delete_order")
     {
-        book.add_order(1, Side::Bid, 100, 100);
-        book.add_order(2, Side::Bid, 200, 200);
-        book.add_order(3, Side::Bid, 300, 300);
-        REQUIRE(book.order_list().size() == 3);
+        order o1{Side::Bid, 100, 100, nullptr};
+        order o2{Side::Bid, 200, 200, nullptr};
+        order o3{Side::Bid, 300, 300, nullptr};
 
-        book.delete_order(2);
-        REQUIRE_FALSE(book.order_list().contains(2));
-        REQUIRE(book.order_list().size() == 2);
+        book.add_order(o1);
+        book.add_order(o2);
+        book.add_order(o3);
+
+        book.delete_order(o2);
+        REQUIRE(book.bids().size() == 2);
+        REQUIRE(o2.price == 0);
+        REQUIRE(o2.qty == 0);
 
         // non-existent order
-        book.delete_order(5);
-        REQUIRE(book.order_list().size() == 2);
+        order tmp{Side::Bid, 5000, 5000, nullptr};
+        book.delete_order(tmp);
+        REQUIRE(book.bids().size() == 2);
+        REQUIRE(tmp.price == 5000);
+        REQUIRE(tmp.qty == 5000);
+        REQUIRE(tmp.pl == nullptr);
 
-        book.delete_order(3);
-        REQUIRE_FALSE(book.order_list().contains(3));
-        REQUIRE(book.order_list().size() == 1);
+        book.delete_order(o3);
+        REQUIRE(book.bids().size() == 1);
+        REQUIRE(o3.price == 0);
+        REQUIRE(o3.qty == 0);
 
-        book.delete_order(1);
-        REQUIRE_FALSE(book.order_list().contains(1));
-        REQUIRE(book.order_list().size() == 0);
-        REQUIRE(book.order_list().empty());
+        book.delete_order(o1);
+        REQUIRE(book.bids().empty());
+        REQUIRE(o1.price == 0);
+        REQUIRE(o1.qty == 0);
     }
 
     SECTION("bids")
     {
-        book.add_order(3, Side::Bid, 300, 30);
-        book.add_order(2, Side::Bid, 200, 20);
-        book.add_order(5, Side::Bid, 500, 50);
-        book.add_order(1, Side::Bid, 100, 10);
-        book.add_order(4, Side::Bid, 400, 40);
+        order o1{Side::Bid, 100, 10, nullptr};
+        order o2{Side::Bid, 200, 20, nullptr};
+        order o3{Side::Bid, 300, 30, nullptr};
+        order o4{Side::Bid, 400, 40, nullptr};
+        order o5{Side::Bid, 500, 50, nullptr};
+
+        book.add_order(o3);
+        book.add_order(o2);
+        book.add_order(o5);
+        book.add_order(o1);
+        book.add_order(o4);
 
         auto const& bids = book.bids();
         REQUIRE(bids.size() == 5);
@@ -91,11 +97,17 @@ TEST_CASE("tsbook", "[book]")
 
     SECTION("asks")
     {
-        book.add_order(3, Side::Ask, 300, 30);
-        book.add_order(2, Side::Ask, 200, 20);
-        book.add_order(5, Side::Ask, 500, 50);
-        book.add_order(1, Side::Ask, 100, 10);
-        book.add_order(4, Side::Ask, 400, 40);
+        order o1{Side::Ask, 100, 10, nullptr};
+        order o2{Side::Ask, 200, 20, nullptr};
+        order o3{Side::Ask, 300, 30, nullptr};
+        order o4{Side::Ask, 400, 40, nullptr};
+        order o5{Side::Ask, 500, 50, nullptr};
+
+        book.add_order(o3);
+        book.add_order(o2);
+        book.add_order(o5);
+        book.add_order(o1);
+        book.add_order(o4);
 
         auto const& asks = book.asks();
         REQUIRE(asks.size() == 5);

@@ -10,6 +10,7 @@
 #include <cstddef> // std::size_t
 #include <cstdint>
 #include <cstdio> // std::fclose, std::fopen
+#include <vector>
 
 
 class itch_parser
@@ -27,6 +28,7 @@ private:
 
 private:
     instrument instruments_[9000];
+    std::vector<order> orders_;
     bool logging_enabled_ = false;
     FILE* log_ = nullptr;
     std::filesystem::path stats_filepath_;
@@ -67,6 +69,7 @@ private:
 
 itch_parser::itch_parser(bool enable_logging, std::filesystem::path const& stats_fp) noexcept
         : instruments_()
+        , orders_(800'000'000, order())
         , logging_enabled_(enable_logging)
         , log_(nullptr)
         , stats_filepath_(stats_fp)
@@ -190,22 +193,26 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
-    ++stats_.add_count;
+
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
-    std::uint32_t const price = be32toh(m->price);
-    std::uint32_t const qty = be32toh(m->shares);
-    Side const side = m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask;
 
-    instruments_[index].book.add_order(order_number, side, price, qty);
-    ++instruments_[index].num_orders;
+    order& o = orders_[order_number];
+    o.price = be32toh(m->price);
+    o.qty = be32toh(m->shares);
+    o.side = m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask;
+
+    instruments_[index].book.add_order(o);
 
     if (instruments_[index].lo_price == instrument::InvalidLoPrice
-            || price < instruments_[index].lo_price)
-        instruments_[index].lo_price = price;
+            || o.price < instruments_[index].lo_price)
+        instruments_[index].lo_price = o.price;
     if (instruments_[index].hi_price == instrument::InvalidHiPrice
-            || price > instruments_[index].hi_price)
-        instruments_[index].hi_price = price;
+            || o.price > instruments_[index].hi_price)
+        instruments_[index].hi_price = o.price;
+
+    ++instruments_[index].num_orders;
+    ++stats_.add_count;
 }
 
 void
@@ -213,28 +220,31 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
-    ++stats_.add_count;
+
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
-    std::uint32_t const price = be32toh(m->price);
-    std::uint32_t const qty = be32toh(m->shares);
-    Side const side = m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask;
 
-    instruments_[index].book.add_order(order_number, side, price, qty);
-    ++instruments_[index].num_orders;
+    order& o = orders_[order_number];
+    o.price = be32toh(m->price);
+    o.qty = be32toh(m->shares);
+    o.side = m->buy_sell_indicator == 'B' ? Side::Bid : Side::Ask;
 
-    if (side == Side::Ask && price == instrument::InvalidPrice) {
+    instruments_[index].book.add_order(o);
+
+    if (o.side == Side::Ask && o.price == instrument::InvalidPrice) {
         // add_order_with_mpid(length=40,message_type=F,stock_locate=13,tracking_number=0,timestamp=27801211937238,order_reference_number=3653101,buy_sell_indicator=S,shares=100,stock=AAPL
         // ,price=1999999900,attribution=NITE) fmt::print(stderr, "{}\n", *m);
-        return;
+    } else {
+        if (instruments_[index].lo_price == instrument::InvalidLoPrice
+                || o.price < instruments_[index].lo_price)
+            instruments_[index].lo_price = o.price;
+        if (instruments_[index].hi_price == instrument::InvalidHiPrice
+                || o.price > instruments_[index].hi_price)
+            instruments_[index].hi_price = o.price;
     }
 
-    if (instruments_[index].lo_price == instrument::InvalidLoPrice
-            || price < instruments_[index].lo_price)
-        instruments_[index].lo_price = price;
-    if (instruments_[index].hi_price == instrument::InvalidHiPrice
-            || price > instruments_[index].hi_price)
-        instruments_[index].hi_price = price;
+    ++instruments_[index].num_orders;
+    ++stats_.add_count;
 }
 
 void
@@ -298,12 +308,16 @@ itch_parser::handle_order_cancel(itch::order_cancel const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
-    ++stats_.cancel_count;
+
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
+
+    order& o = orders_[order_number];
     std::uint32_t const cancelled_shares = be32toh(m->cancelled_shares);
 
-    instruments_[index].book.cancel_order(order_number, cancelled_shares);
+    instruments_[index].book.cancel_order(o, cancelled_shares);
+
+    ++stats_.cancel_count;
 }
 
 void
@@ -311,11 +325,15 @@ itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
-    ++stats_.delete_count;
+
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
 
-    instruments_[index].book.delete_order(order_number);
+    order& o = orders_[order_number];
+    instruments_[index].book.delete_order(o);
+    o.clear();
+
+    ++stats_.delete_count;
 }
 
 void
@@ -323,12 +341,16 @@ itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
-    ++stats_.executed_count;
+
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
+
+    order& o = orders_[order_number];
     std::uint32_t const executed_qty = be32toh(m->executed_shares);
 
-    instruments_[index].book.cancel_order(order_number, executed_qty);
+    instruments_[index].book.cancel_order(o, executed_qty);
+
+    ++stats_.executed_count;
 }
 
 void
@@ -336,12 +358,16 @@ itch_parser::handle_order_executed_with_price(itch::order_executed_with_price co
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
-    ++stats_.executed_count;
+
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const order_number = be64toh(m->order_reference_number);
+
+    order& o = orders_[order_number];
     std::uint32_t const executed_qty = be32toh(m->executed_shares);
 
-    instruments_[index].book.cancel_order(order_number, executed_qty);
+    instruments_[index].book.cancel_order(o, executed_qty);
+
+    ++stats_.executed_count;
 }
 
 void
@@ -349,13 +375,19 @@ itch_parser::handle_order_replace(itch::order_replace const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
+
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint64_t const orig_order_number = be64toh(m->original_order_reference_number);
     std::uint64_t const new_order_number = be64toh(m->new_order_reference_number);
-    std::uint32_t const price = be32toh(m->price);
-    std::uint32_t const qty = be32toh(m->shares);
 
-    instruments_[index].book.replace_order(orig_order_number, new_order_number, price, qty);
+    order& old_order = orders_[orig_order_number];
+    order& new_order = orders_[new_order_number];
+
+    new_order.side = old_order.side;
+    new_order.price = be32toh(m->price);
+    new_order.qty = be32toh(m->shares);
+
+    instruments_[index].book.replace_order(old_order, new_order);
 }
 
 void
@@ -398,8 +430,9 @@ itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
 
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint32_t const qty = be32toh(m->shares);
-    ++instruments_[index].num_trades;
     instruments_[index].trade_qty += qty;
+
+    ++instruments_[index].num_trades;
     ++stats_.trade_count;
 }
 
@@ -411,7 +444,8 @@ itch_parser::handle_trade_cross(itch::trade_cross const* m) noexcept
 
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint32_t const qty = be32toh(m->shares);
-    ++instruments_[index].num_trades;
     instruments_[index].trade_qty += qty;
+
+    ++instruments_[index].num_trades;
     ++stats_.trade_count;
 }
