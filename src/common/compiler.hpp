@@ -20,7 +20,7 @@ get_compiler_version()
 {
 #if (defined(COMPILER_GCC))
     return fmt::format("gcc-{}.{}.{}", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
-#elif(defined(COMPILER_CLANG))
+#elif (defined(COMPILER_CLANG))
     return fmt::format("clang-{}.{}.{}", __clang_major__, __clang_minor__, __clang_patchlevel__);
 #else
     return fmt::format("unknown_compiler");
