@@ -84,6 +84,12 @@ public:
     }
 
     std::size_t
+    capacity() const noexcept
+    {
+        return free_list_.capacity();
+    }
+
+    std::size_t
     capacity_left() const noexcept
     {
         return free_list_.capacity() * node_size();

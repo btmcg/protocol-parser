@@ -154,3 +154,15 @@ tsbook::best_ask() const noexcept
 
     return asks_.front();
 }
+
+std::size_t
+tsbook::bid_pool_capacity() const noexcept
+{
+    return bid_pool_.capacity();
+}
+
+std::size_t
+tsbook::ask_pool_capacity() const noexcept
+{
+    return ask_pool_.capacity();
+}

@@ -150,26 +150,26 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 void
 itch_parser::print_stats() const noexcept
 {
-    std::size_t max_price_levels = 0;
+    std::size_t max_pool_capacity = 0;
     for (auto const& itr : instruments_)
-        max_price_levels = std::max(max_price_levels, itr.allocator_stats());
+        max_pool_capacity = std::max(max_pool_capacity, itr.allocator_stats());
 
     // clang-format off
     fmt::print("parser stats\n"
-               "  msgs processed:   {}\n"
-               "  add_orders:       {}\n"
-               "  cancel_orders:    {}\n"
-               "  delete_orders:    {}\n"
-               "  executed_orders:  {}\n"
-               "  trades:           {}\n"
-               "  max_price_levels: {}\n",
+               "  msgs processed:    {}\n"
+               "  add_orders:        {}\n"
+               "  cancel_orders:     {}\n"
+               "  delete_orders:     {}\n"
+               "  executed_orders:   {}\n"
+               "  trades:            {}\n"
+               "  max_pool_capacity: {}\n",
         stats_.msg_count,
         stats_.add_count,
         stats_.cancel_count,
         stats_.delete_count,
         stats_.executed_count,
         stats_.trade_count,
-        max_price_levels);
+        max_pool_capacity);
     // clang-format on
 
     if (stats_file_ != nullptr) {
@@ -370,6 +370,7 @@ itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
+
     std::uint16_t const index = be16toh(m->stock_locate);
     instruments_[index].locate = index;
     instruments_[index].set_name(m->stock);
