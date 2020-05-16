@@ -16,9 +16,8 @@ public:
 
     static constexpr std::size_t min_node_size = free_list::min_element_size;
 
-    template <typename... Args>
-    memory_pool(std::size_t node_size, std::size_t block_size, Args&&... args)
-            : arena_(block_size, std::forward<Args>(args)...)
+    memory_pool(std::size_t node_size, std::size_t count)
+            : arena_(node_size * count)
             , free_list_(node_size)
     {
         allocate_block();
