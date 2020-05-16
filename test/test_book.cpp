@@ -47,7 +47,6 @@ TEST_CASE("tsbook", "[book]")
         REQUIRE(book.best_bid().price == o5.price);
         REQUIRE(book.best_bid().qty == o3.qty + o5.qty);
         REQUIRE(book.bids().size() == 3);
-
     }
 
     SECTION("delete_order")

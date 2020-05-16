@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/compiler.hpp"
 #include <cstdint>
 
 
