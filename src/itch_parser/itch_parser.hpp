@@ -113,6 +113,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             break;
 
         // clang-format off
+        // switch ordered by msg count on sample day (2020-01-30)
         switch (hdr->message_type) {
             case 'A': handle_add_order(reinterpret_cast<add_order const*>(hdr)); break;
             case 'D': handle_order_delete(reinterpret_cast<order_delete const*>(hdr)); break;
