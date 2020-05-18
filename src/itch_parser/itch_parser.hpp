@@ -137,7 +137,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             default:
                 fmt::print(
                         stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->message_type);
-                std::exit(1);
+                std::abort();
                 break;
         }
 
@@ -440,7 +440,7 @@ itch_parser::handle_system_event(itch::system_event const* m) noexcept
             break;
 
         default:
-            fmt::print(stderr, "received unknown system event code: {}\n", m->event_code);
+            fmt::print(stderr, "[ERROR] received unknown system event code: {}\n", m->event_code);
             market_state_ = MarketState::Unknown;
             break;
     }
