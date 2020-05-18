@@ -1,14 +1,15 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 
 
 constexpr std::uint32_t InvalidPrice = 1'999'999'900;
-constexpr std::uint32_t InvalidHiPrice = 1'999'990'000;
-constexpr std::uint32_t InvalidLoPrice = 1;
+constexpr std::uint32_t InvalidHiPrice = std::numeric_limits<std::uint32_t>::min();
+constexpr std::uint32_t InvalidLoPrice = std::numeric_limits<std::uint32_t>::max();
 
 
-enum Side
+enum Side : std::uint8_t
 {
     Bid = 0,
     Ask = 1
@@ -44,6 +45,16 @@ struct order
         pl = nullptr;
         ts = 0;
     }
+};
+
+enum class MarketState : std::uint8_t
+{
+    Open = 0,               // 0930 - 1600
+    SystemUp = 1,           // x - 0400
+    AcceptingOrders = 2,    // 0400 - 0930
+    Closed = 3,             // 1600 - 2000
+    SystemDown = 4,         // 2005 - x
+    Unknown = 5,
 };
 
 /**********************************************************************/

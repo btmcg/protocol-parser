@@ -16,7 +16,7 @@
 class itch_parser
 {
 private:
-    struct stats
+    struct msg_stats
     {
         std::size_t msg_count = 0;
         std::size_t add_count = 0;
@@ -33,7 +33,8 @@ private:
     FILE* log_ = nullptr;
     std::filesystem::path stats_filepath_;
     FILE* stats_file_ = nullptr;
-    stats stats_;
+    msg_stats msg_stats_;
+    MarketState market_state_ = MarketState::Unknown;
 
 public:
     itch_parser(bool log, std::filesystem::path const& stats_file) noexcept;
@@ -74,7 +75,8 @@ itch_parser::itch_parser(bool enable_logging, std::filesystem::path const& stats
         , log_(nullptr)
         , stats_filepath_(stats_fp)
         , stats_file_(nullptr)
-        , stats_()
+        , msg_stats_()
+        , market_state_(MarketState::Unknown)
 {
     if (logging_enabled_)
         log_ = std::fopen("itch.log", "w");
@@ -143,7 +145,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
                 break;
         }
 
-        ++stats_.msg_count;
+        ++msg_stats_.msg_count;
         buf += msg_len;
         bytes_processed += msg_len;
     }
@@ -158,7 +160,7 @@ itch_parser::print_stats() const noexcept
         max_pool_capacity = std::max(max_pool_capacity, itr.allocator_stats());
 
     // clang-format off
-    fmt::print("parser stats\n"
+    fmt::print("parser msg stats\n"
                "  msgs processed:    {}\n"
                "  add_orders:        {}\n"
                "  cancel_orders:     {}\n"
@@ -166,12 +168,12 @@ itch_parser::print_stats() const noexcept
                "  executed_orders:   {}\n"
                "  trades:            {}\n"
                "  max_pool_capacity: {}\n",
-        stats_.msg_count,
-        stats_.add_count,
-        stats_.cancel_count,
-        stats_.delete_count,
-        stats_.executed_count,
-        stats_.trade_count,
+        msg_stats_.msg_count,
+        msg_stats_.add_count,
+        msg_stats_.cancel_count,
+        msg_stats_.delete_count,
+        msg_stats_.executed_count,
+        msg_stats_.trade_count,
         max_pool_capacity);
     // clang-format on
 
@@ -205,13 +207,8 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
 
     instruments_[index].book.add_order(o);
 
-    if (instruments_[index].lo_price == InvalidLoPrice || o.price < instruments_[index].lo_price)
-        instruments_[index].lo_price = o.price;
-    if (instruments_[index].hi_price == InvalidHiPrice || o.price > instruments_[index].hi_price)
-        instruments_[index].hi_price = o.price;
-
     ++instruments_[index].num_orders;
-    ++stats_.add_count;
+    ++msg_stats_.add_count;
 }
 
 void
@@ -231,20 +228,8 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
 
     instruments_[index].book.add_order(o);
 
-    if (o.side == Side::Ask && o.price == InvalidPrice) {
-        // add_order_with_mpid(length=40,message_type=F,stock_locate=13,tracking_number=0,timestamp=27801211937238,order_reference_number=3653101,buy_sell_indicator=S,shares=100,stock=AAPL
-        // ,price=1999999900,attribution=NITE) fmt::print(stderr, "{}\n", *m);
-    } else {
-        if (instruments_[index].lo_price == InvalidLoPrice
-                || o.price < instruments_[index].lo_price)
-            instruments_[index].lo_price = o.price;
-        if (instruments_[index].hi_price == InvalidHiPrice
-                || o.price > instruments_[index].hi_price)
-            instruments_[index].hi_price = o.price;
-    }
-
     ++instruments_[index].num_orders;
-    ++stats_.add_count;
+    ++msg_stats_.add_count;
 }
 
 void
@@ -317,7 +302,7 @@ itch_parser::handle_order_cancel(itch::order_cancel const* m) noexcept
 
     instruments_[index].book.cancel_order(o, cancelled_shares);
 
-    ++stats_.cancel_count;
+    ++msg_stats_.cancel_count;
 }
 
 void
@@ -333,7 +318,7 @@ itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
     instruments_[index].book.delete_order(o);
     o.clear();
 
-    ++stats_.delete_count;
+    ++msg_stats_.delete_count;
 }
 
 void
@@ -347,10 +332,19 @@ itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
 
     order& o = orders_[order_number];
     std::uint32_t const executed_qty = be32toh(m->executed_shares);
+    std::uint32_t const order_price = o.price;
 
     instruments_[index].book.cancel_order(o, executed_qty);
+    instruments_[index].trade_qty += executed_qty;
 
-    ++stats_.executed_count;
+    if (market_state_ == MarketState::Open) {
+        if (instruments_[index].lo_price == InvalidLoPrice || order_price < instruments_[index].lo_price)
+            instruments_[index].lo_price = order_price;
+        if (instruments_[index].hi_price == InvalidHiPrice || order_price > instruments_[index].hi_price)
+            instruments_[index].hi_price = order_price;
+    }
+
+    ++msg_stats_.executed_count;
 }
 
 void
@@ -364,10 +358,21 @@ itch_parser::handle_order_executed_with_price(itch::order_executed_with_price co
 
     order& o = orders_[order_number];
     std::uint32_t const executed_qty = be32toh(m->executed_shares);
+    std::uint32_t const executed_price = be32toh(m->execution_price);
 
     instruments_[index].book.cancel_order(o, executed_qty);
 
-    ++stats_.executed_count;
+    // only record stats if execution is marked "printable"
+    if (market_state_ == MarketState::Open && m->printable == 'Y') {
+        if (instruments_[index].lo_price == InvalidLoPrice || executed_price < instruments_[index].lo_price)
+            instruments_[index].lo_price = executed_price;
+        if (instruments_[index].hi_price == InvalidHiPrice || o.price > instruments_[index].hi_price)
+            instruments_[index].hi_price = executed_price;
+
+        instruments_[index].trade_qty += executed_qty;
+    }
+
+    ++msg_stats_.executed_count;
 }
 
 void
@@ -418,35 +423,42 @@ itch_parser::handle_system_event(itch::system_event const* m) noexcept
         case 'O':
             fmt::print("{} system event: start of messages\n",
                     to_local_time(from_itch_timestamp(m->timestamp)));
+            market_state_ = MarketState::SystemUp;
             break;
 
         case 'S':
             fmt::print("{} system event: system start\n",
                     to_local_time(from_itch_timestamp(m->timestamp)));
+            market_state_ = MarketState::AcceptingOrders;
             break;
 
         case 'Q':
             fmt::print("{} system event: market open\n",
                     to_local_time(from_itch_timestamp(m->timestamp)));
+            market_state_ = MarketState::Open;
             break;
 
         case 'M':
             fmt::print("{} system event: market close\n",
                     to_local_time(from_itch_timestamp(m->timestamp)));
+            market_state_ = MarketState::Closed;
             break;
 
         case 'E':
             fmt::print("{} system event: system stop\n",
                     to_local_time(from_itch_timestamp(m->timestamp)));
+            market_state_ = MarketState::SystemDown;
             break;
 
         case 'C':
             fmt::print("{} system event: end of messages\n",
                     to_local_time(from_itch_timestamp(m->timestamp)));
+            market_state_ = MarketState::Unknown;
             break;
 
         default:
             fmt::print(stderr, "received unknown system event code: {}\n", m->event_code);
+            market_state_ = MarketState::Unknown;
             break;
     }
 }
@@ -469,7 +481,7 @@ itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
     instruments_[index].trade_qty += qty;
 
     ++instruments_[index].num_trades;
-    ++stats_.trade_count;
+    ++msg_stats_.trade_count;
 }
 
 void
@@ -478,10 +490,7 @@ itch_parser::handle_trade_cross(itch::trade_cross const* m) noexcept
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
 
-    std::uint16_t const index = be16toh(m->stock_locate);
-    std::uint32_t const qty = be32toh(m->shares);
-    instruments_[index].trade_qty += qty;
-
-    ++instruments_[index].num_trades;
-    ++stats_.trade_count;
+    // trade cross msgs shouldn't be counted in market statistic
+    // calculations (i think) (pg 16)
+    ++msg_stats_.trade_count;
 }

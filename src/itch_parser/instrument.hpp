@@ -12,8 +12,8 @@ struct instrument
     char name[8];
     tsbook book;
 
-    std::uint32_t hi_price = InvalidLoPrice;
     std::uint32_t lo_price = InvalidHiPrice;
+    std::uint32_t hi_price = InvalidLoPrice;
     std::uint32_t num_trades = 0;
     std::uint32_t trade_qty = 0;
     std::uint32_t num_orders = 0;
