@@ -1,6 +1,6 @@
 LOCAL_PATH := $(call my-dir)
 LOCAL_SOURCE_FILES := $(wildcard *.cpp)
-LOCAL_LIBRARIES := common
+LOCAL_LIBRARIES := util
 
 $(call use-fmt)
 

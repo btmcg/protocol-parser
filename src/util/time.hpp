@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/compiler.hpp"
+#include "compiler.hpp"
 #include <fmt/chrono.h>
 #include <cstdint>
 #include <ctime>

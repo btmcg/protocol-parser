@@ -1,6 +1,6 @@
 GIT := /usr/bin/git
 VERSION := $(shell $(GIT) describe --abbrev=4 --always --dirty --tags)
-VERSION_FILE := src/version.hpp
+VERSION_FILE := src/util/version.hpp
 
 all: $(VERSION_FILE)
 

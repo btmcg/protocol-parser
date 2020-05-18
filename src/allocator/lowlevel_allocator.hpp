@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/assert.hpp"
+#include "util/assert.hpp"
 #include <fmt/format.h>
 #include <cerrno>
 #include <cstdlib> // std::aligned_alloc

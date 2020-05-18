@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common/byte_buffer.hpp"
-#include "common/time.hpp"
+#include "util/byte_buffer.hpp"
+#include "util/time.hpp"
 #include <filesystem>
 #include <fmt/format.h>
 #include <zlib.h>

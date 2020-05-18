@@ -1,5 +1,5 @@
 #include "free_list.hpp"
-#include "common/assert.hpp"
+#include "util/assert.hpp"
 #include <climits> // CHAR_BIT
 #include <cstring> // std::memcpy
 #include <utility>

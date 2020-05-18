@@ -1,8 +1,8 @@
-#include "version.hpp"
-#include "common/compiler.hpp"
-#include "common/time.hpp"
 #include "file_reader/file_reader.hpp"
 #include "itch_parser/itch_parser.hpp"
+#include "util/compiler.hpp"
+#include "util/time.hpp"
+#include "util/version.hpp"
 #include <filesystem>
 #include <getopt.h>
 #include <cstdio> // std::fprintf

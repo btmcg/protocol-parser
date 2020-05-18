@@ -2,7 +2,7 @@
 
 #include "free_list.hpp"
 #include "memory_arena.hpp"
-#include "common/assert.hpp"
+#include "util/assert.hpp"
 #include <cstdlib>
 #include <new>
 #include <type_traits>

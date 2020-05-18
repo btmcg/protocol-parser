@@ -1,5 +1,5 @@
 LOCAL_PATH := $(call my-dir)
 LOCAL_SOURCE_FILES := $(wildcard *.cpp)
-LOCAL_LIBRARIES := common file_reader itch_parser
+LOCAL_LIBRARIES := file_reader itch_parser util
 
 $(call add-executable-module)
