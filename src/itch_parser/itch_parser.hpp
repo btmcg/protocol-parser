@@ -324,6 +324,7 @@ itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
 
     instruments_[index].book.cancel_order(o, executed_qty);
     instruments_[index].trade_qty += executed_qty;
+    ++instruments_[index].num_trades;
 
     if (market_state_ == MarketState::Open) {
         if (instruments_[index].lo_price == InvalidLoPrice
@@ -360,6 +361,7 @@ itch_parser::handle_order_executed_with_price(itch::order_executed_with_price co
             instruments_[index].hi_price = executed_price;
 
         instruments_[index].trade_qty += executed_qty;
+        ++instruments_[index].num_trades;
     }
 }
 
@@ -480,7 +482,6 @@ itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
     std::uint16_t const index = be16toh(m->stock_locate);
     std::uint32_t const qty = be32toh(m->shares);
     instruments_[index].trade_qty += qty;
-
     ++instruments_[index].num_trades;
 }
 
