@@ -95,5 +95,5 @@ CXXFLAGS += -std=c++2a $(CXX_WARN)
 CFLAGS   += -std=c11 $(CC_WARN)
 
 # linker flags
-LDFLAGS += $(OPTFLAGS) -Wl,-rpath=$(LIB_DIR),--enable-new-dtags
+LDFLAGS += -Wl,-rpath=$(LIB_DIR),--enable-new-dtags
 LDLIBS  += -ldl -lrt -pthread
