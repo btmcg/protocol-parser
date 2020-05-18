@@ -46,7 +46,7 @@ mp_list(benchmark::State& state)
 
     constexpr std::size_t node_size = 16 + sizeof(object);
     memory_pool pool(node_size, 100'000'000);
-    std::list<object, std_allocator<object, memory_pool>> list(pool);
+    std::list<object, std_allocator<object>> list(pool);
     for (auto _ : state)
         list.emplace_back(dist(rng), dist(rng), dist(rng));
 }
@@ -77,7 +77,7 @@ mp_unordered_map(benchmark::State& state)
     constexpr std::size_t node_size = 16 + sizeof(std::pair<const int, object>);
     memory_pool pool(node_size, 100'000'000);
     std::unordered_map<int, object, std::hash<int>, std::equal_to<int>,
-            std_allocator<std::pair<const int, object>, memory_pool>>
+            std_allocator<std::pair<const int, object>>>
             map(pool);
 
     for (auto _ : state)

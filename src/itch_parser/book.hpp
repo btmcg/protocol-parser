@@ -13,8 +13,8 @@ class tsbook
 private:
     memory_pool bid_pool_;
     memory_pool ask_pool_;
-    std::list<price_level, std_allocator<price_level, memory_pool>> bids_;
-    std::list<price_level, std_allocator<price_level, memory_pool>> asks_;
+    std::list<price_level, std_allocator<price_level>> bids_;
+    std::list<price_level, std_allocator<price_level>> asks_;
 
 public:
     tsbook() noexcept;

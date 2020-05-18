@@ -5,7 +5,7 @@
 #include <utility> // std::forward
 
 
-template <typename T, typename Allocator>
+template <typename T>
 class std_allocator : reference_storage
 {
 public:
@@ -19,7 +19,7 @@ public:
     template <typename U>
     struct rebind
     {
-        using other = std_allocator<U, Allocator>;
+        using other = std_allocator<U>;
     };
 
     using allocator_type = reference_storage::allocator_type;
@@ -32,7 +32,7 @@ public:
         // empty
     }
 
-    std_allocator<value_type, Allocator>
+    std_allocator<value_type>
     select_on_container_copy_construction() const
     {
         return *this;
@@ -90,25 +90,24 @@ public:
     }
 
 private:
-    template <typename T1, typename T2, typename Impl>
-    friend bool operator==(
-            std_allocator<T1, Impl> const& lhs, std_allocator<T2, Impl> const& rhs) noexcept;
+    template <typename T1, typename T2>
+    friend bool operator==(std_allocator<T1> const& lhs, std_allocator<T2> const& rhs) noexcept;
 
-    template <typename U, typename OtherAllocator>
+    template <typename U>
     friend class std_allocator;
 };
 
 
-template <typename T, typename U, typename Impl>
+template <typename T, typename U>
 bool
-operator==(std_allocator<T, Impl> const& lhs, std_allocator<U, Impl> const& rhs) noexcept
+operator==(std_allocator<T> const& lhs, std_allocator<U> const& rhs) noexcept
 {
     return &lhs.get_allocator() == &rhs.get_allocator();
 }
 
-template <typename T, typename U, typename Impl>
+template <typename T, typename U>
 bool
-operator!=(std_allocator<T, Impl> const& lhs, std_allocator<U, Impl> const& rhs) noexcept
+operator!=(std_allocator<T> const& lhs, std_allocator<U> const& rhs) noexcept
 {
     return !(lhs == rhs);
 }
