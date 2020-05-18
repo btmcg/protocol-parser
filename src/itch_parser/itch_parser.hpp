@@ -19,11 +19,6 @@ private:
     struct msg_stats
     {
         std::size_t msg_count = 0;
-        std::size_t add_count = 0;
-        std::size_t cancel_count = 0;
-        std::size_t delete_count = 0;
-        std::size_t executed_count = 0;
-        std::size_t trade_count = 0;
     };
 
 private:
@@ -163,18 +158,8 @@ itch_parser::print_stats() const noexcept
     // clang-format off
     fmt::print("parser msg stats\n"
                "  msgs processed:    {}\n"
-               "  add_orders:        {}\n"
-               "  cancel_orders:     {}\n"
-               "  delete_orders:     {}\n"
-               "  executed_orders:   {}\n"
-               "  trades:            {}\n"
                "  max_pool_capacity: {}\n",
         msg_stats_.msg_count,
-        msg_stats_.add_count,
-        msg_stats_.cancel_count,
-        msg_stats_.delete_count,
-        msg_stats_.executed_count,
-        msg_stats_.trade_count,
         max_pool_capacity);
     // clang-format on
 
@@ -209,7 +194,6 @@ itch_parser::handle_add_order(itch::add_order const* m) noexcept
     instruments_[index].book.add_order(o);
 
     ++instruments_[index].num_orders;
-    ++msg_stats_.add_count;
 }
 
 void
@@ -230,7 +214,6 @@ itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noex
     instruments_[index].book.add_order(o);
 
     ++instruments_[index].num_orders;
-    ++msg_stats_.add_count;
 }
 
 void
@@ -302,8 +285,6 @@ itch_parser::handle_order_cancel(itch::order_cancel const* m) noexcept
     std::uint32_t const cancelled_shares = be32toh(m->cancelled_shares);
 
     instruments_[index].book.cancel_order(o, cancelled_shares);
-
-    ++msg_stats_.cancel_count;
 }
 
 void
@@ -318,8 +299,6 @@ itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
     order& o = orders_[order_number];
     instruments_[index].book.delete_order(o);
     o.clear();
-
-    ++msg_stats_.delete_count;
 }
 
 void
@@ -344,8 +323,6 @@ itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
         if (instruments_[index].hi_price == InvalidHiPrice || order_price > instruments_[index].hi_price)
             instruments_[index].hi_price = order_price;
     }
-
-    ++msg_stats_.executed_count;
 }
 
 void
@@ -372,8 +349,6 @@ itch_parser::handle_order_executed_with_price(itch::order_executed_with_price co
 
         instruments_[index].trade_qty += executed_qty;
     }
-
-    ++msg_stats_.executed_count;
 }
 
 void
@@ -482,7 +457,6 @@ itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
     instruments_[index].trade_qty += qty;
 
     ++instruments_[index].num_trades;
-    ++msg_stats_.trade_count;
 }
 
 void
@@ -493,5 +467,4 @@ itch_parser::handle_trade_cross(itch::trade_cross const* m) noexcept
 
     // trade cross msgs shouldn't be counted in market statistic
     // calculations (i think) (pg 16)
-    ++msg_stats_.trade_count;
 }
