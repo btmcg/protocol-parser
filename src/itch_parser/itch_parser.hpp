@@ -413,6 +413,42 @@ itch_parser::handle_system_event(itch::system_event const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
+
+    switch (m->event_code) {
+        case 'O':
+            fmt::print("{} system event: start of messages\n",
+                    to_local_time(from_itch_timestamp(m->timestamp)));
+            break;
+
+        case 'S':
+            fmt::print("{} system event: system start\n",
+                    to_local_time(from_itch_timestamp(m->timestamp)));
+            break;
+
+        case 'Q':
+            fmt::print("{} system event: market open\n",
+                    to_local_time(from_itch_timestamp(m->timestamp)));
+            break;
+
+        case 'M':
+            fmt::print("{} system event: market close\n",
+                    to_local_time(from_itch_timestamp(m->timestamp)));
+            break;
+
+        case 'E':
+            fmt::print("{} system event: system stop\n",
+                    to_local_time(from_itch_timestamp(m->timestamp)));
+            break;
+
+        case 'C':
+            fmt::print("{} system event: end of messages\n",
+                    to_local_time(from_itch_timestamp(m->timestamp)));
+            break;
+
+        default:
+            fmt::print(stderr, "received unknown system event code: {}\n", m->event_code);
+            break;
+    }
 }
 
 void
