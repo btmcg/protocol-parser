@@ -60,8 +60,8 @@ private:
     void handle_order_replace(itch::order_replace const*) noexcept;
     void handle_reg_sho_restriction(itch::reg_sho_restriction const*) noexcept;
     void handle_stock_directory(itch::stock_directory const*) noexcept;
-    void handle_system_event(itch::system_event const*) noexcept;
     void handle_stock_trading_action(itch::stock_trading_action const*) noexcept;
+    void handle_system_event(itch::system_event const*) noexcept;
     void handle_trade_non_cross(itch::trade_non_cross const*) noexcept;
     void handle_trade_cross(itch::trade_cross const*) noexcept;
 };
@@ -414,6 +414,13 @@ itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
 }
 
 void
+itch_parser::handle_stock_trading_action(itch::stock_trading_action const* m) noexcept
+{
+    if (logging_enabled_)
+        fmt::print(log_, "{}\n", *m);
+}
+
+void
 itch_parser::handle_system_event(itch::system_event const* m) noexcept
 {
     if (logging_enabled_)
@@ -461,13 +468,6 @@ itch_parser::handle_system_event(itch::system_event const* m) noexcept
             market_state_ = MarketState::Unknown;
             break;
     }
-}
-
-void
-itch_parser::handle_stock_trading_action(itch::stock_trading_action const* m) noexcept
-{
-    if (logging_enabled_)
-        fmt::print(log_, "{}\n", *m);
 }
 
 void
