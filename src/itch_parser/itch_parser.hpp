@@ -318,9 +318,11 @@ itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
     instruments_[index].trade_qty += executed_qty;
 
     if (market_state_ == MarketState::Open) {
-        if (instruments_[index].lo_price == InvalidLoPrice || order_price < instruments_[index].lo_price)
+        if (instruments_[index].lo_price == InvalidLoPrice
+                || order_price < instruments_[index].lo_price)
             instruments_[index].lo_price = order_price;
-        if (instruments_[index].hi_price == InvalidHiPrice || order_price > instruments_[index].hi_price)
+        if (instruments_[index].hi_price == InvalidHiPrice
+                || order_price > instruments_[index].hi_price)
             instruments_[index].hi_price = order_price;
     }
 }
@@ -342,9 +344,11 @@ itch_parser::handle_order_executed_with_price(itch::order_executed_with_price co
 
     // only record stats if execution is marked "printable"
     if (market_state_ == MarketState::Open && m->printable == 'Y') {
-        if (instruments_[index].lo_price == InvalidLoPrice || executed_price < instruments_[index].lo_price)
+        if (instruments_[index].lo_price == InvalidLoPrice
+                || executed_price < instruments_[index].lo_price)
             instruments_[index].lo_price = executed_price;
-        if (instruments_[index].hi_price == InvalidHiPrice || o.price > instruments_[index].hi_price)
+        if (instruments_[index].hi_price == InvalidHiPrice
+                || o.price > instruments_[index].hi_price)
             instruments_[index].hi_price = executed_price;
 
         instruments_[index].trade_qty += executed_qty;

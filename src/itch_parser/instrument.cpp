@@ -46,6 +46,7 @@ instrument::set_name(char const (&nm)[8]) noexcept
 std::string
 instrument::stats_str() const noexcept
 {
+    // clang-format off
     return fmt::format("{}\n"
                        "  locate:    {}\n"
                        "  low:       {:.4f}\n"
@@ -53,8 +54,14 @@ instrument::stats_str() const noexcept
                        "  trades:    {}\n"
                        "  trade vol: {}\n"
                        "  orders:    {}\n",
-            name, locate, to_hr_price(lo_price), to_hr_price(hi_price), num_trades, trade_qty,
-            num_orders);
+        name,
+        locate,
+        to_hr_price(lo_price),
+        to_hr_price(hi_price),
+        num_trades,
+        trade_qty,
+        num_orders);
+    // clang-format on
 }
 
 std::string
@@ -66,8 +73,16 @@ instrument::stats_csv_header() noexcept
 std::string
 instrument::stats_csv() const noexcept
 {
-    return fmt::format("{},{},{:.4f},{:.4f},{},{},{}", name, locate, to_hr_price(lo_price),
-            to_hr_price(hi_price), num_trades, trade_qty, num_orders);
+    // clang-format off
+    return fmt::format("{},{},{:.4f},{:.4f},{},{},{}",
+        name,
+        locate,
+        to_hr_price(lo_price),
+        to_hr_price(hi_price),
+        num_trades,
+        trade_qty,
+        num_orders);
+    // clang-format on
 }
 
 std::size_t

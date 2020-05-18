@@ -47,6 +47,7 @@ struct order
     }
 };
 
+// clang-format off
 enum class MarketState : std::uint8_t
 {
     Open = 0,               // 0930 - 1600
@@ -56,6 +57,7 @@ enum class MarketState : std::uint8_t
     SystemDown = 4,         // 2005 - x
     Unknown = 5,
 };
+// clang-format on
 
 /**********************************************************************/
 
