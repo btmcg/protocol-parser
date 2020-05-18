@@ -50,12 +50,22 @@ struct order
 // clang-format off
 enum class MarketState : std::uint8_t
 {
-    Open = 0,               // 0930 - 1600
-    SystemUp = 1,           // x - 0400
-    AcceptingOrders = 2,    // 0400 - 0930
-    Closed = 3,             // 1600 - 2000
-    SystemDown = 4,         // 2005 - x
-    Unknown = 5,
+    Open = 0,           // 0930 - 1600
+    SystemUp,           // x - 0400
+    AcceptingOrders,    // 0400 - 0930
+    Closed,             // 1600 - 2000
+    SystemDown,         // 2005 - x
+    Unknown,
+};
+
+enum class InstrumentState : std::uint8_t
+{
+    Trading = 0,
+    Halted,             ///< halted market-wide
+    OperationalHalted,  ///< only halted on nasdaq
+    Paused,             ///< nasdaq-listed only
+    QuotationOnly,
+    Unknown,
 };
 // clang-format on
 

@@ -269,6 +269,15 @@ itch_parser::handle_operational_halt(itch::operational_halt const* m) noexcept
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
+
+    std::uint16_t const index = be16toh(m->stock_locate);
+
+    if (m->operational_halt_action == 'H')
+        instruments_[index].instrument_state = InstrumentState::OperationalHalted;
+    else if (m->operational_halt_action == 'T')
+        instruments_[index].instrument_state = InstrumentState::Trading;
+    else
+        fmt::print(stderr, "[ERROR] received unknown operational halt action: {}\n", *m);
 }
 
 void
@@ -397,6 +406,19 @@ itch_parser::handle_stock_trading_action(itch::stock_trading_action const* m) no
 {
     if (logging_enabled_)
         fmt::print(log_, "{}\n", *m);
+
+    std::uint16_t const index = be16toh(m->stock_locate);
+
+    // clang-format off
+    switch (m->trading_state) {
+        case 'H': instruments_[index].instrument_state = InstrumentState::OperationalHalted; break;
+        case 'P': instruments_[index].instrument_state = InstrumentState::Paused; break;
+        case 'T': instruments_[index].instrument_state = InstrumentState::Trading; break;
+        case 'Q': instruments_[index].instrument_state = InstrumentState::QuotationOnly; break;
+
+        default: fmt::print(stderr, "[ERROR] received unknown trading action: {}\n", *m); break;
+    }
+    // clang-format on
 }
 
 void

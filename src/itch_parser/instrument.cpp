@@ -1,5 +1,4 @@
 #include "instrument.hpp"
-#include "core.hpp"
 #include <fmt/format.h>
 
 
@@ -12,6 +11,7 @@ instrument::instrument() noexcept
         , num_trades(0)
         , trade_qty(0)
         , num_orders(0)
+        , instrument_state(InstrumentState::Unknown)
 {
     // empty
 }
@@ -25,6 +25,7 @@ instrument::instrument(std::uint16_t l, char const (&nm)[8]) noexcept
         , num_trades(0)
         , trade_qty(0)
         , num_orders(0)
+        , instrument_state(InstrumentState::Unknown)
 {
     set_name(nm);
 }
