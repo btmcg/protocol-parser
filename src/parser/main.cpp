@@ -1,3 +1,4 @@
+#include "version.hpp"
 #include "common/compiler.hpp"
 #include "common/time.hpp"
 #include "file_reader/file_reader.hpp"
@@ -67,7 +68,8 @@ namespace { // unnamed
                     break;
 
                 case 'v':
-                    std::fprintf(stdout, "%s\n", get_version_info_multiline().c_str());
+                    std::fprintf(stdout, "app_version=%s\n%s\n", ::VERSION,
+                            get_version_info_multiline().c_str());
                     std::exit(EXIT_SUCCESS);
                     break;
 
