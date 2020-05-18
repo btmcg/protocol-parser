@@ -65,12 +65,12 @@ file_reader::print_stats() const noexcept
 {
     // clang-format off
     fmt::print("reader stats\n"
-               "  file size:        {}\n"
-               "  bytes processed:  {}\n"
-               "  shift count:      {}\n"
-               "  bytes shifted:    {}\n"
-               "  inflate count:    {}\n"
-               "  time:             {}\n",
+               "  file size:       {}\n"
+               "  bytes processed: {}\n"
+               "  shift count:     {}\n"
+               "  bytes shifted:   {}\n"
+               "  inflate count:   {}\n"
+               "  time:            {}\n",
         file_size_,
         stats_.byte_count,
         stats_.shift_count,
