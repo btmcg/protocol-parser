@@ -16,7 +16,6 @@ instrument::instrument() noexcept
     // empty
 }
 
-
 instrument::instrument(std::uint16_t l, char const (&nm)[8]) noexcept
         : locate(l)
         , name()
@@ -29,7 +28,6 @@ instrument::instrument(std::uint16_t l, char const (&nm)[8]) noexcept
 {
     set_name(nm);
 }
-
 
 void
 instrument::set_name(char const (&nm)[8]) noexcept

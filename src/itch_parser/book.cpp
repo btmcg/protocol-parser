@@ -39,7 +39,6 @@ tsbook::add_order(order& o) noexcept
     }
 }
 
-
 void
 tsbook::delete_order(order& order) noexcept
 {

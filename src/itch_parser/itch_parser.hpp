@@ -109,7 +109,7 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
 
         // clang-format off
         // switch ordered by msg count on sample day (2020-01-30)
-        switch (hdr->message_type) {
+        switch (hdr->msg_type) {
             case 'A': handle_add_order(reinterpret_cast<add_order const*>(hdr)); break;
             case 'D': handle_order_delete(reinterpret_cast<order_delete const*>(hdr)); break;
             case 'U': handle_order_replace(reinterpret_cast<order_replace const*>(hdr)); break;
@@ -132,14 +132,13 @@ itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
             case 'W': handle_mwcb_status(reinterpret_cast<mwcb_status const*>(hdr)); break;
             case 'h': handle_operational_halt(reinterpret_cast<operational_halt const*>(hdr)); break;
             case 'B': handle_broken_trade(reinterpret_cast<broken_trade const*>(hdr)); break;
-                // clang-format on
 
             default:
-                fmt::print(
-                        stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->message_type);
+                fmt::print(stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->msg_type);
                 std::abort();
                 break;
         }
+        // clang-format on
 
         ++msg_stats_.msg_count;
         buf += msg_len;

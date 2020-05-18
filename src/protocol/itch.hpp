@@ -12,21 +12,21 @@ namespace itch {
         struct header
         {
             std::uint16_t length; ///< this field does not add to the message length
-            char message_type;
+            char msg_type;
             std::uint16_t stock_locate;
             std::uint16_t tracking_number;
             std::uint8_t timestamp[6];
         } PACKED;
         static_assert(sizeof(header) == 13);
 
-        /// message_type='S'
+        /// msg_type='S'
         struct system_event : public header
         {
             char event_code;
         } PACKED;
         static_assert(sizeof(system_event) - sizeof(header::length) == 12);
 
-        /// message_type='R'
+        /// msg_type='R'
         struct stock_directory : public header
         {
             char stock[8];
@@ -46,7 +46,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(stock_directory) - sizeof(header::length) == 39);
 
-        /// message_type='H'
+        /// msg_type='H'
         struct stock_trading_action : public header
         {
             char stock[8];
@@ -56,7 +56,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(stock_trading_action) - sizeof(header::length) == 25);
 
-        /// message_type='Y'
+        /// msg_type='Y'
         struct reg_sho_restriction : public header
         {
             char stock[8];
@@ -64,7 +64,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(reg_sho_restriction) - sizeof(header::length) == 20);
 
-        /// message_type='L'
+        /// msg_type='L'
         struct market_participant_position : public header
         {
             char mpid[4];
@@ -75,7 +75,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(market_participant_position) - sizeof(header::length) == 26);
 
-        /// message_type='V'
+        /// msg_type='V'
         struct mwcb_decline_level : public header
         {
             std::uint64_t level1;
@@ -84,14 +84,14 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(mwcb_decline_level) - sizeof(header::length) == 35);
 
-        /// message_type='W'
+        /// msg_type='W'
         struct mwcb_status : public header
         {
             char breached_level;
         } PACKED;
         static_assert(sizeof(mwcb_status) - sizeof(header::length) == 12);
 
-        /// message_type='K'
+        /// msg_type='K'
         struct ipo_quoting_period_update : public header
         {
             char stock[8];
@@ -101,7 +101,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(ipo_quoting_period_update) - sizeof(header::length) == 28);
 
-        /// message_type='J'
+        /// msg_type='J'
         struct luld_auction_collar : public header
         {
             char stock[8];
@@ -112,7 +112,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(luld_auction_collar) - sizeof(header::length) == 35);
 
-        /// message_type='h'
+        /// msg_type='h'
         struct operational_halt : public header
         {
             char stock[8];
@@ -121,7 +121,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(operational_halt) - sizeof(header::length) == 21);
 
-        /// message_type='A'
+        /// msg_type='A'
         struct add_order : public header
         {
             std::uint64_t order_reference_number;
@@ -132,7 +132,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(add_order) - sizeof(header::length) == 36);
 
-        /// message_type='F'
+        /// msg_type='F'
         struct add_order_with_mpid : public header
         {
             std::uint64_t order_reference_number;
@@ -144,7 +144,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(add_order_with_mpid) - sizeof(header::length) == 40);
 
-        /// message_type='E'
+        /// msg_type='E'
         struct order_executed : public header
         {
             std::uint64_t order_reference_number;
@@ -153,7 +153,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(order_executed) - sizeof(header::length) == 31);
 
-        /// message_type='C'
+        /// msg_type='C'
         struct order_executed_with_price : public header
         {
             std::uint64_t order_reference_number;
@@ -164,7 +164,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(order_executed_with_price) - sizeof(header::length) == 36);
 
-        /// message_type='X'
+        /// msg_type='X'
         struct order_cancel : public header
         {
             std::uint64_t order_reference_number;
@@ -172,14 +172,14 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(order_cancel) - sizeof(header::length) == 23);
 
-        /// message_type='D'
+        /// msg_type='D'
         struct order_delete : public header
         {
             std::uint64_t order_reference_number;
         } PACKED;
         static_assert(sizeof(order_delete) - sizeof(header::length) == 19);
 
-        /// message_type='U'
+        /// msg_type='U'
         struct order_replace : public header
         {
             std::uint64_t original_order_reference_number;
@@ -189,7 +189,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(order_replace) - sizeof(header::length) == 35);
 
-        /// message_type='P'
+        /// msg_type='P'
         struct trade_non_cross : public header
         {
             std::uint64_t order_reference_number;
@@ -201,7 +201,7 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(trade_non_cross) - sizeof(header::length) == 44);
 
-        /// message_type='Q'
+        /// msg_type='Q'
         struct trade_cross : public header
         {
             std::uint64_t shares;
@@ -212,14 +212,14 @@ namespace itch {
         } PACKED;
         static_assert(sizeof(trade_cross) - sizeof(header::length) == 40);
 
-        /// message_type='B'
+        /// msg_type='B'
         struct broken_trade : public header
         {
             std::uint64_t match_number;
         } PACKED;
         static_assert(sizeof(broken_trade) - sizeof(header::length) == 19);
 
-        /// message_type='I'
+        /// msg_type='I'
         struct noii : public header
         {
             std::uint64_t paired_shares;
