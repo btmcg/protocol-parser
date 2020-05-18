@@ -42,6 +42,14 @@ space2 := $(space)$(space)
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# function : uniq
+# returns  : a string with duplicate words removed
+# usage    : $(call uniq,<string>)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+uniq = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # function : clear-vars
 # returns  : nothing
 # usage    : $(call clear-vars)
@@ -249,6 +257,7 @@ build-local-target-rules =\
 # rationale: internal dependencies are based on the values given in
 #            LOCAL_LIBRARIES, so for each module provided, append all
 #            flags from that module to this module
+#            Note that certain variables are uniq'd.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 build-internal-dependencies =\
   $(foreach other_module,$(__modules.$1.LOCAL_LIBRARIES),\
@@ -257,6 +266,10 @@ build-internal-dependencies =\
     $(eval __modules.$1.LOCAL_CXXFLAGS += $(__modules.$(other_module).LOCAL_CXXFLAGS))\
     $(eval __modules.$1.LOCAL_LDFLAGS += $(__modules.$(other_module).LOCAL_LDFLAGS))\
     $(eval __modules.$1.LOCAL_LDLIBS += $(__modules.$(other_module).LOCAL_LDLIBS))\
+    \
+    $(eval __modules.$1.LOCAL_CPPFLAGS := $(call uniq,$(__modules.$1.LOCAL_CPPFLAGS)))\
+    $(eval __modules.$1.LOCAL_LDLIBS := $(call uniq,$(__modules.$1.LOCAL_LDLIBS)))\
+    $(eval __modules.$1.LOCAL_LDFLAGS := $(call uniq,$(__modules.$1.LOCAL_LDFLAGS)))\
   )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
