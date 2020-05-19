@@ -1,4 +1,5 @@
 #include "itch/book.hpp"
+#include "itch/core.hpp"
 #include <catch2/catch.hpp>
 #include <cstring>
 

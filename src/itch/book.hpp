@@ -1,6 +1,5 @@
 #pragma once
 
-#include "core.hpp"
 #include "allocator/memory_pool.hpp"
 #include "allocator/std_allocator.hpp"
 #include <cstdint>
@@ -8,6 +7,10 @@
 
 
 namespace itch {
+
+    struct order;
+    struct price_level;
+
 
     /// Two-sided book
     class tsbook
