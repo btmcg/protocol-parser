@@ -5,7 +5,7 @@
 
 
 namespace itch {
-    constexpr std::uint32_t InvalidPrice = 1'999'999'900;
+
     constexpr std::uint32_t InvalidHiPrice = std::numeric_limits<std::uint32_t>::min();
     constexpr std::uint32_t InvalidLoPrice = std::numeric_limits<std::uint32_t>::max();
 
@@ -21,7 +21,7 @@ namespace itch {
         std::uint32_t price = 0;
         std::uint32_t qty = 0;
 
-        price_level(std::uint32_t p, std::uint32_t q)
+        price_level(std::uint32_t p, std::uint32_t q) noexcept
                 : price(p)
                 , qty(q)
         {
@@ -72,8 +72,9 @@ namespace itch {
 
     /**********************************************************************/
 
+    /// converts nasdaq integer price to human readable floating point
     constexpr inline double
-    to_hr_price(std::uint32_t p)
+    to_hr_price(std::uint32_t p) noexcept
     {
         return (p == InvalidHiPrice || p == InvalidLoPrice) ? 0.0
                                                             : static_cast<double>(p) / 10000.0;

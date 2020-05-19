@@ -8,8 +8,8 @@ namespace itch {
 
     tsbook::tsbook() noexcept
             : bid_pool_(sizeof(price_level) + 16, 10000)
-            , ask_pool_(sizeof(price_level) + 16, 10000)
             , bids_(bid_pool_)
+            , ask_pool_(sizeof(price_level) + 16, 10000)
             , asks_(ask_pool_)
     {
         // empty
