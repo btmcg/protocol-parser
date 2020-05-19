@@ -10,7 +10,7 @@ namespace itch {
     constexpr std::uint32_t InvalidLoPrice = std::numeric_limits<std::uint32_t>::max();
 
 
-    enum Side : std::uint8_t
+    enum class Side : std::uint8_t
     {
         Bid = 0,
         Ask = 1

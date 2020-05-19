@@ -20,8 +20,8 @@ namespace itch {
     void
     mapped_book::add_order(order& o) noexcept
     {
-        auto* book = (o.side == Bid) ? &bids_ : &asks_;
-        auto* map = (o.side == Bid) ? &bid_map_ : &ask_map_;
+        auto* book = (o.side == Side::Bid) ? &bids_ : &asks_;
+        auto* map = (o.side == Side::Bid) ? &bid_map_ : &ask_map_;
 
         if (book->empty()) {
             auto new_itr = book->emplace(book->begin(), o.price, o.qty);
@@ -35,7 +35,7 @@ namespace itch {
             if (map_itr == map->end()) {
                 // find location in book
                 auto loc = std::find_if(book->begin(), book->end(), [&o](price_level const& pl) {
-                    return (o.side == Bid) ? pl.price <= o.price : pl.price >= o.price;
+                    return (o.side == Side::Bid) ? pl.price <= o.price : pl.price >= o.price;
                 });
 
                 // new price level
@@ -59,8 +59,8 @@ namespace itch {
 
         // decrease qty on price level, if it goes to zero, delete the level
         if (order.pl->qty <= order.qty) {
-            auto* book = (order.side == Bid) ? &bids_ : &asks_;
-            auto* map = (order.side == Bid) ? &bid_map_ : &ask_map_;
+            auto* book = (order.side == Side::Bid) ? &bids_ : &asks_;
+            auto* map = (order.side == Side::Bid) ? &bid_map_ : &ask_map_;
 
             auto map_itr = map->find(order.pl->price);
             book->erase(map_itr->second);
