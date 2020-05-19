@@ -6,6 +6,22 @@
 #include <list>
 
 
+// Book Interface:
+// struct book {
+//     book() noexcept;
+
+//     void add_order(order&) noexcept;
+//     void delete_order(order&) noexcept;
+//     void replace_order(order& old_order, order& new_order) noexcept;
+//     void cancel_order(order&, std::uint32_t remove_qty) noexcept;
+
+//     // accessors
+//     decltype(bids_) const& bids() const noexcept;
+//     decltype(asks_) const& asks() const noexcept;
+//     price_level best_bid() const noexcept;
+//     price_level best_ask() const noexcept;
+// };
+
 namespace itch {
 
     struct order;

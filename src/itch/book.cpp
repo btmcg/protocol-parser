@@ -16,28 +16,28 @@ namespace itch {
     }
 
     void
-    tsbook::add_order(order& o) noexcept
+    tsbook::add_order(order& order) noexcept
     {
-        auto* book = (o.side == Side::Bid) ? &bids_ : &asks_;
+        auto* book = (order.side == Side::Bid) ? &bids_ : &asks_;
 
         if (book->empty()) {
-            o.pl = &book->emplace_front(o.price, o.qty);
+            order.pl = &book->emplace_front(order.price, order.qty);
         } else {
             // find location in book
-            auto o_itr = std::find_if(book->begin(), book->end(), [&o](price_level const& pl) {
-                return (o.side == Side::Bid) ? pl.price <= o.price : pl.price >= o.price;
+            auto o_itr = std::find_if(book->begin(), book->end(), [&order](price_level const& pl) {
+                return (order.side == Side::Bid) ? pl.price <= order.price : pl.price >= order.price;
             });
 
             if (o_itr == book->end()) {
-                o.pl = &book->emplace_back(o.price, o.qty);
-            } else if (o_itr->price == o.price) {
+                order.pl = &book->emplace_back(order.price, order.qty);
+            } else if (o_itr->price == order.price) {
                 // price exists, adjust qty
-                o_itr->qty += o.qty;
-                o.pl = &(*o_itr);
+                o_itr->qty += order.qty;
+                order.pl = &(*o_itr);
             } else {
                 // new price level
-                auto i_itr = book->emplace(o_itr, o.price, o.qty);
-                o.pl = &(*i_itr);
+                auto i_itr = book->emplace(o_itr, order.price, order.qty);
+                order.pl = &(*i_itr);
             }
         }
     }
