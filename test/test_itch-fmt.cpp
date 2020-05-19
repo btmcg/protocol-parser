@@ -8,6 +8,7 @@
 
 TEST_CASE("get_midnight", "[itch-fmt]")
 {
+    using namespace itch;
     std::time_t now = std::time(nullptr);
     tm midnight_tm;
     ::localtime_r(&now, &midnight_tm);
@@ -21,6 +22,7 @@ TEST_CASE("get_midnight", "[itch-fmt]")
 
 TEST_CASE("to_local_time", "[itch-fmt]")
 {
+    using namespace itch;
     std::uint64_t const nsecs_since_midnight = 72000087028229;
     REQUIRE(to_local_time(nsecs_since_midnight) == "20:00:00.087028229");
     REQUIRE(to_local_time(nsecs_since_midnight - 1) == "20:00:00.087028228");

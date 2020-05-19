@@ -108,7 +108,7 @@ main(int argc, char** argv)
     tsc::init();
 
     try {
-        itch_parser parser(args.logging, args.stats_fp);
+        itch::itch_parser parser(args.logging, args.stats_fp);
         file_reader reader(args.input_file);
         reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
         reader.print_stats();

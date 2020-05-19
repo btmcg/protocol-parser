@@ -8,31 +8,34 @@
 #include <unordered_map>
 
 
-/// Book with std::list for ordered price levels and a
-/// std::unordered_map keyed by price for fast look-up.
-class mapped_book 
-{
-private:
-    memory_pool bid_pool_;
-    memory_pool ask_pool_;
-    std::list<price_level, std_allocator<price_level>> bids_;
-    std::list<price_level, std_allocator<price_level>> asks_;
-    std::unordered_map<std::uint32_t, decltype(bids_)::iterator> bid_map_;
-    std::unordered_map<std::uint32_t, decltype(asks_)::iterator> ask_map_;
+namespace itch {
+    /// Book with std::list for ordered price levels and a
+    /// std::unordered_map keyed by price for fast look-up.
+    class mapped_book
+    {
+    private:
+        memory_pool bid_pool_;
+        memory_pool ask_pool_;
+        std::list<price_level, std_allocator<price_level>> bids_;
+        std::list<price_level, std_allocator<price_level>> asks_;
+        std::unordered_map<std::uint32_t, decltype(bids_)::iterator> bid_map_;
+        std::unordered_map<std::uint32_t, decltype(asks_)::iterator> ask_map_;
 
-public:
-    mapped_book() noexcept;
-    void add_order(order&) noexcept;
-    void delete_order(order&) noexcept;
-    void replace_order(order& old_order, order& new_order) noexcept;
-    void cancel_order(order&, std::uint32_t remove_qty) noexcept;
+    public:
+        mapped_book() noexcept;
+        void add_order(order&) noexcept;
+        void delete_order(order&) noexcept;
+        void replace_order(order& old_order, order& new_order) noexcept;
+        void cancel_order(order&, std::uint32_t remove_qty) noexcept;
 
-    // accessors
-public:
-    decltype(bids_) const& bids() const noexcept;
-    decltype(asks_) const& asks() const noexcept;
-    price_level best_bid() const noexcept;
-    price_level best_ask() const noexcept;
-    std::size_t bid_pool_capacity() const noexcept;
-    std::size_t ask_pool_capacity() const noexcept;
-};
+        // accessors
+    public:
+        decltype(bids_) const& bids() const noexcept;
+        decltype(asks_) const& asks() const noexcept;
+        price_level best_bid() const noexcept;
+        price_level best_ask() const noexcept;
+        std::size_t bid_pool_capacity() const noexcept;
+        std::size_t ask_pool_capacity() const noexcept;
+    };
+
+} // namespace itch

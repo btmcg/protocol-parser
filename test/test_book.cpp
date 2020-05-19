@@ -2,8 +2,10 @@
 #include <catch2/catch.hpp>
 #include <cstring>
 
+
 TEST_CASE("tsbook", "[book]")
 {
+    using namespace itch;
     tsbook book;
 
     SECTION("add_order")

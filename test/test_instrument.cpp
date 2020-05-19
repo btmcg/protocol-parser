@@ -5,6 +5,8 @@
 
 TEST_CASE("initial state", "[instrument]")
 {
+    using namespace itch;
+
     SECTION("constructors")
     {
         instrument i1;

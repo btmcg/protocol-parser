@@ -7,7 +7,7 @@
 #include <ctime>
 
 
-namespace { // unnamed
+namespace itch {
     /// returns nsecs since midnight
     constexpr std::uint64_t
     from_itch_timestamp(std::uint8_t const (&timestamp)[6]) noexcept
@@ -49,7 +49,7 @@ namespace { // unnamed
 
         return fmt::format("{:%H:%M:%S}.{:0>9}", *std::localtime(&now), nsec);
     }
-} // namespace
+} // namespace itch
 
 
 template <>
@@ -65,6 +65,7 @@ struct fmt::formatter<itch::system_event>
     auto
     format(itch::system_event const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "system_event(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},event_code={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -85,6 +86,7 @@ struct fmt::formatter<itch::stock_directory>
     auto
     format(itch::stock_directory const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "stock_directory(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},market_category={},financial_status_indicator={},round_lot_size={},round_lots_only={},issue_classification={},issue_subtype={:.{}},authenticity={},short_sale_threshold_indicator={},ipo_flag={},luld_reference_price_tier={},etp_flag={},etp_leverage_factor={},inverse_indicator={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -110,6 +112,7 @@ struct fmt::formatter<itch::stock_trading_action>
     auto
     format(itch::stock_trading_action const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "stock_trading_action(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},trading_state={},reserved={},reason={:.{}})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -131,6 +134,7 @@ struct fmt::formatter<itch::reg_sho_restriction>
     auto
     format(itch::reg_sho_restriction const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "reg_sho_restriction(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},reg_sho_action={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -152,6 +156,7 @@ struct fmt::formatter<itch::market_participant_position>
     auto
     format(itch::market_participant_position const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "market_participant_position(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},mpid={:.{}},stock={:.{}},primary_market_maker={},market_maker_mode={},market_participant_state={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -174,6 +179,7 @@ struct fmt::formatter<itch::mwcb_decline_level>
     auto
     format(itch::mwcb_decline_level const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "mwcb_decline_level(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},level1={},level2={},level3={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -195,6 +201,7 @@ struct fmt::formatter<itch::mwcb_status>
     auto
     format(itch::mwcb_status const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "mwcb_status(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},breached_level={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -215,6 +222,7 @@ struct fmt::formatter<itch::ipo_quoting_period_update>
     auto
     format(itch::ipo_quoting_period_update const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "ipo_quoting_period_update(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},ipo_quotation_release_time={},ipo_quotation_release_qualifier={},ipo_price={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -237,6 +245,7 @@ struct fmt::formatter<itch::luld_auction_collar>
     auto
     format(itch::luld_auction_collar const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "luld_auction_collar(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},auction_collar_reference_price={},upper_auction_collar_price={},lower_auction_collar_price={},auction_collar_extension={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -259,6 +268,7 @@ struct fmt::formatter<itch::operational_halt>
     auto
     format(itch::operational_halt const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "operational_halt(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},stock={:.{}},market_code={},operational_halt_action={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -280,6 +290,7 @@ struct fmt::formatter<itch::add_order>
     auto
     format(itch::add_order const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "add_order(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},buy_sell_indicator={},shares={},stock={:.{}},price={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -302,6 +313,7 @@ struct fmt::formatter<itch::add_order_with_mpid>
     auto
     format(itch::add_order_with_mpid const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "add_order_with_mpid(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},buy_sell_indicator={},shares={},stock={:.{}},price={},attribution={:.{}})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -324,6 +336,7 @@ struct fmt::formatter<itch::order_executed>
     auto
     format(itch::order_executed const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "order_executed(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},executed_shares={},match_number={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -345,6 +358,7 @@ struct fmt::formatter<itch::order_executed_with_price>
     auto
     format(itch::order_executed_with_price const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "order_executed_with_price(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},executed_shares={},match_number={},printable={},execution_price={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -367,6 +381,7 @@ struct fmt::formatter<itch::order_cancel>
     auto
     format(itch::order_cancel const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "order_cancel(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},cancelled_shares={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -388,6 +403,7 @@ struct fmt::formatter<itch::order_delete>
     auto
     format(itch::order_delete const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "order_delete(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -408,6 +424,7 @@ struct fmt::formatter<itch::order_replace>
     auto
     format(itch::order_replace const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "order_replace(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},original_order_reference_number={},new_order_reference_number={},shares={},price={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -430,6 +447,7 @@ struct fmt::formatter<itch::trade_non_cross>
     auto
     format(itch::trade_non_cross const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "trade_non_cross(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},order_reference_number={},buy_sell_indicator={},shares={},stock={:.{}},price={},match_number={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -452,6 +470,7 @@ struct fmt::formatter<itch::trade_cross>
     auto
     format(itch::trade_cross const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "trade_cross(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},shares={},stock={:.{}},cross_price={},match_number={},cross_type={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -473,6 +492,7 @@ struct fmt::formatter<itch::broken_trade>
     auto
     format(itch::broken_trade const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "broken_trade(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},match_number={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
@@ -493,6 +513,7 @@ struct fmt::formatter<itch::noii>
     auto
     format(itch::noii const& m, FormatContext& ctx)
     {
+        using namespace itch;
         return format_to(ctx.out(),
                 "noii(length={},msg_type={},stock_locate={},tracking_number={},timestamp={},paired_shares={},imbalance_shares={},imbalance_direction={},stock={:.{}},far_price={},near_price={},current_reference_price={},cross_type={},price_variation_indicator={})",
                 be16toh(m.length), m.msg_type, be16toh(m.stock_locate), be16toh(m.tracking_number),
