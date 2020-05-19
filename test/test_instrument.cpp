@@ -1,4 +1,4 @@
-#include "itch_parser/instrument.hpp"
+#include "itch/instrument.hpp"
 #include <catch2/catch.hpp>
 #include <cstring>
 

@@ -1,5 +1,5 @@
 #include "file_reader/file_reader.hpp"
-#include "itch_parser/parser.hpp"
+#include "itch/parser.hpp"
 #include "util/compiler.hpp"
 #include "util/time.hpp"
 #include "util/version.hpp"

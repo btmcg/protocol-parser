@@ -14,7 +14,7 @@ lib/
 tags
 
 # executables
-src/parser/parser
+src/main/parser
 benchmark/benchmark-runner
 test/test-runner
 
