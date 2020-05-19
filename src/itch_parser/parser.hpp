@@ -15,7 +15,7 @@
 
 namespace itch {
 
-    class itch_parser
+    class parser
     {
     private:
         struct msg_stats
@@ -34,8 +34,8 @@ namespace itch {
         MarketState market_state_ = MarketState::Unknown;
 
     public:
-        itch_parser(bool log, std::filesystem::path const& stats_file) noexcept;
-        ~itch_parser() noexcept;
+        parser(bool log, std::filesystem::path const& stats_file) noexcept;
+        ~parser() noexcept;
         std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
         void print_stats() const noexcept;
 
@@ -65,7 +65,7 @@ namespace itch {
 
     /**********************************************************************/
 
-    itch_parser::itch_parser(bool enable_logging, std::filesystem::path const& stats_fp) noexcept
+    parser::parser(bool enable_logging, std::filesystem::path const& stats_fp) noexcept
             : instruments_()
             , orders_(800'000'000, order())
             , logging_enabled_(enable_logging)
@@ -81,7 +81,7 @@ namespace itch {
             stats_file_ = std::fopen(stats_filepath_.c_str(), "w");
     }
 
-    itch_parser::~itch_parser() noexcept
+    parser::~parser() noexcept
     {
         if (log_ != nullptr) {
             std::fclose(log_);
@@ -95,7 +95,7 @@ namespace itch {
     }
 
     std::size_t
-    itch_parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
+    parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
     {
         using namespace itch;
 
@@ -150,7 +150,7 @@ namespace itch {
     }
 
     void
-    itch_parser::print_stats() const noexcept
+    parser::print_stats() const noexcept
     {
         std::size_t max_pool_capacity = 0;
         for (auto const& itr : instruments_)
@@ -178,7 +178,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_add_order(itch::add_order const* m) noexcept
+    parser::handle_add_order(itch::add_order const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -198,7 +198,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
+    parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -218,28 +218,28 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_broken_trade(itch::broken_trade const* m) noexcept
+    parser::handle_broken_trade(itch::broken_trade const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    itch_parser::handle_ipo_quoting_period_update(itch::ipo_quoting_period_update const* m) noexcept
+    parser::handle_ipo_quoting_period_update(itch::ipo_quoting_period_update const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    itch_parser::handle_luld_auction_collar(itch::luld_auction_collar const* m) noexcept
+    parser::handle_luld_auction_collar(itch::luld_auction_collar const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    itch_parser::handle_market_participant_position(
+    parser::handle_market_participant_position(
             itch::market_participant_position const* m) noexcept
     {
         if (logging_enabled_)
@@ -247,28 +247,28 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_mwcb_decline_level(itch::mwcb_decline_level const* m) noexcept
+    parser::handle_mwcb_decline_level(itch::mwcb_decline_level const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    itch_parser::handle_mwcb_status(itch::mwcb_status const* m) noexcept
+    parser::handle_mwcb_status(itch::mwcb_status const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    itch_parser::handle_noii(itch::noii const* m) noexcept
+    parser::handle_noii(itch::noii const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    itch_parser::handle_operational_halt(itch::operational_halt const* m) noexcept
+    parser::handle_operational_halt(itch::operational_halt const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -284,7 +284,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_order_cancel(itch::order_cancel const* m) noexcept
+    parser::handle_order_cancel(itch::order_cancel const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -299,7 +299,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_order_delete(itch::order_delete const* m) noexcept
+    parser::handle_order_delete(itch::order_delete const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -313,7 +313,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_order_executed(itch::order_executed const* m) noexcept
+    parser::handle_order_executed(itch::order_executed const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -340,7 +340,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_order_executed_with_price(itch::order_executed_with_price const* m) noexcept
+    parser::handle_order_executed_with_price(itch::order_executed_with_price const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -369,7 +369,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_order_replace(itch::order_replace const* m) noexcept
+    parser::handle_order_replace(itch::order_replace const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -389,14 +389,14 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_reg_sho_restriction(itch::reg_sho_restriction const* m) noexcept
+    parser::handle_reg_sho_restriction(itch::reg_sho_restriction const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    itch_parser::handle_stock_directory(itch::stock_directory const* m) noexcept
+    parser::handle_stock_directory(itch::stock_directory const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -407,7 +407,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_stock_trading_action(itch::stock_trading_action const* m) noexcept
+    parser::handle_stock_trading_action(itch::stock_trading_action const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -427,7 +427,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_system_event(itch::system_event const* m) noexcept
+    parser::handle_system_event(itch::system_event const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -478,7 +478,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
+    parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -490,7 +490,7 @@ namespace itch {
     }
 
     void
-    itch_parser::handle_trade_cross(itch::trade_cross const* m) noexcept
+    parser::handle_trade_cross(itch::trade_cross const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);

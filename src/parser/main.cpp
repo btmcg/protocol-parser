@@ -1,5 +1,5 @@
 #include "file_reader/file_reader.hpp"
-#include "itch_parser/itch_parser.hpp"
+#include "itch_parser/parser.hpp"
 #include "util/compiler.hpp"
 #include "util/time.hpp"
 #include "util/version.hpp"
@@ -108,7 +108,7 @@ main(int argc, char** argv)
     tsc::init();
 
     try {
-        itch::itch_parser parser(args.logging, args.stats_fp);
+        itch::parser parser(args.logging, args.stats_fp);
         file_reader reader(args.input_file);
         reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
         reader.print_stats();
