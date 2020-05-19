@@ -33,12 +33,12 @@ namespace itch {
     private:
         instrument instruments_[MaxNumInstruments];
         std::vector<order> orders_;
-        bool logging_enabled_ = false;
-        FILE* log_ = nullptr;
-        std::filesystem::path stats_filepath_;
+        MarketState market_state_ = MarketState::Unknown;
         FILE* stats_file_ = nullptr;
         msg_stats msg_stats_;
-        MarketState market_state_ = MarketState::Unknown;
+        std::filesystem::path stats_filepath_;
+        bool logging_enabled_ = false;
+        FILE* log_ = nullptr;
 
     public:
         parser(bool log, std::filesystem::path const& stats_file) noexcept;
@@ -75,12 +75,12 @@ namespace itch {
     parser::parser(bool enable_logging, std::filesystem::path const& stats_fp) noexcept
             : instruments_()
             , orders_(MaxNumOrders, order())
-            , logging_enabled_(enable_logging)
-            , log_(nullptr)
-            , stats_filepath_(stats_fp)
+            , market_state_(MarketState::Unknown)
             , stats_file_(nullptr)
             , msg_stats_()
-            , market_state_(MarketState::Unknown)
+            , stats_filepath_(stats_fp)
+            , logging_enabled_(enable_logging)
+            , log_(nullptr)
     {
         if (logging_enabled_)
             log_ = std::fopen("itch.log", "w");
