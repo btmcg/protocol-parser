@@ -21,6 +21,7 @@ namespace itch {
     /// the number of distinct orders per run, cannot exceed this number
     constexpr std::uint32_t MaxNumOrders = 800'000'000;
 
+
     class parser
     {
     private:
@@ -46,27 +47,27 @@ namespace itch {
         void print_stats() const noexcept;
 
     private:
-        void handle_add_order(itch::add_order const*) noexcept;
-        void handle_add_order_with_mpid(itch::add_order_with_mpid const*) noexcept;
-        void handle_broken_trade(itch::broken_trade const*) noexcept;
-        void handle_ipo_quoting_period_update(itch::ipo_quoting_period_update const*) noexcept;
-        void handle_luld_auction_collar(itch::luld_auction_collar const*) noexcept;
-        void handle_market_participant_position(itch::market_participant_position const*) noexcept;
-        void handle_mwcb_decline_level(itch::mwcb_decline_level const*) noexcept;
-        void handle_mwcb_status(itch::mwcb_status const*) noexcept;
-        void handle_noii(itch::noii const*) noexcept;
-        void handle_operational_halt(itch::operational_halt const*) noexcept;
-        void handle_order_cancel(itch::order_cancel const*) noexcept;
-        void handle_order_delete(itch::order_delete const*) noexcept;
-        void handle_order_executed(itch::order_executed const*) noexcept;
-        void handle_order_executed_with_price(itch::order_executed_with_price const*) noexcept;
-        void handle_order_replace(itch::order_replace const*) noexcept;
-        void handle_reg_sho_restriction(itch::reg_sho_restriction const*) noexcept;
-        void handle_stock_directory(itch::stock_directory const*) noexcept;
-        void handle_stock_trading_action(itch::stock_trading_action const*) noexcept;
-        void handle_system_event(itch::system_event const*) noexcept;
-        void handle_trade_non_cross(itch::trade_non_cross const*) noexcept;
-        void handle_trade_cross(itch::trade_cross const*) noexcept;
+        void handle_add_order(add_order const*) noexcept;
+        void handle_add_order_with_mpid(add_order_with_mpid const*) noexcept;
+        void handle_broken_trade(broken_trade const*) noexcept;
+        void handle_ipo_quoting_period_update(ipo_quoting_period_update const*) noexcept;
+        void handle_luld_auction_collar(luld_auction_collar const*) noexcept;
+        void handle_market_participant_position(market_participant_position const*) noexcept;
+        void handle_mwcb_decline_level(mwcb_decline_level const*) noexcept;
+        void handle_mwcb_status(mwcb_status const*) noexcept;
+        void handle_noii(noii const*) noexcept;
+        void handle_operational_halt(operational_halt const*) noexcept;
+        void handle_order_cancel(order_cancel const*) noexcept;
+        void handle_order_delete(order_delete const*) noexcept;
+        void handle_order_executed(order_executed const*) noexcept;
+        void handle_order_executed_with_price(order_executed_with_price const*) noexcept;
+        void handle_order_replace(order_replace const*) noexcept;
+        void handle_reg_sho_restriction(reg_sho_restriction const*) noexcept;
+        void handle_stock_directory(stock_directory const*) noexcept;
+        void handle_stock_trading_action(stock_trading_action const*) noexcept;
+        void handle_system_event(system_event const*) noexcept;
+        void handle_trade_non_cross(trade_non_cross const*) noexcept;
+        void handle_trade_cross(trade_cross const*) noexcept;
     };
 
     /**********************************************************************/
@@ -184,7 +185,7 @@ namespace itch {
     }
 
     void
-    parser::handle_add_order(itch::add_order const* m) noexcept
+    parser::handle_add_order(add_order const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -204,7 +205,7 @@ namespace itch {
     }
 
     void
-    parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m) noexcept
+    parser::handle_add_order_with_mpid(add_order_with_mpid const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -224,56 +225,56 @@ namespace itch {
     }
 
     void
-    parser::handle_broken_trade(itch::broken_trade const* m) noexcept
+    parser::handle_broken_trade(broken_trade const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    parser::handle_ipo_quoting_period_update(itch::ipo_quoting_period_update const* m) noexcept
+    parser::handle_ipo_quoting_period_update(ipo_quoting_period_update const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    parser::handle_luld_auction_collar(itch::luld_auction_collar const* m) noexcept
+    parser::handle_luld_auction_collar(luld_auction_collar const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    parser::handle_market_participant_position(itch::market_participant_position const* m) noexcept
+    parser::handle_market_participant_position(market_participant_position const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    parser::handle_mwcb_decline_level(itch::mwcb_decline_level const* m) noexcept
+    parser::handle_mwcb_decline_level(mwcb_decline_level const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    parser::handle_mwcb_status(itch::mwcb_status const* m) noexcept
+    parser::handle_mwcb_status(mwcb_status const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    parser::handle_noii(itch::noii const* m) noexcept
+    parser::handle_noii(noii const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    parser::handle_operational_halt(itch::operational_halt const* m) noexcept
+    parser::handle_operational_halt(operational_halt const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -289,7 +290,7 @@ namespace itch {
     }
 
     void
-    parser::handle_order_cancel(itch::order_cancel const* m) noexcept
+    parser::handle_order_cancel(order_cancel const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -304,7 +305,7 @@ namespace itch {
     }
 
     void
-    parser::handle_order_delete(itch::order_delete const* m) noexcept
+    parser::handle_order_delete(order_delete const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -318,7 +319,7 @@ namespace itch {
     }
 
     void
-    parser::handle_order_executed(itch::order_executed const* m) noexcept
+    parser::handle_order_executed(order_executed const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -345,7 +346,7 @@ namespace itch {
     }
 
     void
-    parser::handle_order_executed_with_price(itch::order_executed_with_price const* m) noexcept
+    parser::handle_order_executed_with_price(order_executed_with_price const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -374,7 +375,7 @@ namespace itch {
     }
 
     void
-    parser::handle_order_replace(itch::order_replace const* m) noexcept
+    parser::handle_order_replace(order_replace const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -394,14 +395,14 @@ namespace itch {
     }
 
     void
-    parser::handle_reg_sho_restriction(itch::reg_sho_restriction const* m) noexcept
+    parser::handle_reg_sho_restriction(reg_sho_restriction const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
     }
 
     void
-    parser::handle_stock_directory(itch::stock_directory const* m) noexcept
+    parser::handle_stock_directory(stock_directory const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -412,7 +413,7 @@ namespace itch {
     }
 
     void
-    parser::handle_stock_trading_action(itch::stock_trading_action const* m) noexcept
+    parser::handle_stock_trading_action(stock_trading_action const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -432,7 +433,7 @@ namespace itch {
     }
 
     void
-    parser::handle_system_event(itch::system_event const* m) noexcept
+    parser::handle_system_event(system_event const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -483,7 +484,7 @@ namespace itch {
     }
 
     void
-    parser::handle_trade_non_cross(itch::trade_non_cross const* m) noexcept
+    parser::handle_trade_non_cross(trade_non_cross const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
@@ -495,7 +496,7 @@ namespace itch {
     }
 
     void
-    parser::handle_trade_cross(itch::trade_cross const* m) noexcept
+    parser::handle_trade_cross(trade_cross const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
