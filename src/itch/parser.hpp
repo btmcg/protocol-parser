@@ -23,7 +23,7 @@ namespace itch {
             /// the number of distinct instruments cannot exceed this number
             MaxNumInstruments = 9000,
 
-            /// the number of distinct orders per run, cannot exceed this number
+            /// the number of distinct orders per run cannot exceed this number
             MaxNumOrders = 800'000'000
         };
 
