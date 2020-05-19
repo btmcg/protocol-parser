@@ -1,7 +1,7 @@
 #pragma once
 
 #include "allocator/memory_pool.hpp"
-#include "allocator/std_allocator.hpp"
+#include "allocator/mp_allocator.hpp"
 #include <cstdint>
 #include <list>
 
@@ -18,8 +18,8 @@ namespace itch {
     private:
         memory_pool bid_pool_;
         memory_pool ask_pool_;
-        std::list<price_level, std_allocator<price_level>> bids_;
-        std::list<price_level, std_allocator<price_level>> asks_;
+        std::list<price_level, mp_allocator<price_level>> bids_;
+        std::list<price_level, mp_allocator<price_level>> asks_;
 
     public:
         tsbook() noexcept;

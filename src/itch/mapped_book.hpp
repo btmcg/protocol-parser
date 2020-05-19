@@ -2,7 +2,7 @@
 
 #include "core.hpp"
 #include "allocator/memory_pool.hpp"
-#include "allocator/std_allocator.hpp"
+#include "allocator/mp_allocator.hpp"
 #include <cstdint>
 #include <list>
 #include <unordered_map>
@@ -16,8 +16,8 @@ namespace itch {
     private:
         memory_pool bid_pool_;
         memory_pool ask_pool_;
-        std::list<price_level, std_allocator<price_level>> bids_;
-        std::list<price_level, std_allocator<price_level>> asks_;
+        std::list<price_level, mp_allocator<price_level>> bids_;
+        std::list<price_level, mp_allocator<price_level>> asks_;
         std::unordered_map<std::uint32_t, decltype(bids_)::iterator> bid_map_;
         std::unordered_map<std::uint32_t, decltype(asks_)::iterator> ask_map_;
 
