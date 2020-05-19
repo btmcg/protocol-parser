@@ -15,6 +15,12 @@
 
 namespace itch {
 
+    /// the number of distinct instruments cannot exceed this number
+    constexpr std::uint16_t MaxNumInstruments = 9000;
+
+    /// the number of distinct orders per run, cannot exceed this number
+    constexpr std::uint32_t MaxNumOrders = 800'000'000;
+
     class parser
     {
     private:
@@ -24,7 +30,7 @@ namespace itch {
         };
 
     private:
-        instrument instruments_[9000];
+        instrument instruments_[MaxNumInstruments];
         std::vector<order> orders_;
         bool logging_enabled_ = false;
         FILE* log_ = nullptr;
@@ -67,7 +73,7 @@ namespace itch {
 
     parser::parser(bool enable_logging, std::filesystem::path const& stats_fp) noexcept
             : instruments_()
-            , orders_(800'000'000, order())
+            , orders_(MaxNumOrders, order())
             , logging_enabled_(enable_logging)
             , log_(nullptr)
             , stats_filepath_(stats_fp)
