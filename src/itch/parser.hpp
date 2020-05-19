@@ -239,8 +239,7 @@ namespace itch {
     }
 
     void
-    parser::handle_market_participant_position(
-            itch::market_participant_position const* m) noexcept
+    parser::handle_market_participant_position(itch::market_participant_position const* m) noexcept
     {
         if (logging_enabled_)
             fmt::print(log_, "{}\n", *m);
