@@ -15,15 +15,18 @@
 
 namespace itch {
 
-    /// the number of distinct instruments cannot exceed this number
-    constexpr std::uint16_t MaxNumInstruments = 9000;
-
-    /// the number of distinct orders per run, cannot exceed this number
-    constexpr std::uint32_t MaxNumOrders = 800'000'000;
-
-
     class parser
     {
+    private:
+        enum
+        {
+            /// the number of distinct instruments cannot exceed this number
+            MaxNumInstruments = 9000,
+
+            /// the number of distinct orders per run, cannot exceed this number
+            MaxNumOrders = 800'000'000
+        };
+
     private:
         struct msg_stats
         {

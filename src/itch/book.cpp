@@ -25,7 +25,8 @@ namespace itch {
         } else {
             // find location in book
             auto o_itr = std::find_if(book->begin(), book->end(), [&order](price_level const& pl) {
-                return (order.side == Side::Bid) ? pl.price <= order.price : pl.price >= order.price;
+                return (order.side == Side::Bid) ? pl.price <= order.price
+                                                 : pl.price >= order.price;
             });
 
             if (o_itr == book->end()) {
