@@ -107,8 +107,6 @@ namespace itch {
     std::size_t
     parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
     {
-        using namespace itch;
-
         std::size_t bytes_processed = 0;
         std::uint8_t const* end = buf + bytes_to_read;
         while (buf + sizeof(header) < end) {
