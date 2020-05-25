@@ -83,7 +83,7 @@ endif
 
 # gcc optimization flags
 ifdef DEBUG
-  OPTFLAGS := -O0 -fno-inline -DBTMCG_DEBUG
+  OPTFLAGS := -O0 -fno-inline
   WARN += -Wno-error
 else
   OPTFLAGS := -O3 -DNDEBUG

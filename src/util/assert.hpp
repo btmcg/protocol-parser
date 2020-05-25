@@ -1,7 +1,7 @@
 #pragma once
 
 
-#ifdef BTMCG_DEBUG
+#ifndef NDEBUG
 #    define DEBUG_ASSERT(expr)                                                                   \
         do {                                                                                     \
             static_cast<void>((expr) || (handle_failed_debug_assertion("\"" #expr "\""), true)); \
