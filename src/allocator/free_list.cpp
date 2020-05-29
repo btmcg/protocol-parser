@@ -1,5 +1,6 @@
 #include "free_list.hpp"
 #include "util/assert.hpp"
+#include <algorithm> // std::max
 #include <climits> // CHAR_BIT
 #include <cstring> // std::memcpy
 #include <utility>
@@ -130,7 +131,9 @@ constexpr std::size_t free_list::min_element_alignment;
 free_list::free_list(std::size_t node_size) noexcept
         : first_(nullptr)
         , node_size_(node_size > min_element_size ? node_size : min_element_size)
-        , capacity_(0u)
+        , capacity_left_(0)
+        , used_(0)
+        , max_used_(0)
 {
     // empty
 }
@@ -144,10 +147,14 @@ free_list::free_list(std::size_t node_size, void* mem, std::size_t size) noexcep
 free_list::free_list(free_list&& other) noexcept
         : first_(other.first_)
         , node_size_(other.node_size_)
-        , capacity_(other.capacity_)
+        , capacity_left_(other.capacity_left_)
+        , used_(other.used_)
+        , max_used_(other.max_used_)
 {
     other.first_ = nullptr;
-    other.capacity_ = 0u;
+    other.capacity_left_ = 0;
+    other.used_ = 0;
+    other.max_used_ = 0;
 }
 
 free_list&
@@ -163,7 +170,9 @@ swap(free_list& a, free_list& b) noexcept
 {
     std::swap(a.first_, b.first_);
     std::swap(a.node_size_, b.node_size_);
-    std::swap(a.capacity_, b.capacity_);
+    std::swap(a.capacity_left_, b.capacity_left_);
+    std::swap(a.used_, b.used_);
+    std::swap(a.max_used_, b.max_used_);
 }
 
 void
@@ -178,7 +187,9 @@ void*
 free_list::allocate() noexcept
 {
     DEBUG_ASSERT(!empty());
-    --capacity_;
+    --capacity_left_;
+    ++used_;
+    max_used_ = std::max(max_used_, used_);
 
     std::uint8_t* mem = first_;
     first_ = list_get_next(first_);
@@ -200,7 +211,9 @@ free_list::allocate(std::size_t n) noexcept
         list_set_next(i.prev, i.next); // change next from previous to first after
     else
         first_ = i.next;
-    capacity_ -= i.size(node_size_);
+    capacity_left_ -= i.size(node_size_);
+    used_ += i.size(node_size_);
+    max_used_ = std::max(max_used_, used_);
 
     return i.first;
 }
@@ -208,7 +221,8 @@ free_list::allocate(std::size_t n) noexcept
 void
 free_list::deallocate(void* ptr) noexcept
 {
-    ++capacity_;
+    ++capacity_left_;
+    --used_;
 
     std::uint8_t* node = static_cast<std::uint8_t*>(ptr);
     list_set_next(node, first_);
@@ -238,9 +252,21 @@ free_list::alignment() const noexcept
 }
 
 std::size_t
-free_list::capacity() const noexcept
+free_list::capacity_left() const noexcept
 {
-    return capacity_;
+    return capacity_left_;
+}
+
+std::size_t
+free_list::used() const noexcept
+{
+    return used_;
+}
+
+std::size_t
+free_list::max_used() const noexcept
+{
+    return max_used_;
 }
 
 bool
@@ -263,5 +289,5 @@ free_list::insert_impl(void* mem, std::size_t size) noexcept
     list_set_next(cur, first_);
     first_ = static_cast<std::uint8_t*>(mem);
 
-    capacity_ += no_nodes;
+    capacity_left_ += no_nodes;
 }

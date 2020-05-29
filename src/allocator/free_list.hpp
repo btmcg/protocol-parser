@@ -28,7 +28,9 @@ public:
 
     std::size_t node_size() const noexcept;
     std::size_t alignment() const noexcept;
-    std::size_t capacity() const noexcept;
+    std::size_t capacity_left() const noexcept;
+    std::size_t used() const noexcept;
+    std::size_t max_used() const noexcept;
     bool empty() const noexcept;
 
 private:
@@ -37,5 +39,7 @@ private:
 private:
     std::uint8_t* first_ = nullptr;
     std::size_t node_size_ = 0;
-    std::size_t capacity_ = 0;
+    std::size_t capacity_left_ = 0;
+    std::size_t used_ = 0;
+    std::size_t max_used_ = 0; ///< only for stats tracking
 };

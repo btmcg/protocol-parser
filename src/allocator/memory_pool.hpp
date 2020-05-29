@@ -84,15 +84,15 @@ public:
     }
 
     std::size_t
-    capacity() const noexcept
+    max_used() const noexcept
     {
-        return free_list_.capacity();
+        return free_list_.max_used();
     }
 
     std::size_t
     capacity_left() const noexcept
     {
-        return free_list_.capacity() * node_size();
+        return free_list_.capacity_left() * node_size();
     }
 
     std::size_t
