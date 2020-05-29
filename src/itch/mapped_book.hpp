@@ -3,12 +3,12 @@
 #include "core.hpp"
 #include "allocator/memory_pool.hpp"
 #include "allocator/mp_allocator.hpp"
-#include <cstdint>
 #include <list>
 #include <unordered_map>
 
 
 namespace itch {
+
     /// Book with std::list for ordered price levels and a
     /// std::unordered_map keyed by price for fast look-up.
     class mapped_book
@@ -26,7 +26,7 @@ namespace itch {
         void add_order(order&) noexcept;
         void delete_order(order&) noexcept;
         void replace_order(order& old_order, order& new_order) noexcept;
-        void cancel_order(order&, std::uint32_t remove_qty) noexcept;
+        void cancel_order(order&, qty_t remove_qty) noexcept;
 
         // accessors
     public:

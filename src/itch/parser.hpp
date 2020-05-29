@@ -305,7 +305,7 @@ namespace itch {
         std::uint64_t const order_number = be64toh(m->order_reference_number);
 
         order& o = orders_[order_number];
-        std::uint32_t const cancelled_shares = be32toh(m->cancelled_shares);
+        qty_t const cancelled_shares = be32toh(m->cancelled_shares);
 
         instruments_[index].book.cancel_order(o, cancelled_shares);
     }
@@ -334,7 +334,7 @@ namespace itch {
         std::uint64_t const order_number = be64toh(m->order_reference_number);
 
         order& o = orders_[order_number];
-        std::uint32_t const executed_qty = be32toh(m->executed_shares);
+        qty_t const executed_qty = be32toh(m->executed_shares);
         price_t const order_price = o.price;
 
         instruments_[index].book.cancel_order(o, executed_qty);
@@ -367,7 +367,7 @@ namespace itch {
         std::uint64_t const order_number = be64toh(m->order_reference_number);
 
         order& o = orders_[order_number];
-        std::uint32_t const executed_qty = be32toh(m->executed_shares);
+        qty_t const executed_qty = be32toh(m->executed_shares);
         price_t const executed_price = be32toh(m->execution_price);
 
         instruments_[index].book.cancel_order(o, executed_qty);

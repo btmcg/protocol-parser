@@ -78,7 +78,7 @@ namespace itch {
     }
 
     void
-    tsbook::cancel_order(order& order, std::uint32_t remove_qty) noexcept
+    tsbook::cancel_order(order& order, qty_t remove_qty) noexcept
     {
         if (remove_qty >= order.qty) {
             // this cancel will remove the order
