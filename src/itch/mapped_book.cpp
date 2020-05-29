@@ -121,16 +121,4 @@ namespace itch {
         return asks_.front();
     }
 
-    std::size_t
-    mapped_book::bid_pool_capacity() const noexcept
-    {
-        return bid_pool_.capacity();
-    }
-
-    std::size_t
-    mapped_book::ask_pool_capacity() const noexcept
-    {
-        return ask_pool_.capacity();
-    }
-
 } // namespace itch

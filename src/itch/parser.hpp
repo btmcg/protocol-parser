@@ -160,16 +160,21 @@ namespace itch {
     void
     parser::print_stats() const noexcept
     {
-        std::size_t max_pool_capacity = 0;
-        for (auto const& itr : instruments_)
-            max_pool_capacity = std::max(max_pool_capacity, itr.allocator_stats());
+        std::size_t max_bid_pool_used = 0;
+        std::size_t max_ask_pool_used = 0;
+        for (auto const& itr : instruments_) {
+            max_bid_pool_used = std::max(max_bid_pool_used, itr.allocator_stats().first);
+            max_ask_pool_used = std::max(max_ask_pool_used, itr.allocator_stats().second);
+        }
 
         // clang-format off
         fmt::print("parser msg stats\n"
                 "  msgs processed:    {}\n"
-                "  max_pool_capacity: {}\n",
+                "  max_bid_pool_used: {}\n"
+                "  max_ask_pool_used: {}\n",
             msg_stats_.msg_count,
-            max_pool_capacity);
+            max_bid_pool_used,
+            max_ask_pool_used);
         // clang-format on
 
         if (stats_file_ != nullptr) {

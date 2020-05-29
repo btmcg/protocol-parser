@@ -86,10 +86,10 @@ namespace itch {
         // clang-format on
     }
 
-    std::size_t
+    std::pair<std::size_t, std::size_t>
     instrument::allocator_stats() const noexcept
     {
-        return std::max(book.bid_pool_capacity(), book.ask_pool_capacity());
+        return std::make_pair(book.max_bid_pool_used(), book.max_ask_pool_used());
     }
 
 } // namespace itch

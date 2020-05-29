@@ -120,15 +120,15 @@ namespace itch {
     }
 
     std::size_t
-    tsbook::bid_pool_capacity() const noexcept
+    tsbook::max_bid_pool_used() const noexcept
     {
-        return bid_pool_.capacity();
+        return bid_pool_.max_used();
     }
 
     std::size_t
-    tsbook::ask_pool_capacity() const noexcept
+    tsbook::max_ask_pool_used() const noexcept
     {
-        return ask_pool_.capacity();
+        return ask_pool_.max_used();
     }
 
 } // namespace itch

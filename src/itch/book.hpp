@@ -50,8 +50,8 @@ namespace itch {
         decltype(asks_) const& asks() const noexcept;
         price_level best_bid() const noexcept;
         price_level best_ask() const noexcept;
-        std::size_t bid_pool_capacity() const noexcept;
-        std::size_t ask_pool_capacity() const noexcept;
+        std::size_t max_bid_pool_used() const noexcept;
+        std::size_t max_ask_pool_used() const noexcept;
     };
 
 } // namespace itch
