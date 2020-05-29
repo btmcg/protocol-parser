@@ -163,8 +163,9 @@ namespace itch {
         std::size_t max_bid_pool_used = 0;
         std::size_t max_ask_pool_used = 0;
         for (auto const& itr : instruments_) {
-            max_bid_pool_used = std::max(max_bid_pool_used, itr.allocator_stats().first);
-            max_ask_pool_used = std::max(max_ask_pool_used, itr.allocator_stats().second);
+            auto [bid_used, ask_used] = itr.allocator_stats();
+            max_bid_pool_used = std::max(max_bid_pool_used, bid_used);
+            max_ask_pool_used = std::max(max_ask_pool_used, ask_used);
         }
 
         // clang-format off
