@@ -107,7 +107,7 @@ file_reader::process_gz(Callable&& fn) noexcept
         ret = ::inflate(&zstrm, Z_NO_FLUSH);
         switch (ret) {
             case Z_STREAM_ERROR:
-                fmt::print(stderr, "Z_NEED_DICT\n");
+                fmt::print(stderr, "Z_STREAM_ERROR\n");
                 return false;
             case Z_NEED_DICT:
                 fmt::print(stderr, "Z_NEED_DICT\n");
