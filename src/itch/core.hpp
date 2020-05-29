@@ -6,8 +6,10 @@
 
 namespace itch {
 
-    constexpr std::uint32_t InvalidHiPrice = std::numeric_limits<std::uint32_t>::min();
-    constexpr std::uint32_t InvalidLoPrice = std::numeric_limits<std::uint32_t>::max();
+    using price_t = std::uint32_t;
+
+    constexpr price_t InvalidHiPrice = std::numeric_limits<price_t>::min();
+    constexpr price_t InvalidLoPrice = std::numeric_limits<price_t>::max();
 
 
     enum class Side : std::uint8_t
@@ -18,10 +20,10 @@ namespace itch {
 
     struct price_level
     {
-        std::uint32_t price = 0;
+        price_t price = 0;
         std::uint32_t qty = 0;
 
-        price_level(std::uint32_t p, std::uint32_t q) noexcept
+        price_level(price_t p, std::uint32_t q) noexcept
                 : price(p)
                 , qty(q)
         {
@@ -32,7 +34,7 @@ namespace itch {
     struct order
     {
         Side side = Side::Bid;
-        std::uint32_t price = 0;
+        price_t price = 0;
         std::uint32_t qty = 0;
         price_level* pl = nullptr;
         std::uint64_t ts = 0;
@@ -74,7 +76,7 @@ namespace itch {
 
     /// converts nasdaq integer price to human readable floating point
     constexpr inline double
-    to_hr_price(std::uint32_t p) noexcept
+    to_hr_price(price_t p) noexcept
     {
         return (p == InvalidHiPrice || p == InvalidLoPrice) ? 0.0
                                                             : static_cast<double>(p) / 10000.0;

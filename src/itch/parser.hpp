@@ -335,7 +335,7 @@ namespace itch {
 
         order& o = orders_[order_number];
         std::uint32_t const executed_qty = be32toh(m->executed_shares);
-        std::uint32_t const order_price = o.price;
+        price_t const order_price = o.price;
 
         instruments_[index].book.cancel_order(o, executed_qty);
         instruments_[index].trade_qty += executed_qty;
@@ -368,7 +368,7 @@ namespace itch {
 
         order& o = orders_[order_number];
         std::uint32_t const executed_qty = be32toh(m->executed_shares);
-        std::uint32_t const executed_price = be32toh(m->execution_price);
+        price_t const executed_price = be32toh(m->execution_price);
 
         instruments_[index].book.cancel_order(o, executed_qty);
 
@@ -478,7 +478,8 @@ namespace itch {
                 // update close prices if needed
                 for (auto& i : instruments_) {
                     if (i.close_price == 0)
-                        i.close_price = (i.last_trade_price == 0) ? i.open_price : i.last_trade_price;
+                        i.close_price
+                                = (i.last_trade_price == 0) ? i.open_price : i.last_trade_price;
                 }
                 break;
 
@@ -524,11 +525,11 @@ namespace itch {
         // calculations (i think) (pg 16)
         std::uint16_t const index = be16toh(m->stock_locate);
         if (m->cross_type == 'O') {
-            std::uint32_t const cp = be32toh(m->cross_price);
+            price_t const cp = be32toh(m->cross_price);
             if (cp != 0)
                 instruments_[index].open_price = cp;
         } else if (m->cross_type == 'C') {
-            std::uint32_t const cp = be32toh(m->cross_price);
+            price_t const cp = be32toh(m->cross_price);
             if (cp != 0)
                 instruments_[index].close_price = cp;
         }

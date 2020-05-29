@@ -18,8 +18,8 @@ namespace itch {
         memory_pool ask_pool_;
         std::list<price_level, mp_allocator<price_level>> bids_;
         std::list<price_level, mp_allocator<price_level>> asks_;
-        std::unordered_map<std::uint32_t, decltype(bids_)::iterator> bid_map_;
-        std::unordered_map<std::uint32_t, decltype(asks_)::iterator> ask_map_;
+        std::unordered_map<price_t, decltype(bids_)::iterator> bid_map_;
+        std::unordered_map<price_t, decltype(asks_)::iterator> ask_map_;
 
     public:
         mapped_book() noexcept;

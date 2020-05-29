@@ -14,11 +14,11 @@ namespace itch {
         char name[8];
         tsbook book;
 
-        std::uint32_t open_price = 0;
-        std::uint32_t close_price = 0;
-        std::uint32_t last_trade_price = 0;
-        std::uint32_t lo_price = InvalidHiPrice;
-        std::uint32_t hi_price = InvalidLoPrice;
+        price_t open_price = 0;
+        price_t close_price = 0;
+        price_t last_trade_price = 0;
+        price_t lo_price = InvalidHiPrice;
+        price_t hi_price = InvalidLoPrice;
         std::uint32_t num_trades = 0;
         std::uint32_t trade_qty = 0;
         std::uint32_t num_orders = 0;
@@ -32,7 +32,7 @@ namespace itch {
         std::string stats_str() const noexcept;
         static std::string stats_csv_header() noexcept;
         std::string stats_csv() const noexcept;
-        std::pair<std::size_t,std::size_t> allocator_stats() const noexcept;
+        std::pair<std::size_t, std::size_t> allocator_stats() const noexcept;
     };
 
 } // namespace itch
