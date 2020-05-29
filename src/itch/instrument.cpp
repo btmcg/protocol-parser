@@ -8,6 +8,8 @@ namespace itch {
             : locate(0)
             , name{}
             , book()
+            , open_price(0)
+            , close_price(0)
             , lo_price(InvalidLoPrice)
             , hi_price(InvalidHiPrice)
             , num_trades(0)
@@ -22,6 +24,8 @@ namespace itch {
             : locate(l)
             , name()
             , book()
+            , open_price(0)
+            , close_price(0)
             , lo_price(InvalidLoPrice)
             , hi_price(InvalidHiPrice)
             , num_trades(0)
@@ -68,16 +72,18 @@ namespace itch {
     std::string
     instrument::stats_csv_header() noexcept
     {
-        return "name,locate,lo_price,hi_price,num_trades,trade_vol,num_orders";
+        return "name,locate,open,close,lo,hi,num_trades,trade_vol,num_orders";
     }
 
     std::string
     instrument::stats_csv() const noexcept
     {
         // clang-format off
-        return fmt::format("{},{},{:.4f},{:.4f},{},{},{}",
+        return fmt::format("{},{},{:.4f},{:.4f},{:.4f},{:.4f},{},{},{}",
             name,
             locate,
+            to_hr_price(open_price),
+            to_hr_price(close_price),
             to_hr_price(lo_price),
             to_hr_price(hi_price),
             num_trades,

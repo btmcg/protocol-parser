@@ -14,6 +14,9 @@ namespace itch {
         char name[8];
         tsbook book;
 
+        std::uint32_t open_price = 0;
+        std::uint32_t close_price = 0;
+        std::uint32_t last_trade_price = 0;
         std::uint32_t lo_price = InvalidHiPrice;
         std::uint32_t hi_price = InvalidLoPrice;
         std::uint32_t num_trades = 0;
