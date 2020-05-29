@@ -39,21 +39,21 @@ public:
     void print_stats() const noexcept;
 
     template <typename Callable>
-    bool process_file(Callable&& fn) noexcept;
+    bool process_file(Callable&& fn);
 
 private:
     template <typename Callable>
-    bool process_raw(Callable&& fn) noexcept;
+    bool process_raw(Callable&& fn);
 
     template <typename Callable>
-    bool process_gz(Callable&& fn) noexcept;
+    bool process_gz(Callable&& fn);
 };
 
 /**********************************************************************/
 
 template <typename Callable>
 bool
-file_reader::process_file(Callable&& fn) noexcept
+file_reader::process_file(Callable&& fn)
 {
     // FIXME: in clang 10, extension() seems to get optimized out
     if (input_file_.string().substr(input_file_.string().size() - 3) == ".gz")
@@ -64,7 +64,7 @@ file_reader::process_file(Callable&& fn) noexcept
 
 template <typename Callable>
 bool
-file_reader::process_raw(Callable&& fn) noexcept
+file_reader::process_raw(Callable&& fn)
 {
     std::uint8_t const* ptr = reinterpret_cast<decltype(ptr)>(f_ptr_);
     stats_.nsec_count += tsc::get_nsecs();
@@ -76,7 +76,7 @@ file_reader::process_raw(Callable&& fn) noexcept
 
 template <typename Callable>
 bool
-file_reader::process_gz(Callable&& fn) noexcept
+file_reader::process_gz(Callable&& fn)
 {
     stats_.nsec_count += tsc::get_nsecs();
 
