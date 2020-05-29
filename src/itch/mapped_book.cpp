@@ -6,8 +6,8 @@
 namespace itch {
 
     mapped_book::mapped_book() noexcept
-            : bid_pool_(sizeof(price_level) + 16, 10000)
-            , ask_pool_(sizeof(price_level) + 16, 10000)
+            : bid_pool_(sizeof(price_level) + 16, 5000)
+            , ask_pool_(sizeof(price_level) + 16, 5000)
             , bids_(bid_pool_)
             , asks_(ask_pool_)
             , bid_map_()
