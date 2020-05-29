@@ -47,7 +47,7 @@ mp_list(benchmark::State& state)
     constexpr std::size_t node_size = 16 + sizeof(object);
     memory_pool pool(node_size, 100'000'000);
     std::list<object, mp_allocator<object>> list(pool);
-    for (auto _ : state)
+    for (auto _ : state) // NOLINT
         list.emplace_back(dist(rng), dist(rng), dist(rng));
 }
 BENCHMARK(mp_list);
@@ -61,7 +61,7 @@ std_list(benchmark::State& state)
             0, std::numeric_limits<int>::max());
 
     std::list<object> list;
-    for (auto _ : state)
+    for (auto _ : state) // NOLINT
         list.emplace_back(dist(rng), dist(rng), dist(rng));
 }
 BENCHMARK(std_list);
@@ -80,7 +80,7 @@ mp_unordered_map(benchmark::State& state)
             mp_allocator<std::pair<const int, object>>>
             map(pool);
 
-    for (auto _ : state)
+    for (auto _ : state) // NOLINT
         map.emplace(dist(rng), object(dist(rng), static_cast<std::uint64_t>(dist(rng)), dist(rng)));
 }
 BENCHMARK(mp_unordered_map);
@@ -94,7 +94,7 @@ std_unordered_map(benchmark::State& state)
             0, std::numeric_limits<int>::max());
 
     std::unordered_map<int, object> map;
-    for (auto _ : state)
+    for (auto _ : state) // NOLINT
         map.emplace(dist(rng), object(dist(rng), static_cast<std::uint64_t>(dist(rng)), dist(rng)));
 }
 BENCHMARK(std_unordered_map);
