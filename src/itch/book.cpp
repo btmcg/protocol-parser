@@ -1,5 +1,4 @@
 #include "book.hpp"
-#include "core.hpp"
 #include <fmt/format.h>
 #include <algorithm>
 
