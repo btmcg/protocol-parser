@@ -39,12 +39,11 @@ namespace itch {
         MarketState market_state_ = MarketState::Unknown;
         FILE* stats_file_ = nullptr;
         msg_stats msg_stats_;
-        std::filesystem::path stats_filepath_;
         bool logging_enabled_ = false;
         FILE* log_ = nullptr;
 
     public:
-        parser(bool log, std::filesystem::path const& stats_file) noexcept;
+        parser(bool enable_logging, std::string const& stats_fname) noexcept;
         ~parser() noexcept;
         std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
         void print_stats() const noexcept;
@@ -75,20 +74,16 @@ namespace itch {
 
     /**********************************************************************/
 
-    parser::parser(bool enable_logging, std::filesystem::path const& stats_fp) noexcept
+    parser::parser(bool enable_logging, std::string const& stats_fname) noexcept
             : instruments_()
             , orders_(MaxNumOrders, order())
             , market_state_(MarketState::Unknown)
-            , stats_file_(nullptr)
+            , stats_file_(stats_fname.empty() ? nullptr : std::fopen(stats_fname.c_str(), "w"))
             , msg_stats_()
-            , stats_filepath_(stats_fp)
             , logging_enabled_(enable_logging)
-            , log_(nullptr)
+            , log_(logging_enabled_ ? std::fopen("itch.log", "w") : nullptr)
     {
-        if (logging_enabled_)
-            log_ = std::fopen("itch.log", "w");
-        if (!stats_filepath_.empty())
-            stats_file_ = std::fopen(stats_filepath_.c_str(), "w");
+        // empty
     }
 
     parser::~parser() noexcept
