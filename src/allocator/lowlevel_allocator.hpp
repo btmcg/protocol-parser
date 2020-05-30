@@ -1,8 +1,6 @@
 #pragma once
 
 #include "util/assert.hpp"
-#include <fmt/format.h>
-#include <cerrno>
 #include <cstdlib> // std::aligned_alloc
 #include <memory>
 #include <new>
@@ -13,7 +11,7 @@ class bad_allocation : public std::bad_alloc
 public:
     bad_allocation() noexcept = default;
 
-    char const*
+    constexpr char const*
     what() const noexcept override
     {
         return "lowlevel_allocator bad allocation";
@@ -25,28 +23,28 @@ template <typename Functor>
 class lowlevel_allocator
 {
 public:
-    lowlevel_allocator() noexcept
+    constexpr lowlevel_allocator() noexcept
     {
         // empty
     }
 
-    lowlevel_allocator(lowlevel_allocator&&) noexcept
+    constexpr lowlevel_allocator(lowlevel_allocator&&) noexcept
     {
         // empty
     }
 
-    ~lowlevel_allocator() noexcept
+    constexpr ~lowlevel_allocator() noexcept
     {
         // empty
     }
 
-    lowlevel_allocator&
+    constexpr lowlevel_allocator&
     operator=(lowlevel_allocator&&) noexcept
     {
         return *this;
     }
 
-    [[nodiscard]] void*
+    [[nodiscard]] constexpr void*
     allocate_node(std::size_t size, std::size_t alignment)
     {
         void* memory = Functor::allocate(size, alignment);
@@ -56,13 +54,14 @@ public:
         return memory;
     }
 
-    void
-    deallocate_node(void* node, std::size_t size, std::size_t alignment) noexcept
+    constexpr void
+    deallocate_node(void* node, std::size_t size, std::size_t alignment) noexcept(
+            noexcept(Functor::deallocate(nullptr, 0, 0)))
     {
         Functor::deallocate(node, size, alignment);
     }
 
-    std::size_t
+    constexpr std::size_t
     max_node_size() const noexcept
     {
         return Functor::max_node_size();
