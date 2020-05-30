@@ -6,8 +6,12 @@
 
 namespace itch {
 
+    /// itch-specific price type
     using price_t = std::uint32_t;
+
+    /// itch-specific quantity type
     using qty_t = std::uint32_t;
+
 
     constexpr price_t InvalidHiPrice = std::numeric_limits<price_t>::min();
     constexpr price_t InvalidLoPrice = std::numeric_limits<price_t>::max();
@@ -24,7 +28,7 @@ namespace itch {
         price_t price = 0;
         qty_t qty = 0;
 
-        price_level(price_t p, qty_t q) noexcept
+        constexpr price_level(price_t p, qty_t q) noexcept
                 : price(p)
                 , qty(q)
         {
@@ -38,9 +42,9 @@ namespace itch {
         price_t price = 0;
         qty_t qty = 0;
         price_level* pl = nullptr;
-        std::uint64_t ts = 0;
+        std::uint64_t ts = 0; ///< nsecs since epoch
 
-        void
+        constexpr void
         clear() noexcept
         {
             side = Side::Bid;
