@@ -8,25 +8,25 @@ class reference_storage
 public:
     using allocator_type = memory_pool;
 
-    reference_storage() noexcept = default;
-    ~reference_storage() noexcept = default;
+    constexpr reference_storage() noexcept = default;
+    constexpr ~reference_storage() noexcept = default;
 
-    reference_storage(memory_pool& alloc) noexcept
+    constexpr reference_storage(memory_pool& alloc) noexcept
             : alloc_(&alloc)
     {
         // empty
     }
 
-    reference_storage(reference_storage const&) noexcept = default;
-    reference_storage& operator=(reference_storage const&) noexcept = default;
+    constexpr reference_storage(reference_storage const&) noexcept = default;
+    constexpr reference_storage& operator=(reference_storage const&) noexcept = default;
 
-    bool
+    constexpr bool
     is_valid() const noexcept
     {
         return alloc_ != nullptr;
     }
 
-    memory_pool&
+    constexpr memory_pool&
     get_allocator() const noexcept
     {
         return *alloc_;
