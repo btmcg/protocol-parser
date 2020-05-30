@@ -1,6 +1,6 @@
 #include "assert.hpp"
 #include <fmt/format.h>
-#include <cstdlib>
+#include <cstdlib> // std::abort
 
 
 void
