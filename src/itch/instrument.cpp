@@ -4,22 +4,6 @@
 
 namespace itch {
 
-    instrument::instrument() noexcept
-            : locate(0)
-            , name{}
-            , book()
-            , open_price(0)
-            , close_price(0)
-            , lo_price(InvalidLoPrice)
-            , hi_price(InvalidHiPrice)
-            , num_trades(0)
-            , trade_qty(0)
-            , num_orders(0)
-            , instrument_state(InstrumentState::Unknown)
-    {
-        // empty
-    }
-
     instrument::instrument(std::uint16_t l, char const (&nm)[8]) noexcept
             : locate(l)
             , name()
