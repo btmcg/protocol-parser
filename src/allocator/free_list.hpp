@@ -35,7 +35,7 @@ namespace detail {
     get_int(void* address) noexcept
     {
         DEBUG_ASSERT(address != nullptr);
-        std::uintptr_t res;
+        std::uintptr_t res = 0;
         std::memcpy(&res, address, sizeof(std::uintptr_t));
         return res;
     }
