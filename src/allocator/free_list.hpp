@@ -71,10 +71,10 @@ namespace detail {
     // i.e. array
     struct interval
     {
-        std::uint8_t* prev; // last before
-        std::uint8_t* first; // first in
-        std::uint8_t* last; // last in
-        std::uint8_t* next; // first after
+        std::uint8_t* prev = nullptr; // last before
+        std::uint8_t* first = nullptr; // first in
+        std::uint8_t* last = nullptr; // last in
+        std::uint8_t* next = nullptr; // first after
 
         // number of nodes in the interval
         constexpr std::size_t

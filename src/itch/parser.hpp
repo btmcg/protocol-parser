@@ -300,8 +300,7 @@ namespace itch {
         else {
             try {
                 fmt::print(stderr, "[ERROR] received unknown operational halt action: {}\n", *m);
-            }
-            catch (...) {
+            } catch (...) {
                 // suppress
             }
         }
@@ -380,7 +379,6 @@ namespace itch {
 
         // only record stats if execution is marked "printable"
         if (market_state_ == MarketState::Open && m->printable == 'Y') {
-
             if (instruments_[index].lo == InvalidLoPrice || executed_price < instruments_[index].lo)
                 instruments_[index].lo = executed_price;
             if (instruments_[index].hi == InvalidHiPrice || executed_price > instruments_[index].hi)
@@ -502,8 +500,8 @@ namespace itch {
                     break;
 
                 default:
-                    fmt::print(
-                            stderr, "[ERROR] received unknown system event code: {}\n", m->event_code);
+                    fmt::print(stderr, "[ERROR] received unknown system event code: {}\n",
+                            m->event_code);
                     market_state_ = MarketState::Unknown;
                     break;
             }
