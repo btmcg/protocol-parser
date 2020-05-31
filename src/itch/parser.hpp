@@ -46,9 +46,11 @@ namespace itch {
         parser(bool enable_logging, std::string const& stats_fname) noexcept;
         ~parser() noexcept;
         std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
-        void print_stats() const noexcept;
+        void print_stats() const;
 
     private:
+        template <typename T>
+        void log_msg(T const*) noexcept;
         void handle_add_order(add_order const*) noexcept;
         void handle_add_order_with_mpid(add_order_with_mpid const*) noexcept;
         void handle_broken_trade(broken_trade const*) noexcept;
@@ -156,7 +158,7 @@ namespace itch {
     }
 
     void
-    parser::print_stats() const noexcept
+    parser::print_stats() const
     {
         std::size_t max_bid_pool_used = 0;
         std::size_t max_ask_pool_used = 0;
@@ -189,11 +191,25 @@ namespace itch {
         }
     }
 
+    template <typename T>
+    void
+    parser::log_msg(T const* m) noexcept
+    {
+        if (!logging_enabled_)
+            return;
+
+        try {
+            fmt::print(log_, "{}\n", *m);
+        } catch (fmt::format_error const&) {
+            // suppress
+        }
+    }
+
+
     void
     parser::handle_add_order(add_order const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
         std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -212,8 +228,7 @@ namespace itch {
     void
     parser::handle_add_order_with_mpid(add_order_with_mpid const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
         std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -232,57 +247,49 @@ namespace itch {
     void
     parser::handle_broken_trade(broken_trade const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
     }
 
     void
     parser::handle_ipo_quoting_period_update(ipo_quoting_period_update const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
     }
 
     void
     parser::handle_luld_auction_collar(luld_auction_collar const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
     }
 
     void
     parser::handle_market_participant_position(market_participant_position const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
     }
 
     void
     parser::handle_mwcb_decline_level(mwcb_decline_level const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
     }
 
     void
     parser::handle_mwcb_status(mwcb_status const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
     }
 
     void
     parser::handle_noii(noii const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
     }
 
     void
     parser::handle_operational_halt(operational_halt const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
 
@@ -290,15 +297,20 @@ namespace itch {
             instruments_[index].instrument_state = InstrumentState::OperationalHalted;
         else if (m->operational_halt_action == 'T')
             instruments_[index].instrument_state = InstrumentState::Trading;
-        else
-            fmt::print(stderr, "[ERROR] received unknown operational halt action: {}\n", *m);
+        else {
+            try {
+                fmt::print(stderr, "[ERROR] received unknown operational halt action: {}\n", *m);
+            }
+            catch (fmt::format_error const&) {
+                // suppress
+            }
+        }
     }
 
     void
     parser::handle_order_cancel(order_cancel const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
         std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -312,8 +324,7 @@ namespace itch {
     void
     parser::handle_order_delete(order_delete const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
         std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -326,8 +337,7 @@ namespace itch {
     void
     parser::handle_order_executed(order_executed const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
         std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -357,8 +367,7 @@ namespace itch {
     void
     parser::handle_order_executed_with_price(order_executed_with_price const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
         std::uint64_t const order_number = be64toh(m->order_reference_number);
@@ -386,8 +395,7 @@ namespace itch {
     void
     parser::handle_order_replace(order_replace const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
         std::uint64_t const orig_order_number = be64toh(m->original_order_reference_number);
@@ -406,15 +414,13 @@ namespace itch {
     void
     parser::handle_reg_sho_restriction(reg_sho_restriction const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
     }
 
     void
     parser::handle_stock_directory(stock_directory const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
         instruments_[index].locate = index;
@@ -424,8 +430,7 @@ namespace itch {
     void
     parser::handle_stock_trading_action(stock_trading_action const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
 
@@ -436,7 +441,13 @@ namespace itch {
             case 'T': instruments_[index].instrument_state = InstrumentState::Trading; break;
             case 'Q': instruments_[index].instrument_state = InstrumentState::QuotationOnly; break;
 
-            default: fmt::print(stderr, "[ERROR] received unknown trading action: {}\n", *m); break;
+            default:
+                try {
+                    fmt::print(stderr, "[ERROR] received unknown trading action: {}\n", *m);
+                } catch (fmt::format_error const&) {
+                    // suppress
+                }
+                break;
         }
         // clang-format on
     }
@@ -444,65 +455,67 @@ namespace itch {
     void
     parser::handle_system_event(system_event const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
-        switch (m->event_code) {
-            case 'O':
-                fmt::print("{} system event: start of messages\n",
-                        to_local_time(from_itch_timestamp(m->timestamp)));
-                market_state_ = MarketState::SystemUp;
-                break;
+        try {
+            switch (m->event_code) {
+                case 'O':
+                    fmt::print("{} system event: start of messages\n",
+                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    market_state_ = MarketState::SystemUp;
+                    break;
 
-            case 'S':
-                fmt::print("{} system event: system start\n",
-                        to_local_time(from_itch_timestamp(m->timestamp)));
-                market_state_ = MarketState::AcceptingOrders;
-                break;
+                case 'S':
+                    fmt::print("{} system event: system start\n",
+                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    market_state_ = MarketState::AcceptingOrders;
+                    break;
 
-            case 'Q':
-                fmt::print("{} system event: market open\n",
-                        to_local_time(from_itch_timestamp(m->timestamp)));
-                market_state_ = MarketState::Open;
-                break;
+                case 'Q':
+                    fmt::print("{} system event: market open\n",
+                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    market_state_ = MarketState::Open;
+                    break;
 
-            case 'M':
-                fmt::print("{} system event: market close\n",
-                        to_local_time(from_itch_timestamp(m->timestamp)));
-                market_state_ = MarketState::Closed;
+                case 'M':
+                    fmt::print("{} system event: market close\n",
+                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    market_state_ = MarketState::Closed;
 
-                // update close prices if needed
-                for (auto& i : instruments_) {
-                    if (i.close == 0)
-                        i.close = (i.last == 0) ? i.open : i.last;
-                }
-                break;
+                    // update close prices if needed
+                    for (auto& i : instruments_) {
+                        if (i.close == 0)
+                            i.close = (i.last == 0) ? i.open : i.last;
+                    }
+                    break;
 
-            case 'E':
-                fmt::print("{} system event: system stop\n",
-                        to_local_time(from_itch_timestamp(m->timestamp)));
-                market_state_ = MarketState::SystemDown;
-                break;
+                case 'E':
+                    fmt::print("{} system event: system stop\n",
+                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    market_state_ = MarketState::SystemDown;
+                    break;
 
-            case 'C':
-                fmt::print("{} system event: end of messages\n",
-                        to_local_time(from_itch_timestamp(m->timestamp)));
-                market_state_ = MarketState::Unknown;
-                break;
+                case 'C':
+                    fmt::print("{} system event: end of messages\n",
+                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    market_state_ = MarketState::Unknown;
+                    break;
 
-            default:
-                fmt::print(
-                        stderr, "[ERROR] received unknown system event code: {}\n", m->event_code);
-                market_state_ = MarketState::Unknown;
-                break;
+                default:
+                    fmt::print(
+                            stderr, "[ERROR] received unknown system event code: {}\n", m->event_code);
+                    market_state_ = MarketState::Unknown;
+                    break;
+            }
+        } catch (fmt::format_error const&) {
+            // suppress
         }
     }
 
     void
     parser::handle_trade_non_cross(trade_non_cross const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
         instruments_[index].trade_qty += be32toh(m->shares);
@@ -513,8 +526,7 @@ namespace itch {
     void
     parser::handle_trade_cross(trade_cross const* m) noexcept
     {
-        if (logging_enabled_)
-            fmt::print(log_, "{}\n", *m);
+        log_msg(m);
 
         // trade cross msgs shouldn't be counted in market statistic
         // calculations (i think) (pg 16)
