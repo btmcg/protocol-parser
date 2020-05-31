@@ -139,7 +139,10 @@ namespace itch {
                 case 'B': handle_broken_trade(reinterpret_cast<broken_trade const*>(hdr)); break;
 
                 default:
-                    fmt::print(stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->msg_type);
+                    try {
+                        fmt::print(stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->msg_type);
+                    } catch (...)
+                    {}
                     std::abort();
                     break;
             }
@@ -368,6 +371,7 @@ namespace itch {
 
         // only record stats if execution is marked "printable"
         if (market_state_ == MarketState::Open && m->printable == 'Y') {
+
             if (instruments_[index].lo == InvalidLoPrice || executed_price < instruments_[index].lo)
                 instruments_[index].lo = executed_price;
             if (instruments_[index].hi == InvalidHiPrice || executed_price > instruments_[index].hi)
