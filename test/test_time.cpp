@@ -1,7 +1,5 @@
 #include "util/time.hpp"
 #include <catch2/catch.hpp>
-#include <fmt/format.h>
-#include <cstdint>
 #include <ctime>
 #include <iostream>
 #include <string>

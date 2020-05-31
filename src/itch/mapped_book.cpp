@@ -1,6 +1,7 @@
 #include "mapped_book.hpp"
 #include <fmt/format.h>
 #include <algorithm>
+#include <cstdio>
 
 
 namespace itch {

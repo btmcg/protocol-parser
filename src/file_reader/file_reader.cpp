@@ -4,7 +4,7 @@
 #include <unistd.h> // ::lseek
 #include <cerrno>
 #include <cstring> // std::strerror
-#include <iostream>
+#include <stdexcept> // std::runtime_error
 #include <tuple>
 
 

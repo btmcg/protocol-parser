@@ -1,7 +1,6 @@
 #include "protocol/itch-fmt.hpp"
 #include <catch2/catch.hpp>
-#include <fmt/chrono.h>
-#include <fmt/format.h>
+#include <cstdint>
 #include <ctime>
 #include <string>
 
