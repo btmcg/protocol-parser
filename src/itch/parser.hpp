@@ -200,7 +200,7 @@ namespace itch {
 
         try {
             fmt::print(log_, "{}\n", *m);
-        } catch (fmt::format_error const&) {
+        } catch (...) {
             // suppress
         }
     }
@@ -301,7 +301,7 @@ namespace itch {
             try {
                 fmt::print(stderr, "[ERROR] received unknown operational halt action: {}\n", *m);
             }
-            catch (fmt::format_error const&) {
+            catch (...) {
                 // suppress
             }
         }
@@ -444,7 +444,7 @@ namespace itch {
             default:
                 try {
                     fmt::print(stderr, "[ERROR] received unknown trading action: {}\n", *m);
-                } catch (fmt::format_error const&) {
+                } catch (...) {
                     // suppress
                 }
                 break;
@@ -507,7 +507,7 @@ namespace itch {
                     market_state_ = MarketState::Unknown;
                     break;
             }
-        } catch (fmt::format_error const&) {
+        } catch (...) {
             // suppress
         }
     }
