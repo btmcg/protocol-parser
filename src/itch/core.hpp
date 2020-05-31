@@ -44,7 +44,7 @@ namespace itch {
         price_level* pl = nullptr;
         std::uint64_t ts = 0; ///< nsecs since epoch
 
-        constexpr void
+        void
         clear() noexcept
         {
             side = Side::Bid;
