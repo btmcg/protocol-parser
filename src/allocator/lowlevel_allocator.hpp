@@ -1,7 +1,6 @@
 #pragma once
 
-#include "util/assert.hpp"
-#include <cstdlib> // std::aligned_alloc
+#include <cstdlib> // ::posix_memalign
 #include <memory>
 #include <new>
 
@@ -45,7 +44,7 @@ public:
     }
 
     [[nodiscard]] constexpr void*
-    allocate_node(std::size_t size, std::size_t alignment)
+    allocate_node(std::size_t size, std::size_t alignment) const
     {
         void* memory = Functor::allocate(size, alignment);
         if (memory == nullptr)
@@ -55,8 +54,8 @@ public:
     }
 
     constexpr void
-    deallocate_node(void* node, std::size_t size, std::size_t alignment) noexcept(
-            noexcept(Functor::deallocate(nullptr, 0, 0)))
+    deallocate_node(void* node, std::size_t size, std::size_t alignment) const
+            noexcept(noexcept(Functor::deallocate(nullptr, 0, 0)))
     {
         Functor::deallocate(node, size, alignment);
     }
@@ -115,8 +114,8 @@ struct posix_allocator
     [[nodiscard]] static void*
     allocate(std::size_t size, std::size_t alignment = 8) noexcept
     {
-        DEBUG_ASSERT(size % alignment == 0);
-        return std::aligned_alloc(alignment, size);
+        void* ptr = nullptr;
+        return (::posix_memalign(&ptr, alignment, size) == 0) ? ptr : nullptr;
     }
 
     static void

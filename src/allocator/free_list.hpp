@@ -1,15 +1,15 @@
 #pragma once
 
 #include "util/assert.hpp"
-#include <algorithm>    // std::max
-#include <climits>      // CHAR_BIT
-#include <cstring>      // std::memcpy
-#include <utility>
-#include <cstddef>      // std::max_align_t, std::size_t
+#include <algorithm> // std::max
+#include <climits> // CHAR_BIT
+#include <cstddef> // std::max_align_t, std::size_t
 #include <cstdint>
+#include <cstring> // std::memcpy
+#include <utility>
 
 
-namespace {
+namespace detail {
 
     // constants
     constexpr std::size_t MaxAlignment = alignof(std::max_align_t);
@@ -92,7 +92,7 @@ namespace {
     // begin and end are the proxy nodes
     // assumes list is not empty
     // similar to list_search_array()
-    interval
+    inline interval
     list_search_array(std::uint8_t* first, std::size_t bytes_needed, std::size_t node_size) noexcept
     {
         interval i;
@@ -127,7 +127,7 @@ namespace {
         return {nullptr, nullptr, nullptr, nullptr};
     }
 
-} // namespace
+} // namespace detail
 
 
 class free_list
@@ -170,7 +170,7 @@ private:
 
 constexpr free_list::free_list(std::size_t node_size) noexcept
         : first_(nullptr)
-        , node_size_(node_size > MinElementSize ? node_size : MinElementSize)
+        , node_size_(node_size > detail::MinElementSize ? node_size : detail::MinElementSize)
         , capacity_left_(0)
         , used_(0)
         , max_used_(0)
@@ -222,7 +222,7 @@ free_list::allocate() noexcept
     max_used_ = std::max(max_used_, used_);
 
     std::uint8_t* mem = first_;
-    first_ = list_get_next(first_);
+    first_ = detail::list_get_next(first_);
     return mem;
 }
 
@@ -233,12 +233,12 @@ free_list::allocate(std::size_t n) noexcept
     if (n <= node_size_)
         return allocate();
 
-    interval i = list_search_array(first_, n, node_size_);
+    detail::interval i = detail::list_search_array(first_, n, node_size_);
     if (i.first == nullptr)
         return nullptr;
 
     if (i.prev)
-        list_set_next(i.prev, i.next); // change next from previous to first after
+        detail::list_set_next(i.prev, i.next); // change next from previous to first after
     else
         first_ = i.next;
     capacity_left_ -= i.size(node_size_);
@@ -255,7 +255,7 @@ free_list::deallocate(void* ptr) noexcept
     --used_;
 
     std::uint8_t* node = static_cast<std::uint8_t*>(ptr);
-    list_set_next(node, first_);
+    detail::list_set_next(node, first_);
     first_ = node;
 }
 
@@ -277,7 +277,8 @@ free_list::node_size() const noexcept
 constexpr std::size_t
 free_list::alignment() const noexcept
 {
-    return node_size_ >= MaxAlignment ? MaxAlignment : (1u << ilog2(node_size_));
+    return node_size_ >= detail::MaxAlignment ? detail::MaxAlignment
+                                              : (1u << detail::ilog2(node_size_));
 }
 
 constexpr std::size_t
@@ -323,10 +324,10 @@ free_list::insert_impl(void* mem, std::size_t size) noexcept
 
     std::uint8_t* cur = static_cast<std::uint8_t*>(mem);
     for (std::size_t i = 0u; i != no_nodes - 1; ++i) {
-        list_set_next(cur, cur + node_size_);
+        detail::list_set_next(cur, cur + node_size_);
         cur += node_size_;
     }
-    list_set_next(cur, first_);
+    detail::list_set_next(cur, first_);
     first_ = static_cast<std::uint8_t*>(mem);
 
     capacity_left_ += no_nodes;
