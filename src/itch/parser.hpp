@@ -335,21 +335,19 @@ namespace itch {
 
         instruments_[index].book.cancel_order(o, executed_qty);
         instruments_[index].trade_qty += executed_qty;
-        instruments_[index].last_trade_price = order_price;
+        instruments_[index].last = order_price;
         ++instruments_[index].num_trades;
 
         if (market_state_ == MarketState::Open) {
             // not all cross_trades marked as opening have prices, so
             // record this
-            if (instruments_[index].open_price == 0)
-                instruments_[index].open_price = order_price;
+            if (instruments_[index].open == 0)
+                instruments_[index].open = order_price;
 
-            if (instruments_[index].lo_price == InvalidLoPrice
-                    || order_price < instruments_[index].lo_price)
-                instruments_[index].lo_price = order_price;
-            if (instruments_[index].hi_price == InvalidHiPrice
-                    || order_price > instruments_[index].hi_price)
-                instruments_[index].hi_price = order_price;
+            if (instruments_[index].lo == InvalidLoPrice || order_price < instruments_[index].lo)
+                instruments_[index].lo = order_price;
+            if (instruments_[index].hi == InvalidHiPrice || order_price > instruments_[index].hi)
+                instruments_[index].hi = order_price;
         }
     }
 
@@ -370,15 +368,13 @@ namespace itch {
 
         // only record stats if execution is marked "printable"
         if (market_state_ == MarketState::Open && m->printable == 'Y') {
-            if (instruments_[index].lo_price == InvalidLoPrice
-                    || executed_price < instruments_[index].lo_price)
-                instruments_[index].lo_price = executed_price;
-            if (instruments_[index].hi_price == InvalidHiPrice
-                    || o.price > instruments_[index].hi_price)
-                instruments_[index].hi_price = executed_price;
+            if (instruments_[index].lo == InvalidLoPrice || executed_price < instruments_[index].lo)
+                instruments_[index].lo = executed_price;
+            if (instruments_[index].hi == InvalidHiPrice || executed_price > instruments_[index].hi)
+                instruments_[index].hi = executed_price;
 
             instruments_[index].trade_qty += executed_qty;
-            instruments_[index].last_trade_price = executed_price;
+            instruments_[index].last = executed_price;
             ++instruments_[index].num_trades;
         }
     }
@@ -473,9 +469,8 @@ namespace itch {
 
                 // update close prices if needed
                 for (auto& i : instruments_) {
-                    if (i.close_price == 0)
-                        i.close_price
-                                = (i.last_trade_price == 0) ? i.open_price : i.last_trade_price;
+                    if (i.close == 0)
+                        i.close = (i.last == 0) ? i.open : i.last;
                 }
                 break;
 
@@ -507,7 +502,7 @@ namespace itch {
 
         std::uint16_t const index = be16toh(m->stock_locate);
         instruments_[index].trade_qty += be32toh(m->shares);
-        instruments_[index].last_trade_price = be32toh(m->price);
+        instruments_[index].last = be32toh(m->price);
         ++instruments_[index].num_trades;
     }
 
@@ -523,11 +518,11 @@ namespace itch {
         if (m->cross_type == 'O') {
             price_t const cp = be32toh(m->cross_price);
             if (cp != 0)
-                instruments_[index].open_price = cp;
+                instruments_[index].open = cp;
         } else if (m->cross_type == 'C') {
             price_t const cp = be32toh(m->cross_price);
             if (cp != 0)
-                instruments_[index].close_price = cp;
+                instruments_[index].close = cp;
         }
     }
 
