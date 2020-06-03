@@ -144,7 +144,7 @@ namespace itch {
 
                 default:
                     try {
-                        fmt::print(stderr, "[ERROR] parse_itch(): unknown type=[{:c}]\n", hdr->msg_type);
+                        fmt::print(stderr, "[ERROR] parse(): unknown type=[{:c}]\n", hdr->msg_type);
                     } catch (...)
                     {}
                     std::abort();
