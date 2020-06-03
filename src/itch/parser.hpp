@@ -199,7 +199,7 @@ namespace itch {
     void
     parser<LoggingEnabled>::log_msg(T const* m) noexcept
     {
-        if constexpr(LoggingEnabled) {
+        if constexpr (LoggingEnabled) {
             try {
                 fmt::print(log_, "{}\n", *m);
             } catch (...) {
@@ -257,7 +257,8 @@ namespace itch {
 
     template <bool LoggingEnabled>
     void
-    parser<LoggingEnabled>::handle_ipo_quoting_period_update(ipo_quoting_period_update const* m) noexcept
+    parser<LoggingEnabled>::handle_ipo_quoting_period_update(
+            ipo_quoting_period_update const* m) noexcept
     {
         log_msg(m);
     }
@@ -271,7 +272,8 @@ namespace itch {
 
     template <bool LoggingEnabled>
     void
-    parser<LoggingEnabled>::handle_market_participant_position(market_participant_position const* m) noexcept
+    parser<LoggingEnabled>::handle_market_participant_position(
+            market_participant_position const* m) noexcept
     {
         log_msg(m);
     }
@@ -380,7 +382,8 @@ namespace itch {
 
     template <bool LoggingEnabled>
     void
-    parser<LoggingEnabled>::handle_order_executed_with_price(order_executed_with_price const* m) noexcept
+    parser<LoggingEnabled>::handle_order_executed_with_price(
+            order_executed_with_price const* m) noexcept
     {
         log_msg(m);
 

@@ -55,9 +55,7 @@ template <typename Callable>
 bool
 file_reader::process_file(Callable&& fn)
 {
-    return (input_file_.extension() == ".gz")
-            ? process_gz(fn)
-            : process_raw(fn);
+    return (input_file_.extension() == ".gz") ? process_gz(fn) : process_raw(fn);
 }
 
 template <typename Callable>
