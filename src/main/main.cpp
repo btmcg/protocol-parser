@@ -22,7 +22,7 @@ namespace { // unnamed
     Args
     arg_parse(int argc, char** argv)
     {
-        auto usage = [](FILE* outerr, std::filesystem::path const& app) {
+        auto usage = [](std::FILE* outerr, std::filesystem::path const& app) {
             std::fprintf(outerr,
                     "usage: %s [-hlv] [-s <stats_file>] <input_file>\n"
                     "arguments:\n"

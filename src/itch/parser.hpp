@@ -34,13 +34,13 @@ namespace itch {
         };
 
     private:
-        instrument instruments_[MaxNumInstruments];
+        std::vector<instrument> instruments_;
         std::vector<order> orders_;
         MarketState market_state_ = MarketState::Unknown;
-        FILE* stats_file_ = nullptr;
+        std::FILE* stats_file_ = nullptr;
         msg_stats msg_stats_;
         bool logging_enabled_ = false;
-        FILE* log_ = nullptr;
+        std::FILE* log_ = nullptr;
 
     public:
         parser(bool enable_logging, std::string const& stats_fname) noexcept;
@@ -77,8 +77,8 @@ namespace itch {
     /**********************************************************************/
 
     parser::parser(bool enable_logging, std::string const& stats_fname) noexcept
-            : instruments_()
-            , orders_(MaxNumOrders, order())
+            : instruments_(MaxNumInstruments)
+            , orders_(MaxNumOrders)
             , market_state_(MarketState::Unknown)
             , stats_file_(stats_fname.empty() ? nullptr : std::fopen(stats_fname.c_str(), "w"))
             , msg_stats_()
