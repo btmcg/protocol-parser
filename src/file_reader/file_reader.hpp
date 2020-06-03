@@ -28,7 +28,7 @@ private:
     };
 
 private:
-    std::filesystem::path const& input_file_;
+    std::filesystem::path input_file_;
     void* f_ptr_;
     off_t file_size_;
     stats stats_;
@@ -55,11 +55,9 @@ template <typename Callable>
 bool
 file_reader::process_file(Callable&& fn)
 {
-    // FIXME: in clang 10, extension() seems to get optimized out
-    if (input_file_.string().substr(input_file_.string().size() - 3) == ".gz")
-        return process_gz(fn);
-
-    return process_raw(fn);
+    return (input_file_.extension() == ".gz")
+            ? process_gz(fn)
+            : process_raw(fn);
 }
 
 template <typename Callable>
