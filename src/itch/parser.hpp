@@ -15,6 +15,7 @@
 
 namespace itch {
 
+    template <bool LoggingEnabled>
     class parser
     {
     private:
@@ -39,11 +40,10 @@ namespace itch {
         MarketState market_state_ = MarketState::Unknown;
         std::FILE* stats_file_ = nullptr;
         msg_stats msg_stats_;
-        bool logging_enabled_ = false;
         std::FILE* log_ = nullptr;
 
     public:
-        parser(bool enable_logging, std::string const& stats_fname) noexcept;
+        explicit parser(std::string const& stats_fname) noexcept;
         ~parser() noexcept;
         std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
         void print_stats() const;
@@ -76,19 +76,20 @@ namespace itch {
 
     /**********************************************************************/
 
-    parser::parser(bool enable_logging, std::string const& stats_fname) noexcept
+    template <bool LoggingEnabled>
+    parser<LoggingEnabled>::parser(std::string const& stats_fname) noexcept
             : instruments_(MaxNumInstruments)
             , orders_(MaxNumOrders)
             , market_state_(MarketState::Unknown)
             , stats_file_(stats_fname.empty() ? nullptr : std::fopen(stats_fname.c_str(), "w"))
             , msg_stats_()
-            , logging_enabled_(enable_logging)
-            , log_(logging_enabled_ ? std::fopen("itch.log", "w") : nullptr)
+            , log_(LoggingEnabled ? std::fopen("itch.log", "w") : nullptr)
     {
         // empty
     }
 
-    parser::~parser() noexcept
+    template <bool LoggingEnabled>
+    parser<LoggingEnabled>::~parser() noexcept
     {
         if (log_ != nullptr) {
             std::fclose(log_);
@@ -101,8 +102,9 @@ namespace itch {
         }
     }
 
+    template <bool LoggingEnabled>
     std::size_t
-    parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
+    parser<LoggingEnabled>::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
     {
         std::size_t bytes_processed = 0;
         std::uint8_t const* end = buf + bytes_to_read;
@@ -157,8 +159,9 @@ namespace itch {
         return bytes_processed;
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::print_stats() const
+    parser<LoggingEnabled>::print_stats() const
     {
         std::size_t max_bid_pool_used = 0;
         std::size_t max_ask_pool_used = 0;
@@ -191,23 +194,23 @@ namespace itch {
         }
     }
 
+    template <bool LoggingEnabled>
     template <typename T>
     void
-    parser::log_msg(T const* m) noexcept
+    parser<LoggingEnabled>::log_msg(T const* m) noexcept
     {
-        if (!logging_enabled_)
-            return;
-
-        try {
-            fmt::print(log_, "{}\n", *m);
-        } catch (...) {
-            // suppress
+        if constexpr(LoggingEnabled) {
+            try {
+                fmt::print(log_, "{}\n", *m);
+            } catch (...) {
+                // suppress
+            }
         }
     }
 
-
+    template <bool LoggingEnabled>
     void
-    parser::handle_add_order(add_order const* m) noexcept
+    parser<LoggingEnabled>::handle_add_order(add_order const* m) noexcept
     {
         log_msg(m);
 
@@ -225,8 +228,9 @@ namespace itch {
         ++instruments_[index].num_orders;
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_add_order_with_mpid(add_order_with_mpid const* m) noexcept
+    parser<LoggingEnabled>::handle_add_order_with_mpid(add_order_with_mpid const* m) noexcept
     {
         log_msg(m);
 
@@ -244,50 +248,58 @@ namespace itch {
         ++instruments_[index].num_orders;
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_broken_trade(broken_trade const* m) noexcept
+    parser<LoggingEnabled>::handle_broken_trade(broken_trade const* m) noexcept
     {
         log_msg(m);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_ipo_quoting_period_update(ipo_quoting_period_update const* m) noexcept
+    parser<LoggingEnabled>::handle_ipo_quoting_period_update(ipo_quoting_period_update const* m) noexcept
     {
         log_msg(m);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_luld_auction_collar(luld_auction_collar const* m) noexcept
+    parser<LoggingEnabled>::handle_luld_auction_collar(luld_auction_collar const* m) noexcept
     {
         log_msg(m);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_market_participant_position(market_participant_position const* m) noexcept
+    parser<LoggingEnabled>::handle_market_participant_position(market_participant_position const* m) noexcept
     {
         log_msg(m);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_mwcb_decline_level(mwcb_decline_level const* m) noexcept
+    parser<LoggingEnabled>::handle_mwcb_decline_level(mwcb_decline_level const* m) noexcept
     {
         log_msg(m);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_mwcb_status(mwcb_status const* m) noexcept
+    parser<LoggingEnabled>::handle_mwcb_status(mwcb_status const* m) noexcept
     {
         log_msg(m);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_noii(noii const* m) noexcept
+    parser<LoggingEnabled>::handle_noii(noii const* m) noexcept
     {
         log_msg(m);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_operational_halt(operational_halt const* m) noexcept
+    parser<LoggingEnabled>::handle_operational_halt(operational_halt const* m) noexcept
     {
         log_msg(m);
 
@@ -306,8 +318,9 @@ namespace itch {
         }
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_order_cancel(order_cancel const* m) noexcept
+    parser<LoggingEnabled>::handle_order_cancel(order_cancel const* m) noexcept
     {
         log_msg(m);
 
@@ -320,8 +333,9 @@ namespace itch {
         instruments_[index].book.cancel_order(o, cancelled_shares);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_order_delete(order_delete const* m) noexcept
+    parser<LoggingEnabled>::handle_order_delete(order_delete const* m) noexcept
     {
         log_msg(m);
 
@@ -333,8 +347,9 @@ namespace itch {
         o.clear();
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_order_executed(order_executed const* m) noexcept
+    parser<LoggingEnabled>::handle_order_executed(order_executed const* m) noexcept
     {
         log_msg(m);
 
@@ -363,8 +378,9 @@ namespace itch {
         }
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_order_executed_with_price(order_executed_with_price const* m) noexcept
+    parser<LoggingEnabled>::handle_order_executed_with_price(order_executed_with_price const* m) noexcept
     {
         log_msg(m);
 
@@ -390,8 +406,9 @@ namespace itch {
         }
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_order_replace(order_replace const* m) noexcept
+    parser<LoggingEnabled>::handle_order_replace(order_replace const* m) noexcept
     {
         log_msg(m);
 
@@ -409,14 +426,16 @@ namespace itch {
         instruments_[index].book.replace_order(old_order, new_order);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_reg_sho_restriction(reg_sho_restriction const* m) noexcept
+    parser<LoggingEnabled>::handle_reg_sho_restriction(reg_sho_restriction const* m) noexcept
     {
         log_msg(m);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_stock_directory(stock_directory const* m) noexcept
+    parser<LoggingEnabled>::handle_stock_directory(stock_directory const* m) noexcept
     {
         log_msg(m);
 
@@ -425,8 +444,9 @@ namespace itch {
         instruments_[index].set_name(m->stock);
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_stock_trading_action(stock_trading_action const* m) noexcept
+    parser<LoggingEnabled>::handle_stock_trading_action(stock_trading_action const* m) noexcept
     {
         log_msg(m);
 
@@ -450,8 +470,9 @@ namespace itch {
         // clang-format on
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_system_event(system_event const* m) noexcept
+    parser<LoggingEnabled>::handle_system_event(system_event const* m) noexcept
     {
         log_msg(m);
 
@@ -510,8 +531,9 @@ namespace itch {
         }
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_trade_non_cross(trade_non_cross const* m) noexcept
+    parser<LoggingEnabled>::handle_trade_non_cross(trade_non_cross const* m) noexcept
     {
         log_msg(m);
 
@@ -521,8 +543,9 @@ namespace itch {
         ++instruments_[index].num_trades;
     }
 
+    template <bool LoggingEnabled>
     void
-    parser::handle_trade_cross(trade_cross const* m) noexcept
+    parser<LoggingEnabled>::handle_trade_cross(trade_cross const* m) noexcept
     {
         log_msg(m);
 

@@ -108,11 +108,19 @@ main(int argc, char** argv)
     tsc::init();
 
     try {
-        itch::parser parser(args.logging, args.stats_fp);
         file_reader reader(args.input_file);
-        reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
+
+        if (args.logging) {
+            itch::parser<true> parser(args.stats_fp.string());
+            reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
+            parser.print_stats();
+        } else {
+            itch::parser<false> parser(args.stats_fp.string());
+            reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
+            parser.print_stats();
+        }
+
         reader.print_stats();
-        parser.print_stats();
     } catch (std::exception const& e) {
         std::fprintf(stderr, "exception caught: %s\n", e.what());
         return EXIT_FAILURE;
