@@ -20,7 +20,7 @@ CheckOptions:
   - key:    bugprone-assert-side-effect.AssertMacros
     value:  assert, DEBUG_ASSERT
   - key:    cppcoreguidelines-macro-usage.AllowedRegexp
-    value:  PACKED
+    value:  PACKED|DEBUG_ASSERT
   - key:    readability-identifier-naming.ClassCase
     value:  lower_case
   - key:    readability-identifier-naming.ClassMethodCase
