@@ -5,7 +5,6 @@
 #include <string>
 
 
-#define ALWAYS_INLINE __attribute__((always_inline))
 #define PACKED __attribute__((packed))
 
 #if (defined(__GNUC__) && !defined(__clang__))

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "compiler.hpp"
 #include <fmt/chrono.h>
 #include <cstdint>
 #include <ctime>
@@ -55,14 +54,14 @@ public:
     }
 
     /// return nanoseconds since epoch
-    static ALWAYS_INLINE std::uint64_t
+    static std::uint64_t
     gettime_nsec()
     {
         return (rdtscp() - init_ticks_) / ticks_per_nsec_;
     }
 
     /// return current time (nsec since epoch) in the form of a timespec
-    static ALWAYS_INLINE std::timespec
+    static std::timespec
     gettime_ts()
     {
         std::uint64_t const now_nsec = gettime_nsec();
@@ -73,14 +72,14 @@ public:
     }
 
     /// return number of ticks per nsec for this cpu
-    static ALWAYS_INLINE double
+    static double
     get_ticks_per_nsec()
     {
         return ticks_per_nsec_;
     }
 
     /// return nanoseconds since system start
-    static ALWAYS_INLINE std::uint64_t
+    static std::uint64_t
     get_nsecs()
     {
         return rdtscp() / ticks_per_nsec_;
@@ -88,7 +87,7 @@ public:
 
 private:
     /// return number of ticks since system start
-    static ALWAYS_INLINE std::uint64_t
+    static std::uint64_t
     rdtscp()
     {
         std::uint32_t lo_ticks = 0;
