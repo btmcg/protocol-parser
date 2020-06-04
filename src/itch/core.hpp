@@ -13,6 +13,7 @@ namespace itch {
     using qty_t = std::uint32_t;
 
 
+    constexpr std::uint8_t NameLen = 8;
     constexpr price_t InvalidHiPrice = std::numeric_limits<price_t>::min();
     constexpr price_t InvalidLoPrice = std::numeric_limits<price_t>::max();
 

@@ -184,8 +184,7 @@ namespace itch {
         if (stats_file_ != nullptr) {
             fmt::print(stats_file_, "{}\n", instrument::stats_csv_header());
 
-            int const num_inst = sizeof(instruments_) / sizeof(instruments_[0]);
-            for (int i = 0; i < num_inst; ++i) {
+            for (std::size_t i = 0; i < instruments_.size(); ++i) {
                 if (instruments_[i].locate == 0)
                     continue;
 

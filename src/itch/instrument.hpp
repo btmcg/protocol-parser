@@ -11,7 +11,7 @@ namespace itch {
     struct instrument
     {
         std::uint16_t locate = 0;
-        char name[8] = {0};
+        char name[NameLen] = {0};
         tsbook book;
 
         price_t open = 0;
@@ -25,8 +25,8 @@ namespace itch {
         InstrumentState instrument_state = InstrumentState::Unknown;
 
         instrument() noexcept;
-        instrument(std::uint16_t locate, char const (&name)[8]) noexcept;
-        void set_name(char const (&name)[8]) noexcept;
+        instrument(std::uint16_t locate, char const (&name)[NameLen]) noexcept;
+        void set_name(char const (&name)[NameLen]) noexcept;
 
         // stats
         std::string stats_str() const;

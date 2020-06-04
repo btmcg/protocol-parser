@@ -20,7 +20,7 @@ namespace itch {
         // empty
     }
 
-    instrument::instrument(std::uint16_t l, char const (&nm)[8]) noexcept
+    instrument::instrument(std::uint16_t l, char const (&nm)[NameLen]) noexcept
             : locate(l)
             , name()
             , book()
@@ -37,7 +37,7 @@ namespace itch {
     }
 
     void
-    instrument::set_name(char const (&nm)[8]) noexcept
+    instrument::set_name(char const (&nm)[NameLen]) noexcept
     {
         for (std::size_t i = 0; i < sizeof(nm); ++i) {
             if (nm[i] == ' ') {
