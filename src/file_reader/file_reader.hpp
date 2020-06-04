@@ -37,6 +37,10 @@ public:
     file_reader(std::filesystem::path const&);
     ~file_reader() noexcept;
     file_reader(file_reader const&) noexcept = delete;
+    file_reader(file_reader&&) noexcept = delete;
+    file_reader& operator=(file_reader const&) noexcept = delete;
+    file_reader& operator=(file_reader&&) noexcept = delete;
+
     void print_stats() const;
 
     template <typename Callable>
