@@ -16,7 +16,7 @@ namespace { // unnamed
     // allocate this many buckets in the mapping
     constexpr std::uint32_t NumBuckets = 100;
 
-} // unnamed
+} // namespace
 
 
 namespace itch {

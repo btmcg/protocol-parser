@@ -11,7 +11,7 @@ namespace { // unnamed
     // allocate this many price levels in the memory pool
     constexpr std::uint32_t NumPriceLevels = 5000;
 
-} // unnamed
+} // namespace
 
 
 namespace itch {
