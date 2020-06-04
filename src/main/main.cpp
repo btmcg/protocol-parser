@@ -50,7 +50,8 @@ namespace { // unnamed
                     {nullptr, 0, nullptr, 0},
             };
 
-            int const c = ::getopt_long(argc, argv, "hls:v", long_options, nullptr);
+            int const c = ::getopt_long(
+                    argc, argv, "hls:v", static_cast<option const*>(long_options), nullptr);
             if (c == -1)
                 break;
 
