@@ -45,6 +45,10 @@ namespace itch {
     public:
         explicit parser(std::string const& stats_fname) noexcept;
         ~parser() noexcept;
+        parser(parser const&) noexcept = delete;
+        parser(parser&&) noexcept = delete;
+        parser& operator=(parser const&) noexcept = delete;
+        parser& operator=(parser&&) noexcept = delete;
         std::size_t parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept;
         void print_stats() const;
 
