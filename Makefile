@@ -78,6 +78,7 @@ benchmark: benchmark-runner
 test: test-runner
 	./bin/$^
 
+# works best when run as 'make COMPILER=clang DEBUG=1 tidy'
 tidy:
 	$(run-clang-tidy)
 
