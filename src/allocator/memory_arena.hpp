@@ -20,11 +20,14 @@ public:
     /// BlockAllocator.
     constexpr ~memory_arena() noexcept;
 
-    memory_arena(memory_arena&& other) noexcept;
-    memory_arena& operator=(memory_arena&& other) noexcept;
+    memory_arena(memory_arena const&) noexcept = delete;
+    memory_arena(memory_arena&&) noexcept;
+
+    memory_arena& operator=(memory_arena const&) noexcept = delete;
+    memory_arena& operator=(memory_arena&&) noexcept;
 
     memory_block allocate_block();
-    constexpr memory_block current_block() const noexcept;
+    memory_block current_block() const noexcept;
     void deallocate_block() noexcept;
     constexpr bool owns(void const* ptr) const noexcept;
     constexpr std::size_t size() const noexcept;
@@ -77,11 +80,12 @@ memory_block
 memory_arena<BlockAllocator>::allocate_block()
 {
     used_.push(BlockAllocator::allocate_block());
+    DEBUG_ASSERT(!used_.empty());
     return used_.top();
 }
 
 template <typename BlockAllocator>
-constexpr memory_block
+memory_block
 memory_arena<BlockAllocator>::current_block() const noexcept
 {
     return used_.top();

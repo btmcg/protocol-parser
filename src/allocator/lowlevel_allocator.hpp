@@ -33,6 +33,8 @@ public:
         // empty
     }
 
+    lowlevel_allocator(lowlevel_allocator const&) noexcept = delete;
+
     constexpr ~lowlevel_allocator() noexcept
     {
         // empty
@@ -43,6 +45,8 @@ public:
     {
         return *this;
     }
+
+    lowlevel_allocator& operator=(lowlevel_allocator const&) = delete;
 
     [[nodiscard]] constexpr void*
     allocate_node(std::size_t size, std::size_t alignment) const
@@ -56,7 +60,7 @@ public:
 
     constexpr void
     deallocate_node(void* node, std::size_t size, std::size_t alignment) const
-            noexcept(noexcept(Functor::deallocate(nullptr, 0, 0)))
+            noexcept(noexcept(Functor::deallocate(node, size, alignment)))
     {
         Functor::deallocate(node, size, alignment);
     }
@@ -71,7 +75,7 @@ public:
 struct malloc_allocator
 {
     [[nodiscard]] static void*
-    allocate(std::size_t size, std::size_t /*alignment = 8*/) noexcept
+    allocate(std::size_t size, std::size_t /*alignment*/) noexcept
     {
         return std::malloc(size);
     }
@@ -91,8 +95,10 @@ struct malloc_allocator
 
 struct new_allocator
 {
+    static constexpr std::size_t DefaultAlignment = 8;
+
     [[nodiscard]] static void*
-    allocate(std::size_t size, std::size_t alignment = 8) noexcept
+    allocate(std::size_t size, std::size_t alignment = DefaultAlignment) noexcept
     {
         return ::operator new(size, static_cast<std::align_val_t>(alignment), std::nothrow);
     }
@@ -112,8 +118,10 @@ struct new_allocator
 
 struct posix_allocator
 {
+    static constexpr std::size_t DefaultAlignment = 8;
+
     [[nodiscard]] static void*
-    allocate(std::size_t size, std::size_t alignment = 8) noexcept
+    allocate(std::size_t size, std::size_t alignment = DefaultAlignment) noexcept
     {
         void* ptr = nullptr;
         ::posix_memalign(&ptr, alignment, size);

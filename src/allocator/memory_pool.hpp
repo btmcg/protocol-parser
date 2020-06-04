@@ -24,7 +24,9 @@ public:
     inline memory_pool(std::size_t node_size, std::size_t count);
     ~memory_pool() noexcept = default;
     inline memory_pool(memory_pool&&) noexcept;
+    memory_pool(memory_pool const&) noexcept = delete;
     inline memory_pool& operator=(memory_pool&&) noexcept;
+    memory_pool& operator=(memory_pool const&) noexcept = delete;
     inline void* allocate_node();
     inline void* allocate_array(std::size_t n);
     inline void deallocate_node(void* ptr) noexcept;

@@ -1,5 +1,4 @@
 #include "memory_block_stack.hpp"
-#include "util/assert.hpp"
 #include <new> // ::new
 
 
@@ -16,7 +15,7 @@ bool
 is_aligned(void* ptr, std::size_t alignment) noexcept
 {
     DEBUG_ASSERT(is_valid_alignment(alignment));
-    auto address = reinterpret_cast<std::uintptr_t>(ptr);
+    std::uintptr_t address = reinterpret_cast<std::uintptr_t>(ptr);
     return address % alignment == 0u;
 }
 
@@ -48,15 +47,15 @@ void
 memory_block_stack::push(allocated_mb block) noexcept
 {
     DEBUG_ASSERT(is_aligned(block.memory, max_alignment));
-    auto next = ::new (block.memory) node(head_, block.size - node::offset);
+    node* next = ::new (block.memory) node(head_, block.size - node::offset);
     head_ = next;
 }
 
 memory_block_stack::allocated_mb
 memory_block_stack::pop() noexcept
 {
-    DEBUG_ASSERT(head_);
-    auto to_pop = head_;
+    DEBUG_ASSERT(head_ != nullptr);
+    node* to_pop = head_;
     head_ = head_->prev;
     return {to_pop, to_pop->usable_size + node::offset};
 }

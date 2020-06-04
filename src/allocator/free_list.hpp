@@ -26,7 +26,7 @@ namespace detail {
     inline void
     set_int(void* address, std::uintptr_t i) noexcept
     {
-        DEBUG_ASSERT(address);
+        DEBUG_ASSERT(address != nullptr);
         std::memcpy(address, &i, sizeof(std::uintptr_t));
     }
 
@@ -136,6 +136,8 @@ public:
     constexpr free_list(std::size_t node_size) noexcept;
     /// calls constructor plus insert
     constexpr free_list(std::size_t node_size, void* mem, std::size_t size) noexcept;
+    constexpr free_list(free_list const&) noexcept = delete;
+    constexpr free_list& operator=(free_list const&) noexcept = delete;
     constexpr free_list(free_list&&) noexcept;
     constexpr ~free_list() noexcept = default;
     inline free_list& operator=(free_list&&) noexcept;

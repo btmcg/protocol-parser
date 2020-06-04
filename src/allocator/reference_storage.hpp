@@ -18,7 +18,9 @@ public:
     }
 
     constexpr reference_storage(reference_storage const&) noexcept = default;
+    constexpr reference_storage(reference_storage&&) noexcept = default;
     constexpr reference_storage& operator=(reference_storage const&) noexcept = default;
+    constexpr reference_storage& operator=(reference_storage&&) noexcept = default;
 
     constexpr bool
     is_valid() const noexcept

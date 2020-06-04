@@ -13,6 +13,9 @@ class growing_block_allocator : private LLAllocator
     static_assert(static_cast<float>(Num) / Den >= 1.0, "invalid growth factor");
 
 private:
+    static constexpr std::size_t DefaultAlignment = 8;
+
+private:
     std::size_t block_size_ = 0;
 
 public:
@@ -39,7 +42,7 @@ template <typename LLAllocator, std::uint16_t Num, std::uint16_t Den>
 memory_block
 growing_block_allocator<LLAllocator, Num, Den>::allocate_block()
 {
-    void* memory = LLAllocator::allocate_node(block_size_, 8);
+    void* memory = LLAllocator::allocate_node(block_size_, DefaultAlignment);
     memory_block block(memory, block_size_);
     block_size_ = static_cast<std::size_t>(block_size_ * growth_factor());
     return block;
@@ -49,7 +52,7 @@ template <typename LLAllocator, std::uint16_t Num, std::uint16_t Den>
 constexpr void
 growing_block_allocator<LLAllocator, Num, Den>::deallocate_block(memory_block block) const noexcept
 {
-    LLAllocator::deallocate_node(block.memory, block.size, 8);
+    LLAllocator::deallocate_node(block.memory, block.size, DefaultAlignment);
 }
 
 template <typename LLAllocator, std::uint16_t Num, std::uint16_t Den>

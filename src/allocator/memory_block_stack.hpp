@@ -1,6 +1,8 @@
 #pragma once
 
 #include "memory_block.hpp"
+#include "util/assert.hpp"
+#include <fmt/format.h>
 #include <cstddef> // std::size_t
 #include <cstdint>
 
@@ -34,8 +36,10 @@ public:
     constexpr memory_block_stack() noexcept = default;
     constexpr ~memory_block_stack() noexcept = default;
 
-    memory_block_stack(memory_block_stack&& other) noexcept;
-    memory_block_stack& operator=(memory_block_stack&& other) noexcept;
+    memory_block_stack(memory_block_stack const&) noexcept = delete;
+    memory_block_stack(memory_block_stack&&) noexcept;
+    memory_block_stack& operator=(memory_block_stack const&) noexcept = delete;
+    memory_block_stack& operator=(memory_block_stack&&) noexcept;
 
     /// the raw allocated block returned from an allocator
     using allocated_mb = memory_block;
@@ -49,7 +53,7 @@ public:
     void push(allocated_mb block) noexcept;
     allocated_mb pop() noexcept;
 
-    constexpr inserted_mb top() const noexcept;
+    inline inserted_mb top() const noexcept;
     constexpr bool owns(void const* ptr) const noexcept;
 
     /// O(n) size
@@ -61,12 +65,10 @@ public:
 
 /**********************************************************************/
 
-constexpr memory_block_stack::inserted_mb
+memory_block_stack::inserted_mb
 memory_block_stack::top() const noexcept
 {
-    if (empty())
-        return memory_block(nullptr, 0);
-
+    DEBUG_ASSERT(!empty());
     void* mem = static_cast<void*>(head_);
     return memory_block(
             static_cast<std::uint8_t*>(mem) + implementation_offset, head_->usable_size);
@@ -90,7 +92,7 @@ memory_block_stack::size() const noexcept
 constexpr bool
 memory_block_stack::owns(void const* ptr) const noexcept
 {
-    auto address = static_cast<std::uint8_t const*>(ptr);
+    std::uint8_t const* address = static_cast<std::uint8_t const*>(ptr);
     for (node const* cur = head_; cur != nullptr; cur = cur->prev) {
         std::uint8_t const* mem = static_cast<decltype(mem)>(static_cast<void const*>(cur));
         if (address >= mem && address < mem + cur->usable_size)
