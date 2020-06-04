@@ -5,16 +5,19 @@
 #include <fmt/chrono.h>
 #include <fmt/format.h>
 #include <ctime>
+#include <limits>
 
 
 namespace itch {
+
     /// returns nsecs since midnight
     constexpr std::uint64_t
-    from_itch_timestamp(std::uint8_t const (&timestamp)[6]) noexcept
+    from_itch_timestamp(std::uint8_t const (&timestamp)[TimestampLen]) noexcept
     {
+        constexpr std::size_t bits = std::numeric_limits<std::uint8_t>::digits;
         std::uint64_t t = 0;
         for (std::size_t i = 0; i < sizeof(timestamp); ++i)
-            t = (t << 8) + timestamp[i];
+            t = (t << bits) + timestamp[i];
         return t;
     }
 
@@ -23,11 +26,12 @@ namespace itch {
     get_midnight_nsecs()
     {
         std::time_t const now = std::time(nullptr);
-        tm midnight_tm;
+        tm midnight_tm{};
         ::localtime_r(&now, &midnight_tm);
         midnight_tm.tm_sec = midnight_tm.tm_min = midnight_tm.tm_hour = 0;
 
-        return std::mktime(&midnight_tm) * 1000 * 1000 * 1000;
+        constexpr std::uint64_t nsecs_in_sec = 1'000'000'000;
+        return std::mktime(&midnight_tm) * nsecs_in_sec;
     }
 
     std::uint64_t const MidnightNsec = get_midnight_nsecs();
