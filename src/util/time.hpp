@@ -28,6 +28,7 @@ public:
         NsecInUsec = 1'000,
         NsecInMsec = 1'000'000,
         NsecInSec = 1'000'000'000,
+        InitTime = 1'000'000,
     };
 
 public:
@@ -41,7 +42,7 @@ public:
         ::clock_gettime(CLOCK_REALTIME, &begin_ts);
         auto const begin = rdtscp();
 
-        for (auto i = 0; i < 1000000; ++i)
+        for (std::size_t i = 0; i < InitTime; ++i)
             __asm__ __volatile__(""); // don't optimize out this loop
 
         auto const end = rdtscp();
@@ -57,7 +58,7 @@ public:
     static std::uint64_t
     gettime_nsec()
     {
-        return (rdtscp() - init_ticks_) / ticks_per_nsec_;
+        return (rdtscp() - init_ticks_) / static_cast<std::uint64_t>(ticks_per_nsec_);
     }
 
     /// return current time (nsec since epoch) in the form of a timespec
@@ -99,7 +100,8 @@ private:
                              : "%ebx", "%ecx" // clobbered registers
         );
 
-        return ((static_cast<std::uint64_t>(hi_ticks) << 32) | lo_ticks);
+        static constexpr std::uint32_t bits = std::numeric_limits<std::uint32_t>::digits;
+        return ((static_cast<std::uint64_t>(hi_ticks) << bits) | lo_ticks);
     }
 
 }; // class tsc
