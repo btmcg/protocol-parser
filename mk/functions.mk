@@ -462,7 +462,7 @@ cmd-build-static-lib =\
 # usage    : $(run-clang-tidy)
 # ------------------------------------------------------------------------
 run-clang-tidy =\
-  $(foreach module,$(__all_modules),\
+  $(foreach module,$(filter-out benchmark-runner test-runner,$(__all_modules)),\
     $(if $(filter %.cpp,$(__modules.$(module).LOCAL_SOURCE_FILES)),\
       $(call cmd-clang-tidy,$(module))\
       $(\n)\
