@@ -42,6 +42,17 @@ space2 := $(space)$(space)
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# function : \n
+# returns  : a newline
+# usage    : \n
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+define \n
+
+
+endef
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # function : uniq
 # returns  : a string with duplicate words removed
 # usage    : $(call uniq,<string>)
@@ -366,6 +377,7 @@ $(__modules.$1.LOCAL_TARGET):
 
 endef
 
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # function : cmd-build
 # arguments: 1: module name
@@ -440,6 +452,38 @@ cmd-build-static-lib =\
   $(AR)\
   $(__modules.$1.LOCAL_TARGET)\
   $(__modules.$1.LOCAL_OBJS)
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# function : run-clang-tidy
+# arguments: none
+# returns  : nothing
+# rationale: calls the clang-tidy command on every available module
+# usage    : $(run-clang-tidy)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+run-clang-tidy =\
+  $(foreach module,$(__all_modules),\
+    $(if $(filter %.cpp,$(__modules.$(module).LOCAL_SOURCE_FILES)),\
+      $(call cmd-clang-tidy,$(module))\
+      $(\n)\
+    )\
+  )
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# function : cmd-clang-tidy
+# arguments: 1: module name
+# returns  : full command to execute clang-tidy on a module's source
+# usage    : $(call cmd-clang-tidy,<module_name>)
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+cmd-clang-tidy =\
+  clang-tidy\
+  $(__modules.$1.LOCAL_SOURCE_FILES)\
+  --\
+  $(CPPFLAGS)\
+  $(__modules.$1.LOCAL_CPPFLAGS)\
+  $(CXXFLAGS)\
+  $(__modules.$1.LOCAL_CXXFLAGS)
 
 
 # debugging functions

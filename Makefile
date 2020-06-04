@@ -29,7 +29,6 @@ include mk/version.mk
 # o Split compile/link function into two distinct functions
 # o Support DESTDIR:
 #     (https://www.gnu.org/prep/standards/html_node/DESTDIR.html#DESTDIR)
-# o Add better support for clang
 
 
 # initialization
@@ -50,7 +49,7 @@ $(eval $(call build-rules,$(call get-all-modules)))
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # necessary targets and phony targets
-.PHONY: all benchmark clean distclean format list-modules test tags $(call get-all-modules)
+.PHONY: all benchmark clean distclean format list-modules tags test tidy $(call get-all-modules)
 
 all: $(call get-all-modules)
 
@@ -78,6 +77,9 @@ benchmark: benchmark-runner
 
 test: test-runner
 	./bin/$^
+
+tidy:
+	$(run-clang-tidy)
 
 list-modules:
 	$(list-modules)
