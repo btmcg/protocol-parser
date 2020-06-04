@@ -2,13 +2,24 @@
 #include <fmt/format.h>
 #include <algorithm>
 
+namespace { // unnamed
+
+    // each std::list node has two pointers (prev, next) which we
+    // should account for when creating memory pool
+    constexpr std::uint32_t StdListNodeExtra = 16;
+
+    // allocate this many price levels in the memory pool
+    constexpr std::uint32_t NumPriceLevels = 5000;
+
+} // unnamed
+
 
 namespace itch {
 
     tsbook::tsbook() noexcept
-            : bid_pool_(sizeof(price_level) + 16, 5000)
+            : bid_pool_(sizeof(price_level) + StdListNodeExtra, NumPriceLevels)
             , bids_(bid_pool_)
-            , ask_pool_(sizeof(price_level) + 16, 5000)
+            , ask_pool_(sizeof(price_level) + StdListNodeExtra, NumPriceLevels)
             , asks_(ask_pool_)
     {
         // empty

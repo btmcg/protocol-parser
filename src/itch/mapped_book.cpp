@@ -4,18 +4,33 @@
 #include <cstdio>
 
 
+namespace { // unnamed
+
+    // each std::list node has two pointers (prev, next) which we
+    // should account for when creating memory pool
+    constexpr std::uint32_t StdListNodeExtra = 16;
+
+    // allocate this many price levels in the memory pool
+    constexpr std::uint32_t NumPriceLevels = 5000;
+
+    // allocate this many buckets in the mapping
+    constexpr std::uint32_t NumBuckets = 100;
+
+} // unnamed
+
+
 namespace itch {
 
     mapped_book::mapped_book() noexcept
-            : bid_pool_(sizeof(price_level) + 16, 5000)
-            , ask_pool_(sizeof(price_level) + 16, 5000)
+            : bid_pool_(sizeof(price_level) + StdListNodeExtra, NumPriceLevels)
+            , ask_pool_(sizeof(price_level) + StdListNodeExtra, NumPriceLevels)
             , bids_(bid_pool_)
             , asks_(ask_pool_)
             , bid_map_()
             , ask_map_()
     {
-        bid_map_.reserve(100);
-        ask_map_.reserve(100);
+        bid_map_.reserve(NumBuckets);
+        ask_map_.reserve(NumBuckets);
     }
 
     void
