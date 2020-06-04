@@ -36,7 +36,8 @@ private:
 public:
     file_reader(std::filesystem::path const&);
     ~file_reader() noexcept;
-    void print_stats() const noexcept;
+    file_reader(file_reader const&) noexcept = delete;
+    void print_stats() const;
 
     template <typename Callable>
     bool process_file(Callable&& fn);

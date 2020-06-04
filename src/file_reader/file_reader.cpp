@@ -61,7 +61,7 @@ file_reader::~file_reader() noexcept
 }
 
 void
-file_reader::print_stats() const noexcept
+file_reader::print_stats() const
 {
     // clang-format off
     fmt::print("reader stats\n"

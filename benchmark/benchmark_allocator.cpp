@@ -11,6 +11,8 @@
 #include <unordered_map>
 #include <utility>
 
+constexpr std::size_t NumPoolElements = 100'000'000;
+
 class object
 {
 public:
@@ -50,7 +52,7 @@ mp_list(benchmark::State& state)
             0, std::numeric_limits<int>::max());
 
     constexpr std::size_t node_size = 16 + sizeof(object);
-    memory_pool pool(node_size, 100'000'000);
+    memory_pool pool(node_size, NumPoolElements);
     std::list<object, mp_allocator<object>> list(pool);
     for (auto _ : state) // NOLINT
         list.emplace_back(dist(rng), dist(rng), dist(rng));
@@ -80,7 +82,7 @@ mp_unordered_map(benchmark::State& state)
             0, std::numeric_limits<int>::max());
 
     constexpr std::size_t node_size = 16 + sizeof(std::pair<const int, object>);
-    memory_pool pool(node_size, 100'000'000);
+    memory_pool pool(node_size, NumPoolElements);
     std::unordered_map<int, object, std::hash<int>, std::equal_to<int>,
             mp_allocator<std::pair<const int, object>>>
             map(pool);

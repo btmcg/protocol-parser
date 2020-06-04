@@ -12,14 +12,14 @@
 
 namespace { // unnamed
 
-    struct Args
+    struct cli_args
     {
         std::string input_file;
         bool logging = false;
         std::filesystem::path stats_fp;
     };
 
-    Args
+    cli_args
     arg_parse(int argc, char** argv)
     {
         auto usage = [](std::FILE* outerr, std::filesystem::path const& app) {
@@ -40,7 +40,7 @@ namespace { // unnamed
         if (argc == 1)
             usage(stderr, app);
 
-        Args args;
+        cli_args args;
         while (true) {
             static option long_options[] = {
                     {"help", no_argument, nullptr, 'h'},
@@ -103,7 +103,7 @@ namespace { // unnamed
 int
 main(int argc, char** argv)
 {
-    Args const args = arg_parse(argc, argv);
+    cli_args const args = arg_parse(argc, argv);
 
     tsc::init();
 
