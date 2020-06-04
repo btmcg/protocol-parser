@@ -11,7 +11,7 @@
 namespace { // unnamed
 
     std::tuple<void*, off_t>
-    mmap_file(std::filesystem::path const& filepath) noexcept
+    mmap_file(std::filesystem::path const& filepath)
     {
         int const fd = ::open(filepath.c_str(), O_RDONLY);
         if (fd == -1) {
@@ -27,7 +27,7 @@ namespace { // unnamed
         }
 
         void* f_ptr = ::mmap(nullptr, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
-        if (f_ptr == MAP_FAILED) {
+        if (f_ptr == MAP_FAILED) { // NOLINT
             fmt::print(stderr, "ERROR: mmap [{}]\n", std::strerror(errno));
             ::close(fd);
             return {nullptr, 0};
@@ -56,8 +56,12 @@ file_reader::file_reader(std::filesystem::path const& input_file)
 
 file_reader::~file_reader() noexcept
 {
-    if (::munmap(f_ptr_, file_size_) == -1)
-        fmt::print(stderr, "ERROR: munmap [{}]\n", std::strerror(errno));
+    try {
+        if (::munmap(f_ptr_, file_size_) == -1)
+            fmt::print(stderr, "ERROR: munmap [{}]\n", std::strerror(errno));
+    } catch (...) {
+        // suppress
+    }
 }
 
 void

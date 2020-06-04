@@ -45,10 +45,8 @@ namespace itch {
     void
     tsbook::delete_order(order& order) noexcept
     {
-        if (order.pl == nullptr) {
-            fmt::print(stderr, "[ERROR] delete_order(): price level not found\n");
+        if (order.pl == nullptr)
             return;
-        }
 
         // decrease qty on price level, if it goes to zero, delete the level
         if (order.pl->qty <= order.qty) {
