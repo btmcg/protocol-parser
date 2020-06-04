@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sys/mman.h>
 #include <cstdlib> // ::posix_memalign
 #include <memory>
 #include <new>
@@ -115,7 +116,9 @@ struct posix_allocator
     allocate(std::size_t size, std::size_t alignment = 8) noexcept
     {
         void* ptr = nullptr;
-        return (::posix_memalign(&ptr, alignment, size) == 0) ? ptr : nullptr;
+        ::posix_memalign(&ptr, alignment, size);
+        ::madvise(ptr, size, MADV_HUGEPAGE);
+        return ptr;
     }
 
     static void
