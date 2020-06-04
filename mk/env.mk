@@ -1,5 +1,5 @@
 # GNU Make built-in targets
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ------------------------------------------------------------------------
 
 # delete the target if a recipe fails with a non-zero status
 .DELETE_ON_ERROR:
@@ -18,13 +18,13 @@ include mk/env_$(COMPILER).mk
 
 
 # output directories
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ------------------------------------------------------------------------
 BIN_DIR := bin
 LIB_DIR := lib
 
 
 # command variables
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ------------------------------------------------------------------------
 AR      := ar rcs
 CP      := cp --force
 DOXYGEN := doxygen
@@ -35,7 +35,7 @@ RMDIR   := rmdir
 
 
 # compiler and linker flags
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ------------------------------------------------------------------------
 TARGET_ARCH := -march=native
 
 # c/c++ warning flags

@@ -32,21 +32,21 @@ include mk/version.mk
 
 
 # initialization
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ------------------------------------------------------------------------
 
 # load modules (any subdirectory that contains a "Module.mk" file)
 $(call load-modules)
 
 
 # rules and dependencies
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ------------------------------------------------------------------------
 
 # generate all necessary rules
 $(eval $(call build-rules,$(call get-all-modules)))
 
 
 # recipes
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# ------------------------------------------------------------------------
 
 # necessary targets and phony targets
 .PHONY: all benchmark clean distclean format list-modules tags test tidy $(call get-all-modules)
