@@ -72,14 +72,14 @@ ifdef UBSAN
   CPPFLAGS = -fsanitize=undefined -fno-omit-frame-pointer
 endif
 
-# gcc optimization flags
+# optimization flags
 ifdef DEBUG
   OPTFLAGS := -O0 -fno-inline
   WARN += -Wno-error
 else
-  OPTFLAGS := -O3 -DNDEBUG
-  # OPTFLAGS := -O3 -DNDEBUG -fprofile-generate=pgo
-  # OPTFLAGS := -O3 -DNDEBUG -fprofile-use=pgo -Wno-missing-profile
+  OPTFLAGS := -flto -O3 -DNDEBUG
+  # OPTFLAGS := -flto -O3 -DNDEBUG -fprofile-generate=pgo
+  # OPTFLAGS := -flto -O3 -DNDEBUG -fprofile-use=pgo -Wno-missing-profile
 endif
 
 # compiler flags

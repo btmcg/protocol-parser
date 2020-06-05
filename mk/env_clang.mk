@@ -1,6 +1,10 @@
 # clang-specific options
 # --------------------------------------------------------------------
 
+# command variables
+# ----------------------------------------------------------------------
+# Note: In order for -flto to work properly, gcc-ar must be used.
+AR  := llvm-ar rcs
 CC  := clang
 CXX := clang++
 

@@ -1,7 +1,6 @@
 # gcc-specific options
 # ----------------------------------------------------------------------
 
-
 # command variables
 # ----------------------------------------------------------------------
 # Note: In order for -flto to work properly, gcc-ar must be used.
@@ -9,6 +8,10 @@ AR  := gcc-ar rcs
 CC  := gcc
 CXX := g++
 
+# optimization flags
+ifndef DEBUG
+  OPTFLAGS := -ffat-lto-objects
+endif
 
 # warnings
 # ----------------------------------------------------------------------
