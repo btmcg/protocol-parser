@@ -39,39 +39,42 @@ namespace itch {
         auto* book = (o.side == Side::Bid) ? &bids_ : &asks_;
         auto* map = (o.side == Side::Bid) ? &bid_map_ : &ask_map_;
 
-        if (book->empty()) {
-            auto new_itr = book->emplace(book->begin(), o.price, o.qty);
-            map->emplace(o.price, new_itr);
-            o.pl = &(*new_itr);
-        } else {
-            auto map_itr = map->find(o.price);
-
-            // price not found in the map, therefore it doesn't exist in the
-            // book. find out where it should go
-            if (map_itr == map->end()) {
-                // find location in book
-                auto loc = std::find_if(book->begin(), book->end(), [&o](price_level const& pl) {
-                    return (o.side == Side::Bid) ? pl.price <= o.price : pl.price >= o.price;
-                });
-
-                // new price level
-                auto new_itr = book->emplace(loc, o.price, o.qty);
+        // need to catch any exceptions from std::unordered_map::emplace
+        try {
+            if (book->empty()) {
+                auto new_itr = book->emplace(book->begin(), o.price, o.qty);
                 map->emplace(o.price, new_itr);
                 o.pl = &(*new_itr);
             } else {
-                map_itr->second->qty += o.qty;
-                o.pl = &*(map_itr->second);
+                auto map_itr = map->find(o.price);
+
+                // price not found in the map, therefore it doesn't exist in the
+                // book. find out where it should go
+                if (map_itr == map->end()) {
+                    // find location in book
+                    auto loc = std::find_if(book->begin(), book->end(), [&o](price_level const& pl) {
+                        return (o.side == Side::Bid) ? pl.price <= o.price : pl.price >= o.price;
+                    });
+
+                    // new price level
+                    auto new_itr = book->emplace(loc, o.price, o.qty);
+                    map->emplace(o.price, new_itr);
+                    o.pl = &(*new_itr);
+                } else {
+                    map_itr->second->qty += o.qty;
+                    o.pl = &*(map_itr->second);
+                }
             }
+        } catch(...) {
+            std::abort();
         }
     }
 
     void
     mapped_book::delete_order(order& order) noexcept
     {
-        if (order.pl == nullptr) {
-            fmt::print(stderr, "[ERROR] delete_order(): price level not found\n");
+        if (order.pl == nullptr)
             return;
-        }
 
         // decrease qty on price level, if it goes to zero, delete the level
         if (order.pl->qty <= order.qty) {
