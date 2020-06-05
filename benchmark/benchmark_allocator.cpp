@@ -88,7 +88,7 @@ mp_unordered_map(benchmark::State& state)
             map(pool);
 
     for (auto _ : state) // NOLINT
-        map.emplace(dist(rng), object(dist(rng), static_cast<std::uint64_t>(dist(rng)), dist(rng)));
+        map.emplace(dist(rng), object(dist(rng), dist(rng), dist(rng)));
 }
 BENCHMARK(mp_unordered_map);
 
@@ -102,6 +102,6 @@ std_unordered_map(benchmark::State& state)
 
     std::unordered_map<int, object> map;
     for (auto _ : state) // NOLINT
-        map.emplace(dist(rng), object(dist(rng), static_cast<std::uint64_t>(dist(rng)), dist(rng)));
+        map.emplace(dist(rng), object(dist(rng), dist(rng), dist(rng)));
 }
 BENCHMARK(std_unordered_map);
