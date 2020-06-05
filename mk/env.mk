@@ -77,9 +77,7 @@ ifdef DEBUG
   OPTFLAGS := -O0 -fno-inline
   WARN += -Wno-error
 else
-  OPTFLAGS := -flto -O3 -DNDEBUG
-  # OPTFLAGS := -flto -O3 -DNDEBUG -fprofile-generate=pgo
-  # OPTFLAGS := -flto -O3 -DNDEBUG -fprofile-use=pgo -Wno-missing-profile
+  OPTFLAGS += -O3 -DNDEBUG
 endif
 
 # compiler flags

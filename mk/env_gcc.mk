@@ -10,7 +10,14 @@ CXX := g++
 
 # optimization flags
 ifndef DEBUG
-  OPTFLAGS := -ffat-lto-objects
+  OPTFLAGS += -flto -ffat-lto-objects
+
+  ifdef PGO_GEN
+    OPTFLAGS += -fprofile-generate
+  endif
+  ifdef PGO_USE
+    OPTFLAGS += -fprofile-use -Wno-missing-profile
+  endif
 endif
 
 # warnings

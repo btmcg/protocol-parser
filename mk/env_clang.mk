@@ -3,11 +3,25 @@
 
 # command variables
 # ----------------------------------------------------------------------
-# Note: In order for -flto to work properly, gcc-ar must be used.
+# Note: In order for -flto to work properly, llvm-ar must be used.
 AR  := llvm-ar rcs
 CC  := clang
 CXX := clang++
 
+# optimization flags
+ifndef DEBUG
+  OPTFLAGS += -flto=thin
+
+  ifdef PGO_GEN
+    OPTFLAGS += -fprofile-instr-generate
+  endif
+  ifdef PGO_USE
+    # Note: Before being able to use the profile data, you must convert
+    # the raw data into a useable format:
+    #   llvm-profdata merge -output=default.profdata *.profraw
+    OPTFLAGS += -fprofile-instr-use -Wno-error=profile-instr-unprofiled -Wno-error=profile-instr-out-of-date
+  endif
+endif
 
 # warnings
 # --------------------------------------------------------------------
