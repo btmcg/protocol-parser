@@ -16,7 +16,7 @@ ifndef DEBUG
     OPTFLAGS += -fprofile-generate
   endif
   ifdef PGO_USE
-    OPTFLAGS += -fprofile-use -Wno-missing-profile
+    OPTFLAGS += -fprofile-use -Wno-error=missing-profile
   endif
 endif
 
