@@ -2,7 +2,6 @@ include mk/env.mk
 include mk/functions.mk
 include mk/pattern_rules.mk
 include mk/third_party.mk
-include mk/version.mk
 
 
 # FIXME:
@@ -36,6 +35,13 @@ include mk/version.mk
 
 # load modules (any subdirectory that contains a "Module.mk" file)
 $(call load-modules)
+
+
+# binary versioning
+# ------------------------------------------------------------------------
+
+# to disable any versioning information, comment out this line
+include mk/version.mk
 
 
 # rules and dependencies
