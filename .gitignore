@@ -18,5 +18,9 @@ src/main/parser
 benchmark/benchmark-runner
 test/test-runner
 
+# benchmark lib that needs to be built and installed
+third_party/google-benchmark-clang
+third_party/google-benchmark-gcc
+
 # build system artifacts
 src/util/version.hpp
