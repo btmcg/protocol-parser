@@ -7,15 +7,6 @@
 # standardize on good ol' Bourne shell
 SHELL := /bin/sh
 
-# either 'gcc' or 'clang'
-COMPILER := gcc
-
-ifeq (,$(findstring $(COMPILER),gcc clang))
-  $(error "Invalid value COMPILER=$(COMPILER), must be either 'gcc' or 'clang'")
-endif
-
-include mk/env_$(COMPILER).mk
-
 
 # output directories
 # ------------------------------------------------------------------------
@@ -87,6 +78,8 @@ ifdef DEBUG
   WARN += -Wno-error
 else
   OPTFLAGS := -O3 -DNDEBUG
+  # OPTFLAGS := -O3 -DNDEBUG -fprofile-generate=pgo
+  # OPTFLAGS := -O3 -DNDEBUG -fprofile-use=pgo -Wno-missing-profile
 endif
 
 # compiler flags
@@ -97,3 +90,15 @@ CFLAGS   += -std=c11 $(CC_WARN)
 # linker flags
 LDFLAGS += -Wl,-rpath=$(LIB_DIR),--enable-new-dtags
 LDLIBS  += -ldl -lrt -pthread
+
+
+# compiler-specific additions/changes
+# ------------------------------------------------------------------------
+# either 'gcc' or 'clang'
+COMPILER := gcc
+
+ifeq (,$(findstring $(COMPILER),gcc clang))
+  $(error "Invalid value COMPILER=$(COMPILER), must be either 'gcc' or 'clang'")
+endif
+
+include mk/env_$(COMPILER).mk

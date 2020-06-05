@@ -1,16 +1,20 @@
+# clang-specific options
+# ----------------------------------------------------------------------
+
 CC  := clang
 CXX := clang++
+
 
 # warnings
 # ----------------------------------------------------------------------
 # c/c++ warning flags
-WARN :=
+WARN +=
 
 # c-specific warning flags
-CC_WARN :=
+CC_WARN +=
 
 # c++-specific warning flags
-CXX_WARN := \
+CXX_WARN += \
   -Wsuggest-final-methods \
   -Wsuggest-final-types \
 
