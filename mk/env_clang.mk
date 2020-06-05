@@ -14,10 +14,7 @@ WARN +=
 CC_WARN +=
 
 # c++-specific warning flags
-CXX_WARN += \
-  -Wsuggest-final-methods \
-  -Wsuggest-final-types \
-
+CXX_WARN +=
 CXXFLAGS += -stdlib=libc++
 
 # use the clang linker
