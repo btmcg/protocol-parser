@@ -1,29 +1,7 @@
-include mk/env.mk
-include mk/functions.mk
-include mk/pattern_rules.mk
-include mk/third_party.mk
-
-
-# FIXME/TODO:
-# o Add global variable APP_OUT. If defined, place the bin and lib
-#   directories in that directory.
-# o Ensure that we have permission to write to APP_OUT, BIN_DIR, LIB_DIR
-#   before actually doing any work.
-# o Add 'doc' default target.
-# o Support some sort of code gen, specifically where some other program
-#   generates .cpp and .hpp files.
-# o Document build system hierarchy:
-#   app -> module -> target -> object -> source
-# o Document build system variable naming so there aren't any collisions
-#   with user variables.
-# o Add test examples:
-#   - a subdirectory (under src/) that contains several modules
-#   - an executable several levels deep (e.g., src/a/b/c/d/e/Module.mk)
-# o Add support for make v3.81 and below
-# o Add ability to clean just one module (e.g., make module clean)
-# o Split compile/link function into two distinct functions
-# o Support DESTDIR:
-#     (https://www.gnu.org/prep/standards/html_node/DESTDIR.html#DESTDIR)
+include nrmake/env.mk
+include nrmake/functions.mk
+include nrmake/pattern_rules.mk
+include nrmake/third_party.mk
 
 
 # initialization
@@ -37,7 +15,7 @@ $(call load-modules)
 # ----------------------------------------------------------------------
 
 # to disable any versioning information, comment out this line
-include mk/version.mk
+include nrmake/version.mk
 
 
 # rules and dependencies
