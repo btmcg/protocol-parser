@@ -6,24 +6,22 @@
 # Example Module.mk
 
 # The bare-minimum required for a Module.mk file is to define the
-# current path (a Make limitation) and to define what kind of output
-# should be created. The following two lines are all that is required to
-# create a c++ executable.
+# type of module to be built (executable, shared library, or static
+# library) and provide the path. The following line is all that is
+# required to create a c or c++ executable.
 #
-# LOCAL_PATH := = $(call my-dir)
-# $(call add-executable-module)
+#     $(call add-executable-module,$(call get-path))
+#
+# for a shared library:
+#
+#     $(call add-shared-library-module,$(call get-path))
+#
+# and for a static library:
+#
+#     $(call add-static-library-module,$(call get-path))
 
 
 # Acceptable variables:
-
-# LOCAL_PATH
-# This always needs to be set in order for the build system to determine
-# the current path and location of the module. In almost all cases, it
-# should be set by calling the my-dir function, which will do "The Right
-# Thing" and set the variable to the full canonical filepath of the
-# current Module.mk.
-# Example: $(call my-dir)
-# Default: empty
 
 # LOCAL_CFLAGS
 # Flags to be passed to the C compiler. This should contain any CFLAGS
@@ -76,9 +74,10 @@
 
 # LOCAL_MODULE
 # This should contain the name of this particular module, if it should
-# be different than the basename of the path defined by LOCAL_PATH.
+# be different than the basename of the path defined by calling
+# get-path.
 # Example: mymodule
-# Default: basename of $(LOCAL_PATH)
+# Default: basename of $(call get-path)
 
 # LOCAL_OBJS
 # This should contain the names of the object files to be created as a
@@ -88,20 +87,6 @@
 
 # LOCAL_SOURCE_FILES
 # This should contain the name of all source files to be compiled.
-# Example: $(call rwildcard,$(LOCAL_PATH),*.cpp) which will populate the
-# variable with all cpp files in every subdirectory of the module.
+# Example: $(call rwildcard,$(call get-path),*.cpp) which will populate
+# the variable with all cpp files in every subdirectory of the module.
 # Default: *.cpp
-
-# LOCAL_TARGET
-# This should contain the name of resulting object created by this
-# module, whether it be an executable or library.
-# Example: my_executable
-# Default: $(LOCAL_PATH)/$(LOCAL_MODULE) (for executable)
-#          $(LOCAL_PATH)/lib$(LOCAL_MODULE).a (for static lib)
-#          $(LOCAL_PATH)/lib$(LOCAL_MODULE).so (for shared lib)
-# Default: basename of $(LOCAL_PATH)
-
-# Every Module.mk must conclude with one of the following:
-# $(call add-executable-module)
-# $(call add-shared-library-module)
-# $(call add-static-library-module)

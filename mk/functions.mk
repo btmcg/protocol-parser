@@ -21,11 +21,11 @@ modules-LOCALS := \
 
 
 # ----------------------------------------------------------------------
-# function : my-dir
-# returns  : the directory of the current Makefile
-# usage    : $(call my-dir)
+# function : get-path
+# returns  : the path of the current file
+# usage    : $(call get-path)
 # ----------------------------------------------------------------------
-my-dir = $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
+get-path = $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 
 
 # ----------------------------------------------------------------------
@@ -162,6 +162,7 @@ load-modules =\
 
 # ----------------------------------------------------------------------
 # function : add-executable-module
+# arguments: 1: path to module's Module.mk file
 # returns  : nothing
 # usage    : $(call add-executable-module)
 # rationale: used in Module.mk files to add an executable target to the
@@ -169,6 +170,7 @@ load-modules =\
 # note     : this function requires LOCAL_PATH to be set by caller
 # ----------------------------------------------------------------------
 add-executable-module =\
+  $(eval LOCAL_PATH := $1)\
   $(eval LOCAL_MODULE ?= $(notdir $(LOCAL_PATH)))\
   $(eval __modules.$(LOCAL_MODULE).LOCAL_TARGET := $(LOCAL_PATH)/$(LOCAL_MODULE))\
   $(eval __modules.$(LOCAL_MODULE).LOCAL_TYPE   := executable)\
@@ -177,6 +179,7 @@ add-executable-module =\
 
 # ----------------------------------------------------------------------
 # function : add-shared-library-module
+# arguments: 1: path to module's Module.mk file
 # returns  : nothing
 # usage    : $(call add-shared-library-module)
 # rationale: used in Module.mk files to add a shared library target to
@@ -184,6 +187,7 @@ add-executable-module =\
 # note     : this function requires LOCAL_PATH to be set by caller
 # ----------------------------------------------------------------------
 add-shared-library-module =\
+  $(eval LOCAL_PATH := $1)\
   $(eval LOCAL_MODULE ?= $(notdir $(LOCAL_PATH)))\
   $(eval __modules.$(LOCAL_MODULE).LOCAL_TARGET := $(LOCAL_PATH)/lib$(LOCAL_MODULE).so)\
   $(eval __modules.$(LOCAL_MODULE).LOCAL_TYPE   := shared_library)\
@@ -194,6 +198,7 @@ add-shared-library-module =\
 
 # ----------------------------------------------------------------------
 # function : add-static-library-module
+# arguments: 1: path to module's Module.mk file
 # returns  : nothing
 # usage    : $(call add-static-library-module)
 # rationale: used in Module.mk files to add a static library target to
@@ -201,6 +206,7 @@ add-shared-library-module =\
 # note     : this function requires LOCAL_PATH to be set by caller
 # ----------------------------------------------------------------------
 add-static-library-module =\
+  $(eval LOCAL_PATH := $1)\
   $(eval LOCAL_MODULE ?= $(notdir $(LOCAL_PATH)))\
   $(eval __modules.$(LOCAL_MODULE).LOCAL_TARGET := $(LOCAL_PATH)/lib$(LOCAL_MODULE).a)\
   $(eval __modules.$(LOCAL_MODULE).LOCAL_TYPE   := static_library)\
