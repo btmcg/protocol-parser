@@ -1,4 +1,3 @@
-LOCAL_SOURCE_FILES := $(wildcard *.cpp)
 LOCAL_LDLIBS := -lz
 LOCAL_LIBRARIES := util
 
