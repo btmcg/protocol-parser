@@ -1,10 +1,15 @@
+#￼Copyright(c) 2020-present, Brian McGuire.
+# Distributed under the BSD-2-Clause
+# (http://opensource.org/licenses/BSD-2-Clause)
+
+
 # clang-specific options
 # --------------------------------------------------------------------
 
 # command variables
 # ----------------------------------------------------------------------
 # Note: In order for -flto to work properly, llvm-ar must be used.
-AR  := llvm-ar rcs
+AR  := llvm-ar $(ARFLAGS)
 CC  := clang
 CXX := clang++
 

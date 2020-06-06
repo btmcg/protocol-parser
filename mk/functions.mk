@@ -1,3 +1,8 @@
+#￼Copyright(c) 2020-present, Brian McGuire.
+# Distributed under the BSD-2-Clause
+# (http://opensource.org/licenses/BSD-2-Clause)
+
+
 # module-specific variables
 # ----------------------------------------------------------------------
 modules-LOCALS := \
@@ -538,7 +543,7 @@ run-clang-tidy =\
 # usage    : $(call cmd-clang-tidy,<module_name>)
 # ----------------------------------------------------------------------
 cmd-clang-tidy =\
-  clang-tidy\
+  $(TIDY)\
   $(__modules.$1.LOCAL_SOURCE_FILES)\
   --\
   $(CPPFLAGS)\

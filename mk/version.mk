@@ -1,3 +1,8 @@
+#￼Copyright(c) 2020-present, Brian McGuire.
+# Distributed under the BSD-2-Clause
+# (http://opensource.org/licenses/BSD-2-Clause)
+
+
 GIT := /usr/bin/git
 VERSION := $(shell $(GIT) describe --abbrev=4 --always --dirty --tags)
 VERSION_FILE := src/version.hpp

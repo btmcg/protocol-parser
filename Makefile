@@ -4,22 +4,18 @@ include mk/pattern_rules.mk
 include mk/third_party.mk
 
 
-# FIXME:
+# FIXME/TODO:
 # o Add global variable APP_OUT. If defined, place the bin and lib
 #   directories in that directory.
 # o Ensure that we have permission to write to APP_OUT, BIN_DIR, LIB_DIR
 #   before actually doing any work.
-# o Add documentation for all build targets.
 # o Add 'doc' default target.
 # o Support some sort of code gen, specifically where some other program
-#   generates .cpp and .h files.
+#   generates .cpp and .hpp files.
 # o Document build system hierarchy:
 #   app -> module -> target -> object -> source
 # o Document build system variable naming so there aren't any collisions
 #   with user variables.
-# o Create module_example.mk, documenting all of the LOCAL_* variables
-#   that can be defined. (Perhaps also provide a module_example_minimal.mk
-#   which simply defines the bare essentials (LOCAL_PATH, add_module())?
 # o Add test examples:
 #   - a subdirectory (under src/) that contains several modules
 #   - an executable several levels deep (e.g., src/a/b/c/d/e/Module.mk)
@@ -71,9 +67,9 @@ distclean: clean
 		$(RM) $(BIN_DIR)/* && $(RMDIR) $(BIN_DIR))
 
 format:
-	@find src -type f \( -name '*.hpp' -o -name '*.cpp' \) -exec clang-format -i --verbose {} \;
-	@find test -type f \( -name '*.hpp' -o -name '*.cpp' \) -exec clang-format -i --verbose {} \;
-	@find benchmark -type f \( -name '*.hpp' -o -name '*.cpp' \) -exec clang-format -i --verbose {} \;
+	@find src -type f \( -name '*.hpp' -o -name '*.cpp' \) -exec $(FORMAT) {} \;
+	@find test -type f \( -name '*.hpp' -o -name '*.cpp' \) -exec $(FORMAT) {} \;
+	@find benchmark -type f \( -name '*.hpp' -o -name '*.cpp' \) -exec $(FORMAT) {} \;
 
 tags:
 	ctags --recurse src
@@ -84,7 +80,7 @@ benchmark: benchmark-runner
 test: test-runner
 	./bin/$^
 
-# works best when run as 'make COMPILER=clang DEBUG=1 tidy'
+# automatically sets COMPILER=clang
 tidy:
 	$(run-clang-tidy)
 

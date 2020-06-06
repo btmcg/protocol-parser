@@ -1,10 +1,15 @@
+#￼Copyright(c) 2020-present, Brian McGuire.
+# Distributed under the BSD-2-Clause
+# (http://opensource.org/licenses/BSD-2-Clause)
+
+
 # gcc-specific options
 # ----------------------------------------------------------------------
 
 # command variables
 # ----------------------------------------------------------------------
 # Note: In order for -flto to work properly, gcc-ar must be used.
-AR  := gcc-ar rcs
+AR  := gcc-ar $(ARFLAGS)
 CC  := gcc
 CXX := g++
 
