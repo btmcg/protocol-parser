@@ -52,9 +52,11 @@ namespace itch {
                 // book. find out where it should go
                 if (map_itr == map->end()) {
                     // find location in book
-                    auto loc = std::find_if(book->begin(), book->end(), [&o](price_level const& pl) {
-                        return (o.side == Side::Bid) ? pl.price <= o.price : pl.price >= o.price;
-                    });
+                    auto loc
+                            = std::find_if(book->begin(), book->end(), [&o](price_level const& pl) {
+                                  return (o.side == Side::Bid) ? pl.price <= o.price
+                                                               : pl.price >= o.price;
+                              });
 
                     // new price level
                     auto new_itr = book->emplace(loc, o.price, o.qty);
@@ -65,7 +67,7 @@ namespace itch {
                     o.pl = &*(map_itr->second);
                 }
             }
-        } catch(...) {
+        } catch (...) {
             std::abort();
         }
     }
