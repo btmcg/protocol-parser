@@ -4,3 +4,6 @@
 [submodule "third_party/fmt/6.2.1"]
 	path = third_party/fmt/6.2.1
 	url = https://github.com/fmtlib/fmt.git
+[submodule "nrmake"]
+	path = nrmake
+	url = https://gitlab.com/btmcg/nrmake.git
