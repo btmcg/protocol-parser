@@ -50,8 +50,8 @@ Requires the google-benchmark header and libs installed locally; described below
    ``make -j``
 
 
-Maintaining third-party libraries
----------------------------------
+Installing and maintaining third-party libraries
+------------------------------------------------
 
 google benchmark v1.5.0
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,9 +61,8 @@ google benchmark v1.5.0
 .. code-block::
 
     # from protocol-parser root
-    git clone https://github.com/google/benchmark.git gb
+    git clone --branch=v1.5.0 --depth=1 https://github.com/google/benchmark.git gb
     cd gb
-    git checkout -b 1.5.0
 
     cmake . -DBENCHMARK_ENABLE_GTEST_TESTS=OFF -DBENCHMARK_ENABLE_TESTING=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_INSTALL_PREFIX=../third_party/google-benchmark-gcc/1.5.0
     make install -j
