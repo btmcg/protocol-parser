@@ -15,7 +15,7 @@ bool
 is_aligned(void* ptr, std::size_t alignment) noexcept
 {
     DEBUG_ASSERT(is_valid_alignment(alignment));
-    std::uintptr_t address = reinterpret_cast<std::uintptr_t>(ptr);
+    auto address = reinterpret_cast<std::uintptr_t>(ptr);
     return address % alignment == 0u;
 }
 

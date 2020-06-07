@@ -23,22 +23,10 @@ template <typename Functor>
 class lowlevel_allocator
 {
 public:
-    constexpr lowlevel_allocator() noexcept
-    {
-        // empty
-    }
-
-    constexpr lowlevel_allocator(lowlevel_allocator&&) noexcept
-    {
-        // empty
-    }
-
+    constexpr lowlevel_allocator() noexcept = default;
+    constexpr lowlevel_allocator(lowlevel_allocator&&) noexcept = default;
+    constexpr ~lowlevel_allocator() noexcept = default;
     lowlevel_allocator(lowlevel_allocator const&) noexcept = delete;
-
-    constexpr ~lowlevel_allocator() noexcept
-    {
-        // empty
-    }
 
     constexpr lowlevel_allocator&
     operator=(lowlevel_allocator&&) noexcept

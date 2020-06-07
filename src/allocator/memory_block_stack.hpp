@@ -92,9 +92,9 @@ memory_block_stack::size() const noexcept
 constexpr bool
 memory_block_stack::owns(void const* ptr) const noexcept
 {
-    std::uint8_t const* address = static_cast<std::uint8_t const*>(ptr);
+    auto address = static_cast<std::uint8_t const*>(ptr);
     for (node const* cur = head_; cur != nullptr; cur = cur->prev) {
-        std::uint8_t const* mem = static_cast<decltype(mem)>(static_cast<void const*>(cur));
+        auto mem = static_cast<std::uint8_t const*>(static_cast<void const*>(cur));
         if (address >= mem && address < mem + cur->usable_size)
             return true;
     }

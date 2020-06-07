@@ -23,8 +23,8 @@ struct memory_block
         if (address == nullptr)
             return false;
 
-        std::uint8_t const* mem = static_cast<std::uint8_t const*>(memory);
-        std::uint8_t const* addr = static_cast<std::uint8_t const*>(address);
+        auto mem = static_cast<std::uint8_t const*>(memory);
+        auto addr = static_cast<std::uint8_t const*>(address);
         return addr >= mem && addr < mem + size;
     }
 };

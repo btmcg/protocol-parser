@@ -171,11 +171,7 @@ private:
 /**********************************************************************/
 
 constexpr free_list::free_list(std::size_t node_size) noexcept
-        : first_(nullptr)
-        , node_size_(node_size > detail::MinElementSize ? node_size : detail::MinElementSize)
-        , capacity_left_(0)
-        , used_(0)
-        , max_used_(0)
+        : node_size_(node_size > detail::MinElementSize ? node_size : detail::MinElementSize)
 {
     // empty
 }
@@ -256,7 +252,7 @@ free_list::deallocate(void* ptr) noexcept
     ++capacity_left_;
     --used_;
 
-    std::uint8_t* node = static_cast<std::uint8_t*>(ptr);
+    auto* node = static_cast<std::uint8_t*>(ptr);
     detail::list_set_next(node, first_);
     first_ = node;
 }
@@ -324,7 +320,7 @@ free_list::insert_impl(void* mem, std::size_t size) noexcept
     auto no_nodes = size / node_size_;
     DEBUG_ASSERT(no_nodes > 0);
 
-    std::uint8_t* cur = static_cast<std::uint8_t*>(mem);
+    auto* cur = static_cast<std::uint8_t*>(mem);
     for (std::size_t i = 0u; i != no_nodes - 1; ++i) {
         detail::list_set_next(cur, cur + node_size_);
         cur += node_size_;
