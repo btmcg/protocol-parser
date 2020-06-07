@@ -1,37 +1,21 @@
 #include "instrument.hpp"
+#include <algorithm> // std::transform
 #include <fmt/format.h>
 
 
 namespace itch {
 
     instrument::instrument() noexcept
-            : locate(0)
-            , name{}
-            , book()
-            , open(0)
-            , close(0)
-            , lo(InvalidLoPrice)
+            : lo(InvalidLoPrice)
             , hi(InvalidHiPrice)
-            , num_trades(0)
-            , trade_qty(0)
-            , num_orders(0)
-            , instrument_state(InstrumentState::Unknown)
     {
         // empty
     }
 
     instrument::instrument(std::uint16_t l, char const (&nm)[NameLen]) noexcept
             : locate(l)
-            , name()
-            , book()
-            , open(0)
-            , close(0)
             , lo(InvalidLoPrice)
             , hi(InvalidHiPrice)
-            , num_trades(0)
-            , trade_qty(0)
-            , num_orders(0)
-            , instrument_state(InstrumentState::Unknown)
     {
         set_name(nm);
     }
@@ -39,13 +23,8 @@ namespace itch {
     void
     instrument::set_name(char const (&nm)[NameLen]) noexcept
     {
-        for (std::size_t i = 0; i < sizeof(nm); ++i) {
-            if (nm[i] == ' ') {
-                name[i] = '\0';
-                break;
-            }
-            name[i] = nm[i];
-        }
+        std::transform(std::begin(nm), std::end(nm), std::begin(name),
+                [](char c) { return c == ' ' ? '\0' : c; });
     }
 
     std::string

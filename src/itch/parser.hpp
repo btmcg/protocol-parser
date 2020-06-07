@@ -84,7 +84,6 @@ namespace itch {
     parser<LoggingEnabled>::parser(std::string const& stats_fname) noexcept
             : instruments_(MaxNumInstruments)
             , orders_(MaxNumOrders)
-            , market_state_(MarketState::Unknown)
             , stats_file_(stats_fname.empty() ? nullptr : std::fopen(stats_fname.c_str(), "w"))
             , msg_stats_()
             , log_(LoggingEnabled ? std::fopen("itch.log", "w") : nullptr)
@@ -113,7 +112,7 @@ namespace itch {
         std::size_t bytes_processed = 0;
         std::uint8_t const* end = buf + bytes_to_read;
         while (buf + sizeof(header) < end) {
-            header const* hdr = reinterpret_cast<decltype(hdr)>(buf);
+            auto hdr = reinterpret_cast<header const*>(buf);
             std::uint16_t const msg_len = be16toh(hdr->length) + sizeof(hdr->length);
 
             // not enough bytes for the full msg, read nothing
@@ -188,11 +187,11 @@ namespace itch {
         if (stats_file_ != nullptr) {
             fmt::print(stats_file_, "{}\n", instrument::stats_csv_header());
 
-            for (std::size_t i = 0; i < instruments_.size(); ++i) {
-                if (instruments_[i].locate == 0)
+            for (auto const& instrument : instruments_) {
+                if (instrument.locate == 0)
                     continue;
 
-                fmt::print(stats_file_, "{}\n", instruments_[i].stats_csv());
+                fmt::print(stats_file_, "{}\n", instrument.stats_csv());
             }
         }
     }

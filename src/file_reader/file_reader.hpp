@@ -67,7 +67,7 @@ template <typename Callable>
 bool
 file_reader::process_raw(Callable&& fn)
 {
-    std::uint8_t const* ptr = reinterpret_cast<decltype(ptr)>(f_ptr_);
+    auto ptr = reinterpret_cast<std::uint8_t const*>(f_ptr_);
     stats_.nsec_count += tsc::get_nsecs();
     std::size_t const bytes_processed = fn(ptr, file_size_);
     stats_.nsec_count = tsc::get_nsecs() - stats_.nsec_count;

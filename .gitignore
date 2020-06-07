@@ -23,4 +23,4 @@ third_party/google-benchmark-clang
 third_party/google-benchmark-gcc
 
 # build system artifacts
-src/util/version.hpp
+src/version.hpp

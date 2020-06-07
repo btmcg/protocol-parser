@@ -2,7 +2,7 @@
 #include "itch/parser.hpp"
 #include "util/compiler.hpp"
 #include "util/time.hpp"
-#include "util/version.hpp"
+#include "version.hpp"
 #include <filesystem>
 #include <getopt.h>
 #include <cstdio> // std::fprintf

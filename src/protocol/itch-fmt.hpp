@@ -16,8 +16,8 @@ namespace itch {
     {
         constexpr std::size_t bits = std::numeric_limits<std::uint8_t>::digits;
         std::uint64_t t = 0;
-        for (std::size_t i = 0; i < sizeof(timestamp); ++i)
-            t = (t << bits) + timestamp[i];
+        for (std::uint8_t i : timestamp)
+            t = (t << bits) + i;
         return t;
     }
 
