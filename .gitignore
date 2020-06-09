@@ -14,9 +14,9 @@ lib/
 tags
 
 # executables
-src/main/parser
 benchmark/benchmark-runner
 test/test-runner
+src/main/parser
 
 # benchmark lib that needs to be built and installed
 third_party/google-benchmark-clang
