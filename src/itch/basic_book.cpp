@@ -1,6 +1,7 @@
-#include "book.hpp"
-#include <fmt/format.h>
+#include "basic_book.hpp"
 #include <algorithm>
+#include <cstdint>
+
 
 namespace { // unnamed
 
@@ -16,17 +17,15 @@ namespace { // unnamed
 
 namespace itch {
 
-    tsbook::tsbook() noexcept
-            : bid_pool_(sizeof(price_level) + StdListNodeExtra, NumPriceLevels)
-            , bids_(bid_pool_)
-            , ask_pool_(sizeof(price_level) + StdListNodeExtra, NumPriceLevels)
-            , asks_(ask_pool_)
+    basic_book::basic_book() noexcept
+            : bids_()
+            , asks_()
     {
         // empty
     }
 
     void
-    tsbook::add_order(order& order) noexcept
+    basic_book::add_order(order& order) noexcept
     {
         auto* book = (order.side == Side::Bid) ? &bids_ : &asks_;
 
@@ -54,7 +53,7 @@ namespace itch {
     }
 
     void
-    tsbook::delete_order(order& order) noexcept
+    basic_book::delete_order(order& order) noexcept
     {
         if (order.pl == nullptr)
             return;
@@ -79,14 +78,14 @@ namespace itch {
     }
 
     void
-    tsbook::replace_order(order& old_order, order& new_order) noexcept
+    basic_book::replace_order(order& old_order, order& new_order) noexcept
     {
         delete_order(old_order);
         add_order(new_order);
     }
 
     void
-    tsbook::cancel_order(order& order, qty_t remove_qty) noexcept
+    basic_book::cancel_order(order& order, qty_t remove_qty) noexcept
     {
         if (remove_qty >= order.qty) {
             // this cancel will remove the order
@@ -97,20 +96,20 @@ namespace itch {
         }
     }
 
-    decltype(tsbook::bids_) const&
-    tsbook::bids() const noexcept
+    decltype(basic_book::bids_) const&
+    basic_book::bids() const noexcept
     {
         return bids_;
     }
 
-    decltype(tsbook::asks_) const&
-    tsbook::asks() const noexcept
+    decltype(basic_book::asks_) const&
+    basic_book::asks() const noexcept
     {
         return asks_;
     }
 
     price_level
-    tsbook::best_bid() const noexcept
+    basic_book::best_bid() const noexcept
     {
         if (bids_.empty())
             return {0, 0};
@@ -119,24 +118,12 @@ namespace itch {
     }
 
     price_level
-    tsbook::best_ask() const noexcept
+    basic_book::best_ask() const noexcept
     {
         if (asks_.empty())
             return {0, 0};
 
         return asks_.front();
-    }
-
-    std::size_t
-    tsbook::max_bid_pool_used() const noexcept
-    {
-        return bid_pool_.max_used();
-    }
-
-    std::size_t
-    tsbook::max_ask_pool_used() const noexcept
-    {
-        return ask_pool_.max_used();
     }
 
 } // namespace itch

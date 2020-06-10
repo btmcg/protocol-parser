@@ -1,6 +1,8 @@
 #pragma once
 
-#include "book.hpp"
+#include "basic_book.hpp"
+#include "mp_book.hpp"
+#include "mapped_book.hpp"
 #include "core.hpp"
 #include <cstdint>
 #include <string>
@@ -12,7 +14,7 @@ namespace itch {
     {
         std::uint16_t locate = 0;
         char name[NameLen] = {0};
-        tsbook book;
+        mp_book book;
 
         price_t open = 0;
         price_t close = 0;

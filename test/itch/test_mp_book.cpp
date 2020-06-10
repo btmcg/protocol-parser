@@ -1,13 +1,13 @@
-#include "itch/book.hpp"
+#include "itch/mp_book.hpp"
 #include "itch/core.hpp"
 #include <catch2/catch.hpp>
 #include <cstring>
 
 
-TEST_CASE("tsbook", "[book]")
+TEST_CASE("mp_book", "[mp_book]")
 {
     using namespace itch;
-    tsbook book;
+    mp_book book;
 
     SECTION("add_order")
     {
