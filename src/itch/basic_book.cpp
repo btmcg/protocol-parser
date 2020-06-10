@@ -3,18 +3,6 @@
 #include <cstdint>
 
 
-namespace { // unnamed
-
-    // each std::list node has two pointers (prev, next) which we
-    // should account for when creating memory pool
-    constexpr std::uint32_t StdListNodeExtra = 16;
-
-    // allocate this many price levels in the memory pool
-    constexpr std::uint32_t NumPriceLevels = 5000;
-
-} // namespace
-
-
 namespace itch {
 
     basic_book::basic_book() noexcept
