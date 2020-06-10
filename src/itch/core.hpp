@@ -84,8 +84,8 @@ namespace itch {
     constexpr inline double
     to_hr_price(price_t p) noexcept
     {
-        // rather than using the fpu, we multiply by the inverse and
-        // avoid the floating-point division.
+        // multiplying by the inverse avoids floating-point division and
+        // therefore the fpu
         constexpr double inverse = 1 / 10000.0;
         return (p == InvalidHiPrice || p == InvalidLoPrice) ? 0.0 : p * inverse;
     }
