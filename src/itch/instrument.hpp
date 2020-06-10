@@ -2,7 +2,7 @@
 
 #include "basic_book.hpp"
 #include "mp_book.hpp"
-#include "mapped_book.hpp"
+#include "hashed_book.hpp"
 #include "core.hpp"
 #include <cstdint>
 #include <string>

@@ -1,4 +1,4 @@
-#include "mapped_book.hpp"
+#include "hashed_book.hpp"
 #include <fmt/format.h>
 #include <algorithm>
 #include <cstdio>
