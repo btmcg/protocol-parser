@@ -1,6 +1,6 @@
 #include "instrument.hpp"
-#include <algorithm> // std::transform
 #include <fmt/format.h>
+#include <algorithm> // std::transform
 
 
 namespace itch {
