@@ -1,6 +1,8 @@
 #pragma once
 
 #include "core.hpp"
+#include "allocator/memory_pool.hpp"
+#include "allocator/mp_allocator.hpp"
 #include <cstddef> // std::size_t
 #include <functional> // std::greater, std::less
 #include <map>
@@ -12,8 +14,16 @@ namespace itch {
     class map_book
     {
     private:
-        std::map<price_t, price_level, std::greater<>> bids_;
-        std::map<price_t, price_level, std::less<>> asks_;
+        // std::map<price_t, price_level, std::greater<> bids_;
+        // std::map<price_t, price_level, std::less<>> asks_;
+        memory_pool bid_pool_;
+        std::map<price_t, price_level, std::greater<>,
+                mp_allocator<std::pair<price_t const, price_level>>>
+                bids_;
+        memory_pool ask_pool_;
+        std::map<price_t, price_level, std::less<>,
+                mp_allocator<std::pair<price_t const, price_level>>>
+                asks_;
 
     public:
         map_book() noexcept;

@@ -1,12 +1,31 @@
 #include "map_book.hpp"
 #include <fmt/format.h>
+#include <cstdint>
+
+
+namespace { // unnamed
+
+    // each std::map node needs extra memory for at least four pointers
+    // which we should account for when creating memory pool
+    constexpr std::uint32_t StdMapNodeExtra = sizeof(std::uintptr_t) * 4;
+
+    // allocate this many price levels in the memory pool
+    constexpr std::uint32_t NumPriceLevels = 5000;
+
+} // namespace
 
 
 namespace itch {
 
     map_book::map_book() noexcept
-            : bids_()
-            , asks_()
+            : bid_pool_(
+                    sizeof(std::pair<price_t const, price_level>) + StdMapNodeExtra, NumPriceLevels)
+            , bids_(bid_pool_)
+            , ask_pool_(sizeof(std::pair<price_t const, price_level>) + StdMapNodeExtra,
+                      NumPriceLevels)
+            , asks_(ask_pool_)
+    // : bids_()
+    // , asks_()
     {
         // empty
     }

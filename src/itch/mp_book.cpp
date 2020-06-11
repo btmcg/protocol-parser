@@ -7,7 +7,7 @@ namespace { // unnamed
 
     // each std::list node has two pointers (prev, next) which we
     // should account for when creating memory pool
-    constexpr std::uint32_t StdListNodeExtra = 16;
+    constexpr std::uint32_t StdListNodeExtra = sizeof(std::uintptr_t) + sizeof(std::uintptr_t);
 
     // allocate this many price levels in the memory pool
     constexpr std::uint32_t NumPriceLevels = 5000;
