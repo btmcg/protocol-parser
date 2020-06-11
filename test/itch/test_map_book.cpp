@@ -9,11 +9,13 @@ TEST_CASE("map_book", "[map_book]")
     using namespace itch;
     map_book book;
 
-    SECTION("add_order")
+    SECTION("add_order bids")
     {
-        order o1{Side::Bid, 100, 100, nullptr};
-        order o2{Side::Bid, 200, 200, nullptr};
-        order o3{Side::Bid, 300, 300, nullptr};
+        order o1{Side::Bid, 10000, 100, nullptr};
+        order o2{Side::Bid, 20000, 200, nullptr};
+        order o3{Side::Bid, 30000, 300, nullptr};
+        order o4{Side::Bid, 20000, 500, nullptr};
+        order o5{Side::Bid, 30000, 500, nullptr};
 
         book.add_order(o1);
         REQUIRE(o1.pl->price == o1.price);
@@ -36,20 +38,96 @@ TEST_CASE("map_book", "[map_book]")
         REQUIRE(book.bids().size() == 3);
 
         // new order in middle of book
-        order o4{Side::Bid, 200, 500, nullptr};
         book.add_order(o4);
         REQUIRE(o4.pl->price == o4.price);
         REQUIRE(o4.pl->qty == o4.qty + o2.qty);
         REQUIRE(book.bids().size() == 3);
 
         // new inside bid
-        order o5{Side::Bid, 300, 500, nullptr};
         book.add_order(o5);
         REQUIRE(o5.pl->price == o5.price);
         REQUIRE(o5.pl->qty == o3.qty + o5.qty);
         REQUIRE(book.best_bid().price == o5.price);
         REQUIRE(book.best_bid().qty == o3.qty + o5.qty);
         REQUIRE(book.bids().size() == 3);
+    }
+
+    SECTION("add_order bids random")
+    {
+        order o1{Side::Bid, 10000, 100, nullptr};
+        order o2{Side::Bid, 20000, 200, nullptr};
+        order o3{Side::Bid, 30000, 300, nullptr};
+        order o4{Side::Bid, 20000, 500, nullptr};
+        order o5{Side::Bid, 30000, 500, nullptr};
+
+        // final bid book should look like:
+        //  800 @ 30000
+        //  700 @ 20000
+        //  100 @ 10000
+
+        book.add_order(o1);
+        book.add_order(o2);
+        book.add_order(o3);
+        book.add_order(o4);
+        book.add_order(o5);
+
+        map_book book2;
+        book2.add_order(o5);
+        book2.add_order(o4);
+        book2.add_order(o3);
+        book2.add_order(o2);
+        book2.add_order(o1);
+
+        map_book book3;
+        book3.add_order(o3);
+        book3.add_order(o1);
+        book3.add_order(o5);
+        book3.add_order(o2);
+        book3.add_order(o4);
+
+        REQUIRE(book.best_bid() == book2.best_bid());
+        REQUIRE(book2.best_bid() == book3.best_bid());
+        REQUIRE(book.bids() == book2.bids());
+        REQUIRE(book2.bids() == book3.bids());
+    }
+
+    SECTION("add_order asks random")
+    {
+        order o1{Side::Ask, 10000, 100, nullptr};
+        order o2{Side::Ask, 20000, 200, nullptr};
+        order o3{Side::Ask, 30000, 300, nullptr};
+        order o4{Side::Ask, 20000, 500, nullptr};
+        order o5{Side::Ask, 30000, 500, nullptr};
+
+        // final ask book should look like:
+        //  100 @ 10000
+        //  700 @ 20000
+        //  800 @ 30000
+
+        book.add_order(o1);
+        book.add_order(o2);
+        book.add_order(o3);
+        book.add_order(o4);
+        book.add_order(o5);
+
+        map_book book2;
+        book2.add_order(o5);
+        book2.add_order(o4);
+        book2.add_order(o3);
+        book2.add_order(o2);
+        book2.add_order(o1);
+
+        map_book book3;
+        book3.add_order(o3);
+        book3.add_order(o1);
+        book3.add_order(o5);
+        book3.add_order(o2);
+        book3.add_order(o4);
+
+        REQUIRE(book.best_ask() == book2.best_ask());
+        REQUIRE(book2.best_ask() == book3.best_ask());
+        REQUIRE(book.asks() == book2.asks());
+        REQUIRE(book2.asks() == book3.asks());
     }
 
     SECTION("delete_order")
