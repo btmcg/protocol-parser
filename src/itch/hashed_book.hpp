@@ -11,7 +11,7 @@ namespace itch {
 
     /// Book with std::list for ordered price levels and a
     /// std::unordered_map keyed by price for fast look-up.
-    class mapped_book
+    class hashed_book
     {
     private:
         memory_pool bid_pool_;
@@ -22,7 +22,7 @@ namespace itch {
         std::unordered_map<price_t, decltype(asks_)::iterator> ask_map_;
 
     public:
-        mapped_book() noexcept;
+        hashed_book() noexcept;
         void add_order(order&) noexcept;
         void delete_order(order&) noexcept;
         void replace_order(order& old_order, order& new_order) noexcept;

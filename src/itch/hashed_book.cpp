@@ -21,7 +21,7 @@ namespace { // unnamed
 
 namespace itch {
 
-    mapped_book::mapped_book() noexcept
+    hashed_book::hashed_book() noexcept
             : bid_pool_(sizeof(price_level) + StdListNodeExtra, NumPriceLevels)
             , ask_pool_(sizeof(price_level) + StdListNodeExtra, NumPriceLevels)
             , bids_(bid_pool_)
@@ -34,7 +34,7 @@ namespace itch {
     }
 
     void
-    mapped_book::add_order(order& o) noexcept
+    hashed_book::add_order(order& o) noexcept
     {
         auto* book = (o.side == Side::Bid) ? &bids_ : &asks_;
         auto* map = (o.side == Side::Bid) ? &bid_map_ : &ask_map_;
@@ -73,7 +73,7 @@ namespace itch {
     }
 
     void
-    mapped_book::delete_order(order& order) noexcept
+    hashed_book::delete_order(order& order) noexcept
     {
         if (order.pl == nullptr)
             return;
@@ -94,14 +94,14 @@ namespace itch {
     }
 
     void
-    mapped_book::replace_order(order& old_order, order& new_order) noexcept
+    hashed_book::replace_order(order& old_order, order& new_order) noexcept
     {
         delete_order(old_order);
         add_order(new_order);
     }
 
     void
-    mapped_book::cancel_order(order& order, qty_t remove_qty) noexcept
+    hashed_book::cancel_order(order& order, qty_t remove_qty) noexcept
     {
         if (remove_qty >= order.qty) {
             // this cancel will remove the order
@@ -112,20 +112,20 @@ namespace itch {
         }
     }
 
-    decltype(mapped_book::bids_) const&
-    mapped_book::bids() const noexcept
+    decltype(hashed_book::bids_) const&
+    hashed_book::bids() const noexcept
     {
         return bids_;
     }
 
-    decltype(mapped_book::asks_) const&
-    mapped_book::asks() const noexcept
+    decltype(hashed_book::asks_) const&
+    hashed_book::asks() const noexcept
     {
         return asks_;
     }
 
     price_level
-    mapped_book::best_bid() const noexcept
+    hashed_book::best_bid() const noexcept
     {
         if (bids_.empty())
             return {0, 0};
@@ -134,7 +134,7 @@ namespace itch {
     }
 
     price_level
-    mapped_book::best_ask() const noexcept
+    hashed_book::best_ask() const noexcept
     {
         if (asks_.empty())
             return {0, 0};
