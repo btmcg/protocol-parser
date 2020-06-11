@@ -18,14 +18,14 @@ namespace { // unnamed
 namespace itch {
 
     map_book::map_book() noexcept
+    // : bids_()
+    // , asks_()
             : bid_pool_(
                     sizeof(std::pair<price_t const, price_level>) + StdMapNodeExtra, NumPriceLevels)
             , bids_(bid_pool_)
             , ask_pool_(sizeof(std::pair<price_t const, price_level>) + StdMapNodeExtra,
                       NumPriceLevels)
             , asks_(ask_pool_)
-    // : bids_()
-    // , asks_()
     {
         // empty
     }

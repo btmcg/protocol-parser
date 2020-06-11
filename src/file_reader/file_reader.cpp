@@ -10,6 +10,8 @@
 
 namespace { // unnamed
 
+    constexpr std::uint32_t NsecInSec = 1'000'000'000;
+
     std::tuple<void*, off_t>
     mmap_file(std::filesystem::path const& filepath)
     {
@@ -74,12 +76,13 @@ file_reader::print_stats() const
                "  shift count:     {}\n"
                "  bytes shifted:   {}\n"
                "  inflate count:   {}\n"
-               "  time:            {}\n",
+               "  time:            {} ({} s)\n",
         file_size_,
         stats_.byte_count,
         stats_.shift_count,
         stats_.bytes_shifted,
         stats_.inflate_count,
-        to_time_str(stats_.nsec_count));
+        to_time_str(stats_.nsec_count),
+        stats_.nsec_count / NsecInSec);
     // clang-format on
 }
