@@ -41,9 +41,10 @@ namespace itch {
         std::FILE* stats_file_ = nullptr;
         msg_stats msg_stats_;
         std::FILE* log_ = nullptr;
+        bool print_sys_events_ = false;
 
     public:
-        explicit parser(std::string const& stats_fname) noexcept;
+        parser(std::string const& stats_fname, bool print_sys_events) noexcept;
         ~parser() noexcept;
         parser(parser const&) noexcept = delete;
         parser(parser&&) noexcept = delete;
@@ -81,12 +82,13 @@ namespace itch {
     /**********************************************************************/
 
     template <bool LoggingEnabled>
-    parser<LoggingEnabled>::parser(std::string const& stats_fname) noexcept
+    parser<LoggingEnabled>::parser(std::string const& stats_fname, bool print_sys_events) noexcept
             : instruments_(MaxNumInstruments)
             , orders_(MaxNumOrders)
             , stats_file_(stats_fname.empty() ? nullptr : std::fopen(stats_fname.c_str(), "w"))
             , msg_stats_()
             , log_(LoggingEnabled ? std::fopen("itch.log", "w") : nullptr)
+            , print_sys_events_(print_sys_events)
     {
         // empty
     }
@@ -484,26 +486,30 @@ namespace itch {
         try {
             switch (m->event_code) {
                 case 'O':
-                    fmt::print("{} system event: start of messages\n",
-                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    if (print_sys_events_)
+                        fmt::print("{} system event: start of messages\n",
+                                to_local_time(from_itch_timestamp(m->timestamp)));
                     market_state_ = MarketState::SystemUp;
                     break;
 
                 case 'S':
-                    fmt::print("{} system event: system start\n",
-                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    if (print_sys_events_)
+                        fmt::print("{} system event: system start\n",
+                                to_local_time(from_itch_timestamp(m->timestamp)));
                     market_state_ = MarketState::AcceptingOrders;
                     break;
 
                 case 'Q':
-                    fmt::print("{} system event: market open\n",
-                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    if (print_sys_events_)
+                        fmt::print("{} system event: market open\n",
+                                to_local_time(from_itch_timestamp(m->timestamp)));
                     market_state_ = MarketState::Open;
                     break;
 
                 case 'M':
-                    fmt::print("{} system event: market close\n",
-                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    if (print_sys_events_)
+                        fmt::print("{} system event: market close\n",
+                                to_local_time(from_itch_timestamp(m->timestamp)));
                     market_state_ = MarketState::Closed;
 
                     // update close prices if needed
@@ -514,14 +520,16 @@ namespace itch {
                     break;
 
                 case 'E':
-                    fmt::print("{} system event: system stop\n",
-                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    if (print_sys_events_)
+                        fmt::print("{} system event: system stop\n",
+                                to_local_time(from_itch_timestamp(m->timestamp)));
                     market_state_ = MarketState::SystemDown;
                     break;
 
                 case 'C':
-                    fmt::print("{} system event: end of messages\n",
-                            to_local_time(from_itch_timestamp(m->timestamp)));
+                    if (print_sys_events_)
+                        fmt::print("{} system event: end of messages\n",
+                                to_local_time(from_itch_timestamp(m->timestamp)));
                     market_state_ = MarketState::Unknown;
                     break;
 

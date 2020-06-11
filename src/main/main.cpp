@@ -17,6 +17,7 @@ namespace { // unnamed
         std::string input_file;
         bool logging = false;
         std::filesystem::path stats_fp;
+        bool print_status_events = false;
     };
 
     cli_args
@@ -30,6 +31,7 @@ namespace { // unnamed
                     "options:\n"
                     "  -h, --help               this output\n"
                     "  -l, --log                log protocol msgs to <protocol>.log\n"
+                    "      --status             print status msgs to stdout\n"
                     "  -s, --stats=<filepath>   record instrument stats to file\n"
                     "  -v, --version            version\n",
                     app.string().c_str());
@@ -45,13 +47,14 @@ namespace { // unnamed
             static option long_options[] = {
                     {"help", no_argument, nullptr, 'h'},
                     {"log", no_argument, nullptr, 'l'},
+                    {"status", no_argument, nullptr, '1'},
                     {"stats", required_argument, nullptr, 's'},
                     {"version", no_argument, nullptr, 'v'},
                     {nullptr, 0, nullptr, 0},
             };
 
             int const c = ::getopt_long(
-                    argc, argv, "hls:v", static_cast<option const*>(long_options), nullptr);
+                    argc, argv, "hls:1v", static_cast<option const*>(long_options), nullptr);
             if (c == -1)
                 break;
 
@@ -66,6 +69,10 @@ namespace { // unnamed
 
                 case 's':
                     args.stats_fp = optarg;
+                    break;
+
+                case '1': // --status
+                    args.print_status_events = true;
                     break;
 
                 case 'v':
@@ -112,11 +119,11 @@ main(int argc, char** argv)
         file_reader reader(args.input_file);
 
         if (args.logging) {
-            itch::parser<true> parser(args.stats_fp.string());
+            itch::parser<true> parser(args.stats_fp.string(), args.print_status_events);
             reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
             parser.print_stats();
         } else {
-            itch::parser<false> parser(args.stats_fp.string());
+            itch::parser<false> parser(args.stats_fp.string(), args.print_status_events);
             reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
             parser.print_stats();
         }
