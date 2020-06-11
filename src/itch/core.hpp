@@ -37,6 +37,12 @@ namespace itch {
         }
     };
 
+    constexpr bool
+    operator==(price_level const& lhs, price_level const& rhs) noexcept
+    {
+        return lhs.price == rhs.price && lhs.qty == rhs.qty;
+    }
+
     struct order
     {
         Side side = Side::Bid;
