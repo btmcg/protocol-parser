@@ -2,6 +2,7 @@
 
 #include "core.hpp"
 #include <cstddef> // std::size_t
+#include <functional> // std::greater, std::less
 #include <map>
 
 
@@ -11,8 +12,8 @@ namespace itch {
     class map_book
     {
     private:
-        std::map<price_t, price_level> bids_;
-        std::map<price_t, price_level> asks_;
+        std::map<price_t, price_level, std::greater<>> bids_;
+        std::map<price_t, price_level, std::less<>> asks_;
 
     public:
         map_book() noexcept;

@@ -1,7 +1,6 @@
 #include "map_book.hpp"
 #include <fmt/format.h>
-#include <algorithm>
-#include <cstdint>
+
 
 namespace itch {
 
@@ -15,21 +14,37 @@ namespace itch {
     void
     map_book::add_order(order& order) noexcept
     {
-        auto book = (order.side == Side::Bid) ? &bids_ : &asks_;
-
-        if (book->empty()) {
-            auto [itr, success] = book->insert(
-                    std::make_pair(order.price, price_level(order.price, order.qty)));
-            order.pl = &itr->second;
-        } else {
-            auto o_itr = book->find(order.price);
-            if (o_itr == book->end()) {
-                auto [itr, success] = book->insert(
+        if (order.side == Side::Bid) {
+            if (bids_.empty()) {
+                auto [itr, success] = bids_.insert(
                         std::make_pair(order.price, price_level(order.price, order.qty)));
                 order.pl = &itr->second;
             } else {
-                o_itr->second.qty += order.qty;
-                order.pl = &(o_itr->second);
+                auto o_itr = bids_.find(order.price);
+                if (o_itr == bids_.end()) {
+                    auto [itr, success] = bids_.insert(
+                            std::make_pair(order.price, price_level(order.price, order.qty)));
+                    order.pl = &itr->second;
+                } else {
+                    o_itr->second.qty += order.qty;
+                    order.pl = &(o_itr->second);
+                }
+            }
+        } else if (order.side == Side::Ask) {
+            if (asks_.empty()) {
+                auto [itr, success] = asks_.insert(
+                        std::make_pair(order.price, price_level(order.price, order.qty)));
+                order.pl = &itr->second;
+            } else {
+                auto o_itr = asks_.find(order.price);
+                if (o_itr == asks_.end()) {
+                    auto [itr, success] = asks_.insert(
+                            std::make_pair(order.price, price_level(order.price, order.qty)));
+                    order.pl = &itr->second;
+                } else {
+                    o_itr->second.qty += order.qty;
+                    order.pl = &(o_itr->second);
+                }
             }
         }
     }
@@ -91,25 +106,13 @@ namespace itch {
     price_level
     map_book::best_bid() const noexcept
     {
-        if (bids_.empty())
-            return {0, 0};
-
-        auto itr = std::max_element(bids_.cbegin(), bids_.cend(),
-                [](auto const& l, auto const& r) { return l.first < r.first; });
-
-        return itr->second;
+        return bids_.empty() ? price_level(0, 0) : bids_.begin()->second;
     }
 
     price_level
     map_book::best_ask() const noexcept
     {
-        if (asks_.empty())
-            return {0, 0};
-
-        auto itr = std::min_element(asks_.cbegin(), asks_.cend(),
-                [](auto const& l, auto const& r) { return l.first < r.first; });
-
-        return itr->second;
+        return asks_.empty() ? price_level(0, 0) : asks_.begin()->second;
     }
 
 } // namespace itch
