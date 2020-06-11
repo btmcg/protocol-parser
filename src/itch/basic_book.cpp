@@ -1,6 +1,10 @@
 #include "basic_book.hpp"
+#include <fmt/format.h>
 #include <algorithm>
 #include <cstdint>
+#include <cstdio> // std::fprintf
+#include <cstdlib> // std::abort
+#include <exception>
 
 
 namespace itch {
@@ -15,28 +19,35 @@ namespace itch {
     void
     basic_book::add_order(order& order) noexcept
     {
-        auto* book = (order.side == Side::Bid) ? &bids_ : &asks_;
+        // emplace functions may throw, in which case we abort
+        try {
+            auto* book = (order.side == Side::Bid) ? &bids_ : &asks_;
 
-        if (book->empty()) {
-            order.pl = &book->emplace_front(order.price, order.qty);
-        } else {
-            // find location in book
-            auto o_itr = std::find_if(book->begin(), book->end(), [&order](price_level const& pl) {
-                return (order.side == Side::Bid) ? pl.price <= order.price
-                                                 : pl.price >= order.price;
-            });
-
-            if (o_itr == book->end()) {
-                order.pl = &book->emplace_back(order.price, order.qty);
-            } else if (o_itr->price == order.price) {
-                // price exists, adjust qty
-                o_itr->qty += order.qty;
-                order.pl = &(*o_itr);
+            if (book->empty()) {
+                order.pl = &book->emplace_front(order.price, order.qty);
             } else {
-                // new price level
-                auto i_itr = book->emplace(o_itr, order.price, order.qty);
-                order.pl = &(*i_itr);
+                // find location in book
+                auto o_itr
+                        = std::find_if(book->begin(), book->end(), [&order](price_level const& pl) {
+                              return (order.side == Side::Bid) ? pl.price <= order.price
+                                                               : pl.price >= order.price;
+                          });
+
+                if (o_itr == book->end()) {
+                    order.pl = &book->emplace_back(order.price, order.qty);
+                } else if (o_itr->price == order.price) {
+                    // price exists, adjust qty
+                    o_itr->qty += order.qty;
+                    order.pl = &(*o_itr);
+                } else {
+                    // new price level
+                    auto i_itr = book->emplace(o_itr, order.price, order.qty);
+                    order.pl = &(*i_itr);
+                }
             }
+        } catch (std::exception const& e) {
+            std::fprintf(stderr, "[ERROR] exception thrown in add_order: %s\n", e.what());
+            std::abort();
         }
     }
 
