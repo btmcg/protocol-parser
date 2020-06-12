@@ -1,5 +1,6 @@
 #pragma once
 
+#include "detail.hpp"
 #include "free_list.hpp"
 #include "growing_block_allocator.hpp"
 #include "lowlevel_allocator.hpp"
@@ -44,8 +45,8 @@ private:
 /**********************************************************************/
 
 memory_pool::memory_pool(std::size_t node_size, std::size_t count)
-        : arena_(node_size * count)
-        , free_list_(node_size)
+        : arena_(detail::round_up_to_align(node_size) * count)
+        , free_list_(detail::round_up_to_align(node_size))
 {
     allocate_block();
 }

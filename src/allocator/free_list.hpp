@@ -1,5 +1,6 @@
 #pragma once
 
+#include "detail.hpp"
 #include "util/assert.hpp"
 #include <algorithm> // std::max
 #include <climits> // CHAR_BIT
@@ -10,17 +11,6 @@
 
 
 namespace detail {
-
-    // constants
-    constexpr std::size_t MaxAlignment = alignof(std::max_align_t);
-    constexpr std::size_t MinElementSize = sizeof(std::uint8_t*);
-
-
-    constexpr inline std::size_t
-    ilog2(std::uint64_t x)
-    {
-        return ((sizeof(x) * CHAR_BIT) - __builtin_clzll(x)) - 1;
-    }
 
     // sets stored integer value
     inline void
@@ -149,7 +139,6 @@ public:
     inline void deallocate(void* ptr, std::size_t n) noexcept;
 
     constexpr std::size_t node_size() const noexcept;
-    constexpr std::size_t alignment() const noexcept;
     constexpr std::size_t capacity_left() const noexcept;
     constexpr std::size_t used() const noexcept;
     constexpr std::size_t max_used() const noexcept;
@@ -171,7 +160,9 @@ private:
 /**********************************************************************/
 
 constexpr free_list::free_list(std::size_t node_size) noexcept
-        : node_size_(node_size > detail::MinElementSize ? node_size : detail::MinElementSize)
+        : node_size_(node_size > detail::MinElementSize
+                        ? detail::round_up_to_align(node_size, detail::DefaultAlignment)
+                        : detail::MinElementSize)
 {
     // empty
 }
@@ -179,6 +170,7 @@ constexpr free_list::free_list(std::size_t node_size) noexcept
 constexpr free_list::free_list(std::size_t node_size, void* mem, std::size_t size) noexcept
         : free_list(node_size)
 {
+    DEBUG_ASSERT(detail::is_aligned(mem, 8));
     insert(mem, size);
 }
 
@@ -221,6 +213,8 @@ free_list::allocate() noexcept
 
     std::uint8_t* mem = first_;
     first_ = detail::list_get_next(first_);
+
+    DEBUG_ASSERT(detail::is_aligned(mem, 8));
     return mem;
 }
 
@@ -273,13 +267,6 @@ free_list::node_size() const noexcept
 }
 
 constexpr std::size_t
-free_list::alignment() const noexcept
-{
-    return node_size_ >= detail::MaxAlignment ? detail::MaxAlignment
-                                              : (1u << detail::ilog2(node_size_));
-}
-
-constexpr std::size_t
 free_list::capacity_left() const noexcept
 {
     return capacity_left_;
@@ -317,11 +304,13 @@ swap(free_list& a, free_list& b) noexcept
 void
 free_list::insert_impl(void* mem, std::size_t size) noexcept
 {
-    auto no_nodes = size / node_size_;
+    DEBUG_ASSERT(detail::is_aligned(mem, 8));
+    std::size_t const no_nodes = size / node_size_;
     DEBUG_ASSERT(no_nodes > 0);
 
     auto* cur = static_cast<std::uint8_t*>(mem);
     for (std::size_t i = 0u; i != no_nodes - 1; ++i) {
+        DEBUG_ASSERT(detail::is_aligned(cur, 8));
         detail::list_set_next(cur, cur + node_size_);
         cur += node_size_;
     }
