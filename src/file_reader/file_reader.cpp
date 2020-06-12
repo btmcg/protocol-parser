@@ -51,6 +51,9 @@ file_reader::file_reader(std::filesystem::path const& input_file)
         , file_size_(0)
         , stats_()
 {
+    if (input_file_.empty())
+        throw std::runtime_error("missing input_file");
+
     std::tie(f_ptr_, file_size_) = mmap_file(input_file_);
     if (f_ptr_ == nullptr)
         throw std::runtime_error(fmt::format("failed to mmap file: {}", input_file_.c_str()));

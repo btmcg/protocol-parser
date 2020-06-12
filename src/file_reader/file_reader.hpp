@@ -29,12 +29,12 @@ private:
 
 private:
     std::filesystem::path input_file_;
-    void* f_ptr_;
-    off_t file_size_;
+    void* f_ptr_ = nullptr;
+    off_t file_size_ = 0;
     stats stats_;
 
 public:
-    file_reader(std::filesystem::path const&);
+    explicit file_reader(std::filesystem::path const&);
     ~file_reader() noexcept;
     file_reader(file_reader const&) noexcept = delete;
     file_reader(file_reader&&) noexcept = delete;
