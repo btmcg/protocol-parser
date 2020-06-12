@@ -34,7 +34,7 @@ namespace { // unnamed
                     "      --status             print status msgs to stdout\n"
                     "  -s, --stats=<filepath>   record instrument stats to file\n"
                     "  -v, --version            version\n",
-                    app.string().c_str());
+                    app.c_str());
             std::exit(outerr == stdout ? EXIT_SUCCESS : EXIT_FAILURE);
         };
 
