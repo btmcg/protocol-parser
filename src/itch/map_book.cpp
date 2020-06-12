@@ -35,14 +35,12 @@ namespace itch {
     {
         if (order.side == Side::Bid) {
             if (bids_.empty()) {
-                auto [itr, success] = bids_.insert(
-                        std::make_pair(order.price, price_level(order.price, order.qty)));
+                auto [itr, success] = bids_.emplace(order.price, price_level(order.price, order.qty));
                 order.pl = &itr->second;
             } else {
                 auto o_itr = bids_.find(order.price);
                 if (o_itr == bids_.end()) {
-                    auto [itr, success] = bids_.insert(
-                            std::make_pair(order.price, price_level(order.price, order.qty)));
+                    auto [itr, success] = bids_.emplace(order.price, price_level(order.price, order.qty));
                     order.pl = &itr->second;
                 } else {
                     o_itr->second.qty += order.qty;
@@ -51,14 +49,12 @@ namespace itch {
             }
         } else if (order.side == Side::Ask) {
             if (asks_.empty()) {
-                auto [itr, success] = asks_.insert(
-                        std::make_pair(order.price, price_level(order.price, order.qty)));
+                auto [itr, success] = asks_.emplace(order.price, price_level(order.price, order.qty));
                 order.pl = &itr->second;
             } else {
                 auto o_itr = asks_.find(order.price);
                 if (o_itr == asks_.end()) {
-                    auto [itr, success] = asks_.insert(
-                            std::make_pair(order.price, price_level(order.price, order.qty)));
+                    auto [itr, success] = asks_.emplace(order.price, price_level(order.price, order.qty));
                     order.pl = &itr->second;
                 } else {
                     o_itr->second.qty += order.qty;

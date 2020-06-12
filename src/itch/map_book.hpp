@@ -14,7 +14,7 @@ namespace itch {
     class map_book
     {
     private:
-        // std::map<price_t, price_level, std::greater<> bids_;
+        // std::map<price_t, price_level, std::greater<>> bids_;
         // std::map<price_t, price_level, std::less<>> asks_;
         memory_pool bid_pool_;
         std::map<price_t, price_level, std::greater<>,
