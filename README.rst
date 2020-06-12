@@ -16,6 +16,13 @@ or
    git submodule update --init --recursive
 
 
+Data source
+-----------
+
+The raw itch data files can be found `here
+<ftp://emi.nasdaq.com/ITCH>`_.
+
+
 Building and running
 --------------------
 
