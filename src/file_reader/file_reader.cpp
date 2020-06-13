@@ -47,8 +47,6 @@ namespace { // unnamed
 
 file_reader::file_reader(std::filesystem::path const& input_file)
         : input_file_(input_file)
-        , f_ptr_(nullptr)
-        , file_size_(0)
         , stats_()
 {
     if (input_file_.empty())
