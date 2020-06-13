@@ -44,7 +44,7 @@ namespace itch {
         bool print_sys_events_ = false;
 
     public:
-        parser(std::string const& stats_fname, bool print_sys_events) noexcept;
+        parser(std::filesystem::path const& stats_fpath, bool print_sys_events) noexcept;
         ~parser() noexcept;
         parser(parser const&) noexcept = delete;
         parser(parser&&) noexcept = delete;
@@ -82,10 +82,11 @@ namespace itch {
     /**********************************************************************/
 
     template <bool LoggingEnabled>
-    parser<LoggingEnabled>::parser(std::string const& stats_fname, bool print_sys_events) noexcept
+    parser<LoggingEnabled>::parser(
+            std::filesystem::path const& stats_fpath, bool print_sys_events) noexcept
             : instruments_(MaxNumInstruments)
             , orders_(MaxNumOrders)
-            , stats_file_(stats_fname.empty() ? nullptr : std::fopen(stats_fname.c_str(), "w"))
+            , stats_file_(stats_fpath.empty() ? nullptr : std::fopen(stats_fpath.c_str(), "w"))
             , msg_stats_()
             , log_(LoggingEnabled ? std::fopen("itch.log", "w") : nullptr)
             , print_sys_events_(print_sys_events)

@@ -119,11 +119,11 @@ main(int argc, char** argv)
         file_reader reader(args.input_file);
 
         if (args.logging) {
-            itch::parser<true> parser(args.stats_fp.string(), args.print_status_events);
+            itch::parser<true> parser(args.stats_fp, args.print_status_events);
             reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
             parser.print_stats();
         } else {
-            itch::parser<false> parser(args.stats_fp.string(), args.print_status_events);
+            itch::parser<false> parser(args.stats_fp, args.print_status_events);
             reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
             parser.print_stats();
         }
