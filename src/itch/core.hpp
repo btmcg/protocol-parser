@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <limits>
+#include <utility> // std::move
 
 
 namespace itch {
@@ -45,20 +46,35 @@ namespace itch {
 
     struct order
     {
-        Side side = Side::Bid;
         price_t price = 0;
         qty_t qty = 0;
         price_level* pl = nullptr;
         std::uint64_t ts = 0; ///< nsecs since epoch
+        Side side = Side::Bid;
+
+        constexpr order(Side s, price_t p, qty_t q) noexcept
+                : price(p)
+                , qty(q)
+                , side(s)
+        {
+            // empty
+        }
+
+        constexpr order() noexcept = default;
+        constexpr ~order() noexcept = default;
+        constexpr order(order const& other) noexcept = default;
+        order(order&& other) noexcept = default;
+        constexpr order& operator=(order const& rhs) noexcept = default;
+        order& operator=(order&& rhs) noexcept = default;
 
         void
         clear() noexcept
         {
-            side = Side::Bid;
             price = 0;
             qty = 0;
             pl = nullptr;
             ts = 0;
+            side = Side::Bid;
         }
     };
 

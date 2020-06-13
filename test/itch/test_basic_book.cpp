@@ -1,5 +1,4 @@
 #include "itch/basic_book.hpp"
-#include "itch/core.hpp"
 #include <catch2/catch.hpp>
 #include <cstring>
 
@@ -11,11 +10,11 @@ TEST_CASE("basic_book", "[basic_book]")
 
     SECTION("add_order bids")
     {
-        order o1{Side::Bid, 10000, 100, nullptr};
-        order o2{Side::Bid, 20000, 200, nullptr};
-        order o3{Side::Bid, 30000, 300, nullptr};
-        order o4{Side::Bid, 20000, 500, nullptr};
-        order o5{Side::Bid, 30000, 500, nullptr};
+        order o1(Side::Bid, 10000, 100);
+        order o2(Side::Bid, 20000, 200);
+        order o3(Side::Bid, 30000, 300);
+        order o4(Side::Bid, 20000, 500);
+        order o5(Side::Bid, 30000, 500);
 
         book.add_order(o1);
         REQUIRE(o1.pl->price == o1.price);
@@ -54,13 +53,13 @@ TEST_CASE("basic_book", "[basic_book]")
 
     SECTION("add_order bids random")
     {
-        order o1{Side::Bid, 10000, 100, nullptr};
-        order o2{Side::Bid, 20000, 200, nullptr};
-        order o3{Side::Bid, 30000, 300, nullptr};
-        order o4{Side::Bid, 20000, 500, nullptr};
-        order o5{Side::Bid, 30000, 500, nullptr};
+        order o1(Side::Bid, 10000, 100);
+        order o2(Side::Bid, 20000, 200);
+        order o3(Side::Bid, 30000, 300);
+        order o4(Side::Bid, 20000, 500);
+        order o5(Side::Bid, 30000, 500);
 
-        // final ask book should look like:
+        // final bid book should look like:
         //  800 @ 30000
         //  700 @ 20000
         //  100 @ 10000
@@ -93,13 +92,13 @@ TEST_CASE("basic_book", "[basic_book]")
 
     SECTION("add_order asks random")
     {
-        order o1{Side::Ask, 10000, 100, nullptr};
-        order o2{Side::Ask, 20000, 200, nullptr};
-        order o3{Side::Ask, 30000, 300, nullptr};
-        order o4{Side::Ask, 20000, 500, nullptr};
-        order o5{Side::Ask, 30000, 500, nullptr};
+        order o1(Side::Ask, 10000, 100);
+        order o2(Side::Ask, 20000, 200);
+        order o3(Side::Ask, 30000, 300);
+        order o4(Side::Ask, 20000, 500);
+        order o5(Side::Ask, 30000, 500);
 
-        // final bid book should look like:
+        // final ask book should look like:
         //  100 @ 10000
         //  700 @ 20000
         //  800 @ 30000
@@ -130,12 +129,13 @@ TEST_CASE("basic_book", "[basic_book]")
         REQUIRE(book2.asks() == book3.asks());
     }
 
+
     SECTION("delete_order")
     {
-        order o1{Side::Bid, 100, 100, nullptr};
-        order o2{Side::Bid, 200, 200, nullptr};
-        order o3{Side::Bid, 300, 300, nullptr};
-        order o4{Side::Bid, 300, 500, nullptr};
+        order o1(Side::Bid, 100, 100);
+        order o2(Side::Bid, 200, 200);
+        order o3(Side::Bid, 300, 300);
+        order o4(Side::Bid, 300, 500);
 
         book.add_order(o1);
         book.add_order(o2);
@@ -148,7 +148,7 @@ TEST_CASE("basic_book", "[basic_book]")
         REQUIRE(o2.qty == 0);
 
         // non-existent order
-        order tmp{Side::Bid, 5000, 5000, nullptr};
+        order tmp(Side::Bid, 5000, 5000);
         book.delete_order(tmp);
         REQUIRE(book.bids().size() == 2);
         REQUIRE(tmp.price == 5000);
@@ -172,17 +172,17 @@ TEST_CASE("basic_book", "[basic_book]")
 
     SECTION("replace_order")
     {
-        order o1{Side::Bid, 100, 100, nullptr};
-        order o2{Side::Bid, 200, 200, nullptr};
-        order o3{Side::Bid, 300, 300, nullptr};
-        order o4{Side::Bid, 300, 500, nullptr};
+        order o1(Side::Bid, 100, 100);
+        order o2(Side::Bid, 200, 200);
+        order o3(Side::Bid, 300, 300);
+        order o4(Side::Bid, 300, 500);
 
         book.add_order(o1);
         book.add_order(o2);
         book.add_order(o3);
         book.add_order(o4);
 
-        order new_o2{Side::Bid, 200, 500, nullptr};
+        order new_o2(Side::Bid, 200, 500);
         book.replace_order(o2, new_o2);
         REQUIRE(book.bids().size() == 3);
         REQUIRE(o2.price == 0);
@@ -194,7 +194,7 @@ TEST_CASE("basic_book", "[basic_book]")
         REQUIRE(new_o2.pl->qty == 500);
 
         // replace part of level
-        order new_o3{Side::Bid, 300, 500, nullptr};
+        order new_o3(Side::Bid, 300, 500);
         book.replace_order(o3, new_o3);
         REQUIRE(book.best_bid().price == 300);
         REQUIRE(book.best_bid().qty == 1000);
@@ -209,10 +209,10 @@ TEST_CASE("basic_book", "[basic_book]")
 
     SECTION("cancel_order")
     {
-        order o1{Side::Bid, 100, 100, nullptr};
-        order o2{Side::Bid, 200, 200, nullptr};
-        order o3{Side::Bid, 300, 300, nullptr};
-        order o4{Side::Bid, 300, 500, nullptr};
+        order o1(Side::Bid, 100, 100);
+        order o2(Side::Bid, 200, 200);
+        order o3(Side::Bid, 300, 300);
+        order o4(Side::Bid, 300, 500);
 
         book.add_order(o1);
         book.add_order(o2);
@@ -247,11 +247,11 @@ TEST_CASE("basic_book", "[basic_book]")
 
     SECTION("bids")
     {
-        order o1{Side::Bid, 100, 10, nullptr};
-        order o2{Side::Bid, 200, 20, nullptr};
-        order o3{Side::Bid, 300, 30, nullptr};
-        order o4{Side::Bid, 400, 40, nullptr};
-        order o5{Side::Bid, 500, 50, nullptr};
+        order o1(Side::Bid, 100, 10);
+        order o2(Side::Bid, 200, 20);
+        order o3(Side::Bid, 300, 30);
+        order o4(Side::Bid, 400, 40);
+        order o5(Side::Bid, 500, 50);
 
         book.add_order(o3);
         book.add_order(o2);
@@ -281,11 +281,11 @@ TEST_CASE("basic_book", "[basic_book]")
 
     SECTION("asks")
     {
-        order o1{Side::Ask, 100, 10, nullptr};
-        order o2{Side::Ask, 200, 20, nullptr};
-        order o3{Side::Ask, 300, 30, nullptr};
-        order o4{Side::Ask, 400, 40, nullptr};
-        order o5{Side::Ask, 500, 50, nullptr};
+        order o1(Side::Ask, 100, 10);
+        order o2(Side::Ask, 200, 20);
+        order o3(Side::Ask, 300, 30);
+        order o4(Side::Ask, 400, 40);
+        order o5(Side::Ask, 500, 50);
 
         book.add_order(o3);
         book.add_order(o2);
