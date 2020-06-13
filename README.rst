@@ -111,7 +111,7 @@ catch
 
 .. code-block::
 
-    vim mk/third_party.mk
+    vim nrmake/third_party.mk
 
 
 fmt
@@ -140,4 +140,4 @@ fmt
 
 .. code-block::
 
-    vim mk/third_party.mk
+    vim nrmake/third_party.mk
