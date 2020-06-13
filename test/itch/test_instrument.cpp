@@ -7,6 +7,11 @@ TEST_CASE("initial state", "[instrument]")
 {
     using namespace itch;
 
+    SECTION("size")
+    {
+        REQUIRE(224 == sizeof(instrument));
+    }
+
     SECTION("constructors")
     {
         instrument i1;

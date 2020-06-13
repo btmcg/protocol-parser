@@ -13,19 +13,22 @@ namespace itch {
 
     struct instrument
     {
-        std::uint16_t locate = 0;
-        char name[NameLen] = {0};
         mp_book book;
+        // pahole: --- cacheline 2 boundary (128 bytes) was 48 bytes ago ---
+        std::uint32_t num_orders = 0;
+        char name[NameLen] = {0};
+        std::uint16_t locate = 0;
+        InstrumentState instrument_state = InstrumentState::Unknown;
 
-        price_t open = 0;
-        price_t close = 0;
-        price_t last = 0;
+        // pahole: XXX 1 byte hole, try to pack
+        // pahole: --- cacheline 3 boundary (192 bytes) ---
+        std::uint32_t trade_qty = 0;
+        std::uint32_t num_trades = 0;
         price_t lo = InvalidHiPrice;
         price_t hi = InvalidLoPrice;
-        std::uint32_t num_trades = 0;
-        std::uint32_t trade_qty = 0;
-        std::uint32_t num_orders = 0;
-        InstrumentState instrument_state = InstrumentState::Unknown;
+        price_t last = 0;
+        price_t open = 0;
+        price_t close = 0;
 
         instrument() noexcept;
         instrument(std::uint16_t locate, char const (&name)[NameLen]) noexcept;
