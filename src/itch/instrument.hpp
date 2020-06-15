@@ -7,6 +7,7 @@
 #include "mp_book.hpp"
 #include <cstdint>
 #include <string>
+#include <tuple>
 
 
 namespace itch {
@@ -38,7 +39,7 @@ namespace itch {
         std::string stats_str() const;
         static std::string stats_csv_header() noexcept;
         std::string stats_csv() const;
-        std::pair<std::size_t, std::size_t> allocator_stats() const noexcept;
+        std::tuple<std::size_t, std::size_t> allocator_stats() const noexcept;
     };
 
 } // namespace itch

@@ -55,14 +55,14 @@ namespace itch {
     std::string
     instrument::stats_csv_header() noexcept
     {
-        return "name,locate,open,close,low,high,num_trades,trade_vol,num_orders";
+        return "name,locate,open,close,low,high,num_trades,trade_vol,num_orders,max_bids,max_asks";
     }
 
     std::string
     instrument::stats_csv() const
     {
         // clang-format off
-        return fmt::format("{},{},{:.4f},{:.4f},{:.4f},{:.4f},{},{},{}",
+        return fmt::format("{},{},{:.4f},{:.4f},{:.4f},{:.4f},{},{},{},{},{}",
             name,
             locate,
             to_hr_price(open),
@@ -71,14 +71,16 @@ namespace itch {
             to_hr_price(hi),
             num_trades,
             trade_qty,
-            num_orders);
+            num_orders,
+            book.max_bid_pool_used(),
+            book.max_ask_pool_used());
         // clang-format on
     }
 
-    std::pair<std::size_t, std::size_t>
+    std::tuple<std::size_t, std::size_t>
     instrument::allocator_stats() const noexcept
     {
-        return std::make_pair(book.max_bid_pool_used(), book.max_ask_pool_used());
+        return std::make_tuple(book.max_bid_pool_used(), book.max_ask_pool_used());
     }
 
 } // namespace itch
