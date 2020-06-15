@@ -62,9 +62,9 @@ namespace itch {
 
         constexpr order() noexcept = default;
         constexpr ~order() noexcept = default;
-        constexpr order(order const& other) noexcept = default;
-        order(order&& other) noexcept = default;
-        constexpr order& operator=(order const& rhs) noexcept = default;
+        constexpr order(order const&) noexcept = default;
+        order(order&&) noexcept = default;
+        constexpr order& operator=(order const&) noexcept = default;
         order& operator=(order&& rhs) noexcept = default;
 
         void
