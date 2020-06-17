@@ -142,4 +142,16 @@ namespace itch {
         return asks_.front();
     }
 
+    std::size_t
+    hashed_book::max_bid_pool_used() const noexcept
+    {
+        return bid_pool_.max_used();
+    }
+
+    std::size_t
+    hashed_book::max_ask_pool_used() const noexcept
+    {
+        return ask_pool_.max_used();
+    }
+
 } // namespace itch

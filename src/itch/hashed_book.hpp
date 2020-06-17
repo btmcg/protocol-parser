@@ -3,6 +3,7 @@
 #include "core.hpp"
 #include "allocator/memory_pool.hpp"
 #include "allocator/mp_allocator.hpp"
+#include <cstddef> // std::size_t
 #include <list>
 #include <unordered_map>
 
@@ -34,16 +35,8 @@ namespace itch {
         decltype(asks_) const& asks() const noexcept;
         price_level best_bid() const noexcept;
         price_level best_ask() const noexcept;
-        std::size_t
-        max_bid_pool_used() const noexcept
-        {
-            return 0;
-        }
-        std::size_t
-        max_ask_pool_used() const noexcept
-        {
-            return 0;
-        }
+        std::size_t max_bid_pool_used() const noexcept;
+        std::size_t max_ask_pool_used() const noexcept;
     };
 
 } // namespace itch
