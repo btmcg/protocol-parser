@@ -77,13 +77,6 @@ namespace itch {
     }
 
     void
-    basic_book::replace_order(order& old_order, order& new_order) noexcept
-    {
-        delete_order(old_order);
-        add_order(new_order);
-    }
-
-    void
     basic_book::cancel_order(order& order, qty_t remove_qty) noexcept
     {
         if (remove_qty >= order.qty) {
@@ -93,6 +86,13 @@ namespace itch {
             order.qty -= remove_qty;
             order.pl->qty -= remove_qty;
         }
+    }
+
+    void
+    basic_book::replace_order(order& old_order, order& new_order) noexcept
+    {
+        delete_order(old_order);
+        add_order(new_order);
     }
 
     decltype(basic_book::bids_) const&

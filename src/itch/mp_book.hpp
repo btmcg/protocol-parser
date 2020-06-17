@@ -22,8 +22,8 @@ namespace itch {
         mp_book() noexcept;
         void add_order(order&) noexcept;
         void delete_order(order&) noexcept;
-        void replace_order(order& old_order, order& new_order) noexcept;
         void cancel_order(order&, qty_t remove_qty) noexcept;
+        void replace_order(order& old_order, order& new_order) noexcept;
 
         // accessors
     public:
