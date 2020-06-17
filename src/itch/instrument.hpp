@@ -3,7 +3,6 @@
 #include "basic_book.hpp"
 #include "core.hpp"
 #include "hashed_book.hpp"
-#include "map_book.hpp"
 #include "mp_book.hpp"
 #include <cstdint>
 #include <string>

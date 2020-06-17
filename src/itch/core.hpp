@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <limits>
+#include <list>
 #include <utility> // std::move
 
 
@@ -47,23 +48,25 @@ namespace itch {
     {
         price_t price = 0;
         qty_t qty = 0;
-        price_level* pl = nullptr;
+        std::list<price_level>::iterator pl;
         std::uint64_t ts = 0; ///< nsecs since epoch
         Side side = Side::Bid;
+        bool valid_pl = false;
 
-        constexpr order(Side s, price_t p, qty_t q) noexcept
+        order(Side s, price_t p, qty_t q) noexcept
                 : price(p)
                 , qty(q)
+                , pl()
                 , side(s)
         {
             // empty
         }
 
-        constexpr order() noexcept = default;
-        constexpr ~order() noexcept = default;
-        constexpr order(order const&) noexcept = default;
+        order() noexcept = default;
+        ~order() noexcept = default;
+        order(order const&) noexcept = default;
         order(order&&) noexcept = default;
-        constexpr order& operator=(order const&) noexcept = default;
+        order& operator=(order const&) noexcept = default;
         order& operator=(order&& rhs) noexcept = default;
         bool operator==(order const&) const noexcept = default;
 
@@ -72,9 +75,9 @@ namespace itch {
         {
             price = 0;
             qty = 0;
-            pl = nullptr;
             ts = 0;
             side = Side::Bid;
+            valid_pl = false;
         }
     };
 

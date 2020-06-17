@@ -45,9 +45,10 @@ namespace itch {
         // need to catch any exceptions from std::unordered_map::emplace
         try {
             if (book->empty()) {
-                auto new_itr = book->emplace(book->begin(), order.price, order.qty);
-                map->emplace(order.price, new_itr);
-                order.pl = &(*new_itr);
+                // initial price_level
+                book->emplace_front(order);
+                map->emplace(order.price, book->begin());
+                order.pl = book->begin();
             } else {
                 auto map_itr = map->find(order.price);
 
@@ -55,20 +56,29 @@ namespace itch {
                 // book. find out where it should go
                 if (map_itr == map->end()) {
                     // find location in book
-                    auto loc = std::find_if(book->begin(), book->end(), [&order](auto const& pl) {
-                        return (order.side == Side::Bid) ? pl.price() <= order.price
-                                                         : pl.price() >= order.price;
-                    });
+                    auto pl_itr
+                            = std::find_if(book->begin(), book->end(), [&order](auto const& pl) {
+                                  return (order.side == Side::Bid) ? pl.price() <= order.price
+                                                                   : pl.price() >= order.price;
+                              });
 
-                    // new price level
-                    auto new_itr = book->emplace(loc, order.price, order.qty);
-                    map->emplace(order.price, new_itr);
-                    order.pl = &(*new_itr);
+                    if (pl_itr == book->end()) {
+                        // new price level (at bottome of book)
+                        book->emplace_back(order);
+                        order.pl = std::prev(book->end(), 1);
+                        map->emplace(order.price, order.pl);
+                    } else {
+                        // new price level (middle of book)
+                        order.pl = book->emplace(pl_itr, order);
+                        map->emplace(order.price, order.pl);
+                    }
                 } else {
-                    map_itr->second->inc_qty(order.qty);
-                    order.pl = &*(map_itr->second);
+                    map_itr->second->add_order(order);
+                    order.pl = map_itr->second;
                 }
             }
+
+            order.valid_pl = true;
         } catch (std::exception const& e) {
             std::fprintf(stderr, "[ERROR] exception in %s: %s\n", __builtin_FUNCTION(), e.what());
             std::abort();
@@ -78,22 +88,23 @@ namespace itch {
     void
     hashed_book::delete_order(order& order) noexcept
     {
-        DEBUG_ASSERT(order.pl != nullptr);
-        if (order.pl == nullptr)
+        DEBUG_ASSERT(order.valid_pl);
+        DEBUG_ASSERT(order.qty <= order.pl->agg_qty());
+        if (!order.valid_pl)
             return;
 
         DEBUG_ASSERT(order.qty <= order.pl->agg_qty());
 
         // decrease qty on price level, if it goes to zero, delete the level
-        if (order.qty < order.pl->agg_qty()) {
-            order.pl->dec_qty(order.qty);
-        } else {
-            auto* book = (order.side == Side::Bid) ? &bids_ : &asks_;
-            auto* map = (order.side == Side::Bid) ? &bid_map_ : &ask_map_;
-
-            auto map_itr = map->find(order.pl->price());
-            book->erase(map_itr->second);
-            map->erase(map_itr);
+        order.pl->delete_order(order);
+        if (order.pl->size() == 0) {
+            if (order.side == Side::Bid) {
+                bid_map_.erase(order.price);
+                bids_.erase(order.pl);
+            } else {
+                ask_map_.erase(order.price);
+                asks_.erase(order.pl);
+            }
         }
 
         order.clear();
@@ -106,7 +117,7 @@ namespace itch {
 
         if (remove_qty < order.qty) {
             order.qty -= remove_qty;
-            order.pl->dec_qty(remove_qty);
+            order.pl->cancel_order(order, remove_qty);
         } else {
             // this cancel will remove the order (may happen if caused
             // by an execution)
@@ -117,14 +128,14 @@ namespace itch {
     void
     hashed_book::replace_order(order& old_order, order& new_order) noexcept
     {
-        DEBUG_ASSERT(old_order.pl != nullptr);
-        DEBUG_ASSERT(new_order.pl == nullptr);
+        DEBUG_ASSERT(old_order.valid_pl);
+        DEBUG_ASSERT(!new_order.valid_pl);
 
         delete_order(old_order);
-        DEBUG_ASSERT(old_order.pl == nullptr);
+        DEBUG_ASSERT(!old_order.valid_pl);
 
         add_order(new_order);
-        DEBUG_ASSERT(new_order.pl != nullptr);
+        DEBUG_ASSERT(new_order.valid_pl);
     }
 
     decltype(hashed_book::bids_) const&

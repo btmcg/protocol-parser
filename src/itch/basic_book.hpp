@@ -6,6 +6,16 @@
 #include <list>
 
 
+// Bid Book
+// |-> price_level price=1000, agg_qty=750
+// |   |-> order qty=500
+// |   |-> order qty=50
+// |   |-> order qty=200
+// |-> price_level price=900, agg_qty=100
+// |   |-> order qty=50
+// |   |-> order qty=50
+
+
 // Book Interface:
 // struct book
 // {
