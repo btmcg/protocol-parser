@@ -13,9 +13,13 @@ namespace itch {
     /// itch-specific quantity type
     using qty_t = std::uint32_t;
 
-
+    /// maximum size of stock name
     constexpr std::uint8_t NameLen = 8;
+
+    /// initial value for daily high price
     constexpr price_t InvalidHiPrice = std::numeric_limits<price_t>::min();
+
+    /// initial value for daily low price
     constexpr price_t InvalidLoPrice = std::numeric_limits<price_t>::max();
 
 
@@ -25,24 +29,16 @@ namespace itch {
         Ask = 1
     };
 
-    struct price_level
+    /// trivial price/quantity container
+    struct pq
     {
         price_t price = 0;
         qty_t qty = 0;
 
-        constexpr price_level(price_t p, qty_t q) noexcept
-                : price(p)
-                , qty(q)
-        {
-            // empty
-        }
+        constexpr bool operator==(pq const&) const noexcept = default;
     };
 
-    constexpr bool
-    operator==(price_level const& lhs, price_level const& rhs) noexcept
-    {
-        return lhs.price == rhs.price && lhs.qty == rhs.qty;
-    }
+    class price_level; // forward dec
 
     struct order
     {
@@ -66,6 +62,7 @@ namespace itch {
         order(order&&) noexcept = default;
         constexpr order& operator=(order const&) noexcept = default;
         order& operator=(order&& rhs) noexcept = default;
+        bool operator==(order const&) const noexcept = default;
 
         void
         clear() noexcept
@@ -78,27 +75,29 @@ namespace itch {
         }
     };
 
-    // clang-format off
     enum class MarketState : std::uint8_t
     {
+        // clang-format off
         Open = 0,           // 0930 - 1600
         SystemUp,           // x - 0400
         AcceptingOrders,    // 0400 - 0930
         Closed,             // 1600 - 2000
         SystemDown,         // 2005 - x
         Unknown,
+        // clang-format on
     };
 
     enum class InstrumentState : std::uint8_t
     {
+        // clang-format off
         Trading = 0,
         Halted,             ///< halted market-wide
         OperationalHalted,  ///< only halted on nasdaq
         Paused,             ///< nasdaq-listed only
         QuotationOnly,
         Unknown,
+        // clang-format on
     };
-    // clang-format on
 
     /**********************************************************************/
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core.hpp"
+#include "price_level.hpp"
 #include <cstddef> // std::size_t
 #include <list>
 
@@ -18,8 +19,8 @@
 //     // accessors
 //     decltype(bids_) const& bids() const noexcept;
 //     decltype(asks_) const& asks() const noexcept;
-//     price_level best_bid() const noexcept;
-//     price_level best_ask() const noexcept;
+//     pq best_bid() const noexcept;
+//     pq best_ask() const noexcept;
 // };
 
 namespace itch {
@@ -42,14 +43,14 @@ namespace itch {
     public:
         decltype(bids_) const& bids() const noexcept;
         decltype(asks_) const& asks() const noexcept;
-        price_level best_bid() const noexcept;
-        price_level best_ask() const noexcept;
-        std::size_t
+        pq best_bid() const noexcept;
+        pq best_ask() const noexcept;
+        constexpr std::size_t
         max_bid_pool_used() const noexcept
         {
             return 0;
         }
-        std::size_t
+        constexpr std::size_t
         max_ask_pool_used() const noexcept
         {
             return 0;

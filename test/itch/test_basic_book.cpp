@@ -1,6 +1,5 @@
 #include "itch/basic_book.hpp"
 #include <catch2/catch.hpp>
-#include <cstring>
 
 
 TEST_CASE("basic_book", "[basic_book]")
@@ -17,20 +16,20 @@ TEST_CASE("basic_book", "[basic_book]")
         order o5(Side::Bid, 30000, 500);
 
         book.add_order(o1);
-        REQUIRE(o1.pl->price == o1.price);
-        REQUIRE(o1.pl->qty == o1.qty);
+        REQUIRE(o1.pl->price() == o1.price);
+        REQUIRE(o1.pl->agg_qty() == o1.qty);
         REQUIRE(book.best_bid().price == o1.price);
         REQUIRE(book.best_bid().qty == o1.qty);
 
         book.add_order(o2);
-        REQUIRE(o2.pl->price == o2.price);
-        REQUIRE(o2.pl->qty == o2.qty);
+        REQUIRE(o2.pl->price() == o2.price);
+        REQUIRE(o2.pl->agg_qty() == o2.qty);
         REQUIRE(book.best_bid().price == o2.price);
         REQUIRE(book.best_bid().qty == o2.qty);
 
         book.add_order(o3);
-        REQUIRE(o3.pl->price == o3.price);
-        REQUIRE(o3.pl->qty == o3.qty);
+        REQUIRE(o3.pl->price() == o3.price);
+        REQUIRE(o3.pl->agg_qty() == o3.qty);
         REQUIRE(book.best_bid().price == o3.price);
         REQUIRE(book.best_bid().qty == o3.qty);
 
@@ -38,14 +37,14 @@ TEST_CASE("basic_book", "[basic_book]")
 
         // new order in middle of book
         book.add_order(o4);
-        REQUIRE(o4.pl->price == o4.price);
-        REQUIRE(o4.pl->qty == o4.qty + o2.qty);
+        REQUIRE(o4.pl->price() == o4.price);
+        REQUIRE(o4.pl->agg_qty() == o4.qty + o2.qty);
         REQUIRE(book.bids().size() == 3);
 
         // new inside bid
         book.add_order(o5);
-        REQUIRE(o5.pl->price == o5.price);
-        REQUIRE(o5.pl->qty == o3.qty + o5.qty);
+        REQUIRE(o5.pl->price() == o5.price);
+        REQUIRE(o5.pl->agg_qty() == o3.qty + o5.qty);
         REQUIRE(book.best_bid().price == o5.price);
         REQUIRE(book.best_bid().qty == o3.qty + o5.qty);
         REQUIRE(book.bids().size() == 3);
@@ -147,14 +146,6 @@ TEST_CASE("basic_book", "[basic_book]")
         REQUIRE(o2.price == 0);
         REQUIRE(o2.qty == 0);
 
-        // non-existent order
-        order tmp(Side::Bid, 5000, 5000);
-        book.delete_order(tmp);
-        REQUIRE(book.bids().size() == 2);
-        REQUIRE(tmp.price == 5000);
-        REQUIRE(tmp.qty == 5000);
-        REQUIRE(tmp.pl == nullptr);
-
         book.delete_order(o1);
         REQUIRE(book.bids().size() == 1);
         REQUIRE(o1.price == 0);
@@ -190,8 +181,8 @@ TEST_CASE("basic_book", "[basic_book]")
         REQUIRE(o2.pl == nullptr);
         REQUIRE(new_o2.price == 200);
         REQUIRE(new_o2.qty == 500);
-        REQUIRE(new_o2.pl->price == 200);
-        REQUIRE(new_o2.pl->qty == 500);
+        REQUIRE(new_o2.pl->price() == 200);
+        REQUIRE(new_o2.pl->agg_qty() == 500);
 
         // replace part of level
         order new_o3(Side::Bid, 300, 500);
@@ -203,8 +194,8 @@ TEST_CASE("basic_book", "[basic_book]")
         REQUIRE(o3.pl == nullptr);
         REQUIRE(new_o3.price == 300);
         REQUIRE(new_o3.qty == 500);
-        REQUIRE(new_o3.pl->price == 300);
-        REQUIRE(new_o3.pl->qty == 1000);
+        REQUIRE(new_o3.pl->price() == 300);
+        REQUIRE(new_o3.pl->agg_qty() == 1000);
     }
 
     SECTION("cancel_order")
@@ -219,28 +210,27 @@ TEST_CASE("basic_book", "[basic_book]")
         book.add_order(o3);
         book.add_order(o4);
 
-        // cancel complete order
-        book.cancel_order(o2, o2.qty);
-        REQUIRE(o2.price == 0);
-        REQUIRE(o2.qty == 0);
-        REQUIRE(o2.pl == nullptr);
-        REQUIRE(book.bids().size() == 2);
+        book.cancel_order(o2, 25);
+        REQUIRE(o2.price == 200);
+        REQUIRE(o2.qty == 175);
+        REQUIRE(o2.pl->price() == o2.price);
+        REQUIRE(o2.pl->agg_qty() == o2.qty);
+        REQUIRE(book.bids().size() == 3);
 
-        // partial cancel
         book.cancel_order(o1, 50);
         REQUIRE(o1.price == 100);
         REQUIRE(o1.qty == 50);
-        REQUIRE(o1.pl->price == 100);
-        REQUIRE(o1.pl->qty == 50);
-        REQUIRE(book.bids().size() == 2);
+        REQUIRE(o1.pl->price() == 100);
+        REQUIRE(o1.pl->agg_qty() == 50);
+        REQUIRE(book.bids().size() == 3);
 
-        // partial cancel on inside
+        // cancel on inside
         book.cancel_order(o4, 50);
         REQUIRE(o4.price == 300);
         REQUIRE(o4.qty == 450);
-        REQUIRE(o4.pl->price == 300);
-        REQUIRE(o4.pl->qty == 750);
-        REQUIRE(book.bids().size() == 2);
+        REQUIRE(o4.pl->price() == 300);
+        REQUIRE(o4.pl->agg_qty() == 750);
+        REQUIRE(book.bids().size() == 3);
         REQUIRE(book.best_bid().price == 300);
         REQUIRE(book.best_bid().qty == 750);
     }
@@ -263,20 +253,20 @@ TEST_CASE("basic_book", "[basic_book]")
         REQUIRE(bids.size() == 5);
 
         auto itr = bids.cbegin();
-        REQUIRE(itr->price == 500);
-        REQUIRE(itr->qty == 50);
+        REQUIRE(itr->price() == 500);
+        REQUIRE(itr->agg_qty() == 50);
         ++itr;
-        REQUIRE(itr->price == 400);
-        REQUIRE(itr->qty == 40);
+        REQUIRE(itr->price() == 400);
+        REQUIRE(itr->agg_qty() == 40);
         ++itr;
-        REQUIRE(itr->price == 300);
-        REQUIRE(itr->qty == 30);
+        REQUIRE(itr->price() == 300);
+        REQUIRE(itr->agg_qty() == 30);
         ++itr;
-        REQUIRE(itr->price == 200);
-        REQUIRE(itr->qty == 20);
+        REQUIRE(itr->price() == 200);
+        REQUIRE(itr->agg_qty() == 20);
         ++itr;
-        REQUIRE(itr->price == 100);
-        REQUIRE(itr->qty == 10);
+        REQUIRE(itr->price() == 100);
+        REQUIRE(itr->agg_qty() == 10);
     }
 
     SECTION("asks")
@@ -297,19 +287,19 @@ TEST_CASE("basic_book", "[basic_book]")
         REQUIRE(asks.size() == 5);
 
         auto itr = asks.cbegin();
-        REQUIRE(itr->price == 100);
-        REQUIRE(itr->qty == 10);
+        REQUIRE(itr->price() == 100);
+        REQUIRE(itr->agg_qty() == 10);
         ++itr;
-        REQUIRE(itr->price == 200);
-        REQUIRE(itr->qty == 20);
+        REQUIRE(itr->price() == 200);
+        REQUIRE(itr->agg_qty() == 20);
         ++itr;
-        REQUIRE(itr->price == 300);
-        REQUIRE(itr->qty == 30);
+        REQUIRE(itr->price() == 300);
+        REQUIRE(itr->agg_qty() == 30);
         ++itr;
-        REQUIRE(itr->price == 400);
-        REQUIRE(itr->qty == 40);
+        REQUIRE(itr->price() == 400);
+        REQUIRE(itr->agg_qty() == 40);
         ++itr;
-        REQUIRE(itr->price == 500);
-        REQUIRE(itr->qty == 50);
+        REQUIRE(itr->price() == 500);
+        REQUIRE(itr->agg_qty() == 50);
     }
 }
