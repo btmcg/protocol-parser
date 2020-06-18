@@ -10,7 +10,7 @@ namespace { // unnamed
     constexpr std::uint32_t StdMapNodeExtra = sizeof(std::uintptr_t) * 4;
 
     // allocate this many price levels in the memory pool
-    constexpr std::uint32_t NumPriceLevels = 5000;
+    constexpr std::uint32_t NumPriceLevels = 50;
 
 } // namespace
 

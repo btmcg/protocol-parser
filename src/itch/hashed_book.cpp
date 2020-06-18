@@ -14,7 +14,7 @@ namespace { // unnamed
     constexpr std::uint32_t StdListNodeExtra = 16;
 
     // allocate this many price levels in the memory pool
-    constexpr std::uint32_t NumPriceLevels = 5000;
+    constexpr std::uint32_t NumPriceLevels = 50;
 
     // allocate this many buckets in the mapping
     constexpr std::uint32_t NumBuckets = 100;
