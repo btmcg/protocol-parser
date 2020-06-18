@@ -1,7 +1,7 @@
 #!/bin/sh
 
 data_file="tmp/itch-data/01302020.NASDAQ_ITCH50"
-output="./runtimes"
+output="./runtimes-pr"
 
 printf "# %s %s %s\n" "$(uname --nodename)" "$(uname --kernel-release)" "${data_file}" >> "${output}"
 bin/parser -v >> "${output}"
