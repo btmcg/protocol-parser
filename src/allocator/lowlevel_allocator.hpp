@@ -129,3 +129,24 @@ struct posix_allocator
         return std::allocator_traits<std::allocator<char>>::max_size({});
     }
 };
+
+struct mmap_allocator
+{
+    [[nodiscard]] static void*
+    allocate(std::size_t size, std::size_t /*alignment*/) noexcept
+    {
+        return ::mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    }
+
+    static void
+    deallocate(void* ptr, std::size_t size, std::size_t /*alignment*/) noexcept
+    {
+        ::munmap(ptr, size);
+    }
+
+    static std::size_t
+    max_node_size() noexcept
+    {
+        return std::allocator_traits<std::allocator<char>>::max_size({});
+    }
+};
