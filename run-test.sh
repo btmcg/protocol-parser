@@ -1,6 +1,6 @@
 #!/bin/sh
 
-data_file="${HOME}/var/downloads/itch/01302020.NASDAQ_ITCH50"
+data_file="tmp/itch-data/01302020.NASDAQ_ITCH50"
 output="./runtimes"
 
 bin/parser -v >> "${output}"
