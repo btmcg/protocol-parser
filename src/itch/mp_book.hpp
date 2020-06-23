@@ -18,6 +18,8 @@ namespace itch {
         memory_pool ask_pool_;
         std::list<price_level, mp_allocator<price_level>> bids_;
         std::list<price_level, mp_allocator<price_level>> asks_;
+        std::size_t max_bid_order_depth_ = 0; ///< stats only
+        std::size_t max_ask_order_depth_ = 0; ///< stats only
 
     public:
         mp_book() noexcept;
@@ -32,8 +34,10 @@ namespace itch {
         decltype(asks_) const& asks() const noexcept;
         pq best_bid() const noexcept;
         pq best_ask() const noexcept;
-        std::size_t max_bid_pool_used() const noexcept;
-        std::size_t max_ask_pool_used() const noexcept;
+        std::size_t max_bid_book_depth() const noexcept;
+        std::size_t max_ask_book_depth() const noexcept;
+        std::size_t max_bid_order_depth() const noexcept;
+        std::size_t max_ask_order_depth() const noexcept;
     };
 
 } // namespace itch

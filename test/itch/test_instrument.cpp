@@ -9,7 +9,7 @@ TEST_CASE("initial state", "[instrument]")
 
     SECTION("size")
     {
-        REQUIRE(sizeof(instrument) == 224); // using mp_book
+        REQUIRE(sizeof(instrument) == 240); // using mp_book
         // REQUIRE(sizeof(instrument) == 96); // using basic_book
         // REQUIRE(sizeof(instrument) == 336); // using hashed_book
     }

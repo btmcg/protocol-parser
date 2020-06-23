@@ -46,12 +46,22 @@ namespace itch {
         pq best_bid() const noexcept;
         pq best_ask() const noexcept;
         constexpr std::size_t
-        max_bid_pool_used() const noexcept
+        max_bid_book_depth() const noexcept
         {
             return 0;
         }
         constexpr std::size_t
-        max_ask_pool_used() const noexcept
+        max_ask_book_depth() const noexcept
+        {
+            return 0;
+        }
+        constexpr std::size_t
+        max_bid_order_depth() const noexcept
+        {
+            return 0;
+        }
+        constexpr std::size_t
+        max_ask_order_depth() const noexcept
         {
             return 0;
         }

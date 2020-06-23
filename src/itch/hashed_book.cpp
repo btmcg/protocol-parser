@@ -158,15 +158,27 @@ namespace itch {
     }
 
     std::size_t
-    hashed_book::max_bid_pool_used() const noexcept
+    hashed_book::max_bid_book_depth() const noexcept
     {
         return bid_pool_.max_used();
     }
 
     std::size_t
-    hashed_book::max_ask_pool_used() const noexcept
+    hashed_book::max_ask_book_depth() const noexcept
     {
         return ask_pool_.max_used();
+    }
+
+    std::size_t
+    hashed_book::max_bid_order_depth() const noexcept
+    {
+        return max_bid_order_depth_;
+    }
+
+    std::size_t
+    hashed_book::max_ask_order_depth() const noexcept
+    {
+        return max_ask_order_depth_;
     }
 
 } // namespace itch

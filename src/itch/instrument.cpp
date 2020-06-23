@@ -55,14 +55,14 @@ namespace itch {
     std::string
     instrument::stats_csv_header() noexcept
     {
-        return "name,locate,open,close,low,high,num_trades,trade_vol,num_orders,max_bids,max_asks";
+        return "name,locate,open,close,low,high,num_trades,trade_vol,num_orders,max_bid_book_depth,max_ask_book_depth,max_bid_order_depth,max_ask_order_depth";
     }
 
     std::string
     instrument::stats_csv() const
     {
         // clang-format off
-        return fmt::format("{},{},{:.4f},{:.4f},{:.4f},{:.4f},{},{},{},{},{}",
+        return fmt::format("{},{},{:.4f},{:.4f},{:.4f},{:.4f},{},{},{},{},{},{},{}",
             name,
             locate,
             to_hr_price(open),
@@ -72,15 +72,17 @@ namespace itch {
             num_trades,
             trade_qty,
             num_orders,
-            book.max_bid_pool_used(),
-            book.max_ask_pool_used());
+            book.max_bid_book_depth(),
+            book.max_ask_book_depth(),
+            book.max_bid_order_depth(),
+            book.max_ask_order_depth());
         // clang-format on
     }
 
     std::tuple<std::size_t, std::size_t>
     instrument::allocator_stats() const noexcept
     {
-        return std::make_tuple(book.max_bid_pool_used(), book.max_ask_pool_used());
+        return std::make_tuple(book.max_bid_book_depth(), book.max_ask_book_depth());
     }
 
 } // namespace itch
