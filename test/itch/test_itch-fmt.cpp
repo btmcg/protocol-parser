@@ -1,4 +1,4 @@
-#include "protocol/itch-fmt.hpp"
+#include "protocol/itch/itch-fmt.hpp"
 #include <catch2/catch.hpp>
 #include <cstdint>
 #include <ctime>

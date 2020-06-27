@@ -2,8 +2,8 @@
 
 #include "core.hpp"
 #include "instrument.hpp"
-#include "protocol/itch-fmt.hpp"
-#include "protocol/itch.hpp"
+#include "protocol/itch/itch-fmt.hpp"
+#include "protocol/itch/itch.hpp"
 #include <endian.h>
 #include <filesystem>
 #include <algorithm> // std::max, std::min
