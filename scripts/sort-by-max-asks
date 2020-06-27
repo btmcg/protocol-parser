@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -o nounset
+set -o errexit
+
+app=$(basename "${0}")
+target_field=11
+
+if [ "${#}" -ne 1 ]; then
+    printf "usage: %s <stats.csv>\n" "${app}"
+    exit 1
+fi
+
+input_file="${1}"
+head -1 "${input_file}"
+tail --lines=+2 "${input_file}" | sort --numeric-sort --reverse --field-separator=',' --key="${target_field}","${target_field}"
