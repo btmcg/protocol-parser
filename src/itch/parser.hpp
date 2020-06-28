@@ -220,7 +220,7 @@ namespace itch {
         log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
-        std::uint64_t const order_number = be64toh(m->order_reference_number);
+        oid_t const order_number = be64toh(m->order_reference_number);
 
         order& o = orders_[order_number];
         o.price = be32toh(m->price);
@@ -240,7 +240,7 @@ namespace itch {
         log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
-        std::uint64_t const order_number = be64toh(m->order_reference_number);
+        oid_t const order_number = be64toh(m->order_reference_number);
 
         order& o = orders_[order_number];
         o.price = be32toh(m->price);
@@ -332,7 +332,7 @@ namespace itch {
         log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
-        std::uint64_t const order_number = be64toh(m->order_reference_number);
+        oid_t const order_number = be64toh(m->order_reference_number);
 
         order& o = orders_[order_number];
         qty_t const cancelled_shares = be32toh(m->cancelled_shares);
@@ -347,7 +347,7 @@ namespace itch {
         log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
-        std::uint64_t const order_number = be64toh(m->order_reference_number);
+        oid_t const order_number = be64toh(m->order_reference_number);
 
         order& o = orders_[order_number];
         instruments_[index].book.delete_order(o);
@@ -361,7 +361,7 @@ namespace itch {
         log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
-        std::uint64_t const order_number = be64toh(m->order_reference_number);
+        oid_t const order_number = be64toh(m->order_reference_number);
 
         order& o = orders_[order_number];
         qty_t const executed_qty = be32toh(m->executed_shares);
@@ -393,7 +393,7 @@ namespace itch {
         log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
-        std::uint64_t const order_number = be64toh(m->order_reference_number);
+        oid_t const order_number = be64toh(m->order_reference_number);
 
         order& o = orders_[order_number];
         qty_t const executed_qty = be32toh(m->executed_shares);
@@ -421,8 +421,8 @@ namespace itch {
         log_msg(m);
 
         std::uint16_t const index = be16toh(m->stock_locate);
-        std::uint64_t const orig_order_number = be64toh(m->original_order_reference_number);
-        std::uint64_t const new_order_number = be64toh(m->new_order_reference_number);
+        oid_t const orig_order_number = be64toh(m->original_order_reference_number);
+        oid_t const new_order_number = be64toh(m->new_order_reference_number);
 
         order& old_order = orders_[orig_order_number];
         order& new_order = orders_[new_order_number];
