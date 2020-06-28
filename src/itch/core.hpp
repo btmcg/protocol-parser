@@ -13,6 +13,9 @@ namespace itch {
     /// itch-specific quantity type
     using qty_t = std::uint32_t;
 
+    /// itch-specific order reference number
+    using oid_t = std::uint64_t;
+
     /// maximum size of stock name
     constexpr std::uint8_t NameLen = 8;
 
