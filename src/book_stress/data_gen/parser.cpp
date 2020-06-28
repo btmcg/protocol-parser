@@ -1,11 +1,10 @@
 #include "parser.hpp"
 #include "protocol/custom/book_stress.hpp"
-#include <unordered_set>
 
 
 namespace {
     // TODO/FIXME make this a cli arg or something
-    std::unordered_set<std::uint16_t> const TargetLocates = {13 /*=AAPL*/};
+    constexpr std::uint16_t TargetLocate = 6562; // AAPL=13, AMZN=398, QQQ=6562
 } // namespace
 
 
@@ -40,7 +39,7 @@ namespace book_stress::data_gen {
 
             std::uint16_t const stock_locate = be16toh(hdr->stock_locate);
 
-            if (TargetLocates.contains(stock_locate)) {
+            if (stock_locate == TargetLocate) {
                 // clang-format off
                 switch (hdr->msg_type) {
                     case 'A': handle_add_order(reinterpret_cast<itch::add_order const*>(hdr)); break;
