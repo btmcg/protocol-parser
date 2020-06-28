@@ -104,7 +104,7 @@ main(int argc, char** argv)
     try {
         file_reader reader(args.input);
 
-        book_stress::parser parser(args.output);
+        book_stress::data_gen::parser parser(args.output);
         reader.process_file([&parser](auto ptr, auto len) { return parser.parse(ptr, len); });
     } catch (std::exception const& e) {
         std::fprintf(stderr, "exception caught: %s\n", e.what());

@@ -1,15 +1,15 @@
 #include "parser.hpp"
-#include "protocol/custom/bookstress.hpp"
+#include "protocol/custom/book_stress.hpp"
 #include <unordered_set>
 
 
 namespace {
     // TODO/FIXME make this a cli arg or something
-    std::unordered_set<std::uint16_t> const TargetLocates = { 13 /*=AAPL*/};
-}
+    std::unordered_set<std::uint16_t> const TargetLocates = {13 /*=AAPL*/};
+} // namespace
 
 
-namespace book_stress {
+namespace book_stress::data_gen {
 
 
     parser::parser(std::filesystem::path const& output)
@@ -24,7 +24,6 @@ namespace book_stress {
     {
         std::fclose(output_);
     }
-
 
     std::size_t
     parser::parse(std::uint8_t const* buf, std::size_t bytes_to_read) noexcept
@@ -66,106 +65,106 @@ namespace book_stress {
     void
     parser::handle_add_order(itch::add_order const* m)
     {
-        msg msg;
-        std::memset(&msg, 0, sizeof(msg));
+        message msg;
+        std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'A';
         msg.buy_sell = m->buy_sell_indicator == 'B' ? 1 : 2;
         msg.ts = itch::from_itch_timestamp(m->timestamp);
-        msg.order_reference_number = be64toh(m->order_reference_number);
+        msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->shares);
         msg.price = be32toh(m->price);
 
-        std::fwrite(&msg, 1, sizeof(msg), output_);
+        std::fwrite(&msg, 1, sizeof(message), output_);
     }
 
     void
     parser::handle_add_order_with_mpid(itch::add_order_with_mpid const* m)
     {
-        msg msg;
-        std::memset(&msg, 0, sizeof(msg));
+        message msg;
+        std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'A';
         msg.buy_sell = m->buy_sell_indicator == 'B' ? 1 : 2;
         msg.ts = itch::from_itch_timestamp(m->timestamp);
-        msg.order_reference_number = be64toh(m->order_reference_number);
+        msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->shares);
         msg.price = be32toh(m->price);
 
-        std::fwrite(&msg, 1, sizeof(msg), output_);
+        std::fwrite(&msg, 1, sizeof(message), output_);
     }
 
     void
     parser::handle_order_executed_with_price(itch::order_executed_with_price const* m)
     {
-        msg msg;
-        std::memset(&msg, 0, sizeof(msg));
+        message msg;
+        std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'C';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
-        msg.order_reference_number = be64toh(m->order_reference_number);
+        msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->executed_shares);
         msg.price = be32toh(m->execution_price);
 
-        std::fwrite(&msg, 1, sizeof(msg), output_);
+        std::fwrite(&msg, 1, sizeof(message), output_);
     }
 
     void
     parser::handle_order_delete(itch::order_delete const* m)
     {
-        msg msg;
-        std::memset(&msg, 0, sizeof(msg));
+        message msg;
+        std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'D';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
-        msg.order_reference_number = be64toh(m->order_reference_number);
+        msg.oid = be64toh(m->order_reference_number);
 
-        std::fwrite(&msg, 1, sizeof(msg), output_);
+        std::fwrite(&msg, 1, sizeof(message), output_);
     }
 
     void
     parser::handle_order_executed(itch::order_executed const* m)
     {
-        msg msg;
-        std::memset(&msg, 0, sizeof(msg));
+        message msg;
+        std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'C';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
-        msg.order_reference_number = be64toh(m->order_reference_number);
+        msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->executed_shares);
 
-        std::fwrite(&msg, 1, sizeof(msg), output_);
+        std::fwrite(&msg, 1, sizeof(message), output_);
     }
 
     void
     parser::handle_order_replace(itch::order_replace const* m)
     {
-        msg msg;
-        std::memset(&msg, 0, sizeof(msg));
+        message msg;
+        std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'U';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
-        msg.order_reference_number = be64toh(m->original_order_reference_number);
+        msg.oid = be64toh(m->original_order_reference_number);
+        msg.new_oid = be64toh(m->new_order_reference_number);
         msg.qty = be32toh(m->shares);
         msg.price = be32toh(m->price);
-        msg.new_order_reference_number = be64toh(m->new_order_reference_number);
 
-        std::fwrite(&msg, 1, sizeof(msg), output_);
+        std::fwrite(&msg, 1, sizeof(message), output_);
     }
 
     void
     parser::handle_order_cancel(itch::order_cancel const* m)
     {
-        msg msg;
-        std::memset(&msg, 0, sizeof(msg));
+        message msg;
+        std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'X';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
-        msg.order_reference_number = be64toh(m->order_reference_number);
+        msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->cancelled_shares);
 
-        std::fwrite(&msg, 1, sizeof(msg), output_);
+        std::fwrite(&msg, 1, sizeof(message), output_);
     }
 
 
-} // namespace book_stress
+} // namespace book_stress::data_gen

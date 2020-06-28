@@ -8,7 +8,7 @@
 #include <cstdio> // std::fclose, std::fopen
 
 
-namespace book_stress {
+namespace book_stress::data_gen {
 
     class parser
     {
@@ -30,4 +30,4 @@ namespace book_stress {
         void handle_order_cancel(itch::order_cancel const*);
     };
 
-} // namespace book_stress
+} // namespace book_stress::data_gen
