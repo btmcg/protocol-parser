@@ -21,6 +21,8 @@ test/test-runner
 
 # project executables
 golang/cppgen
+src/book_stress/data_gen/bookstress-data-gen
+src/book_stress/data_read/bookstress-data-read
 src/main/parser
 
 # third party code that is built and installed

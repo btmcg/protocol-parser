@@ -100,7 +100,7 @@ namespace book_stress::data_gen {
         message msg;
         std::memset(&msg, 0, sizeof(message));
 
-        msg.type = 'C';
+        msg.type = 'E';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
         msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->executed_shares);
@@ -128,7 +128,7 @@ namespace book_stress::data_gen {
         message msg;
         std::memset(&msg, 0, sizeof(message));
 
-        msg.type = 'C';
+        msg.type = 'E';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
         msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->executed_shares);
