@@ -68,8 +68,8 @@ namespace book_stress::data_gen {
         std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'A';
-        msg.buy_sell = m->buy_sell_indicator == 'B' ? 1 : 2;
         msg.ts = itch::from_itch_timestamp(m->timestamp);
+        msg.side = m->buy_sell_indicator == 'B' ? 0 : 1;
         msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->shares);
         msg.price = be32toh(m->price);
@@ -84,8 +84,8 @@ namespace book_stress::data_gen {
         std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'A';
-        msg.buy_sell = m->buy_sell_indicator == 'B' ? 1 : 2;
         msg.ts = itch::from_itch_timestamp(m->timestamp);
+        msg.side = m->buy_sell_indicator == 'B' ? 0 : 1;
         msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->shares);
         msg.price = be32toh(m->price);
@@ -101,6 +101,7 @@ namespace book_stress::data_gen {
 
         msg.type = 'E';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
+        msg.side = 2; // n/a
         msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->executed_shares);
         msg.price = be32toh(m->execution_price);
@@ -116,6 +117,7 @@ namespace book_stress::data_gen {
 
         msg.type = 'D';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
+        msg.side = 2; // n/a
         msg.oid = be64toh(m->order_reference_number);
 
         std::fwrite(&msg, 1, sizeof(message), output_);
@@ -128,6 +130,7 @@ namespace book_stress::data_gen {
         std::memset(&msg, 0, sizeof(message));
 
         msg.type = 'E';
+        msg.side = 2; // n/a
         msg.ts = itch::from_itch_timestamp(m->timestamp);
         msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->executed_shares);
@@ -143,6 +146,7 @@ namespace book_stress::data_gen {
 
         msg.type = 'U';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
+        msg.side = 2; // n/a
         msg.oid = be64toh(m->original_order_reference_number);
         msg.new_oid = be64toh(m->new_order_reference_number);
         msg.qty = be32toh(m->shares);
@@ -159,6 +163,7 @@ namespace book_stress::data_gen {
 
         msg.type = 'X';
         msg.ts = itch::from_itch_timestamp(m->timestamp);
+        msg.side = 2; // n/a
         msg.oid = be64toh(m->order_reference_number);
         msg.qty = be32toh(m->cancelled_shares);
 
