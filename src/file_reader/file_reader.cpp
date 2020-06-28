@@ -54,7 +54,8 @@ file_reader::file_reader(std::filesystem::path const& input_file)
 
     std::tie(f_ptr_, file_size_) = mmap_file(input_file_);
     if (f_ptr_ == nullptr)
-        throw std::runtime_error(fmt::format("failed to mmap file: {}", input_file_.c_str()));
+        throw std::runtime_error(fmt::format(
+                "{}: failed to mmap file: {}", __builtin_FUNCTION(), input_file_.c_str()));
 }
 
 file_reader::~file_reader() noexcept
