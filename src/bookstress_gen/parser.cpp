@@ -1,5 +1,12 @@
 #include "parser.hpp"
 #include "protocol/custom/bookstress.hpp"
+#include <unordered_set>
+
+
+namespace {
+    // TODO/FIXME make this a cli arg or something
+    std::unordered_set<std::uint16_t> const TargetLocates = { 13 /*=AAPL*/};
+}
 
 
 namespace book_stress {
@@ -32,19 +39,22 @@ namespace book_stress {
             if (buf + msg_len > end)
                 break;
 
-            // clang-format off
-            // switch ordered by msg count on sample day (2020-01-30)
-            switch (hdr->msg_type) {
-                case 'A': handle_add_order(reinterpret_cast<itch::add_order const*>(hdr)); break;
-                case 'F': handle_add_order_with_mpid(reinterpret_cast<itch::add_order_with_mpid const*>(hdr)); break;
-                case 'C': handle_order_executed_with_price(reinterpret_cast<itch::order_executed_with_price const*>(hdr)); break;
-                case 'D': handle_order_delete(reinterpret_cast<itch::order_delete const*>(hdr)); break;
-                case 'E': handle_order_executed(reinterpret_cast<itch::order_executed const*>(hdr)); break;
-                case 'U': handle_order_replace(reinterpret_cast<itch::order_replace const*>(hdr)); break;
-                case 'X': handle_order_cancel(reinterpret_cast<itch::order_cancel const*>(hdr)); break;
-                default: break;
+            std::uint16_t const stock_locate = be16toh(hdr->stock_locate);
+
+            if (TargetLocates.contains(stock_locate)) {
+                // clang-format off
+                switch (hdr->msg_type) {
+                    case 'A': handle_add_order(reinterpret_cast<itch::add_order const*>(hdr)); break;
+                    case 'F': handle_add_order_with_mpid(reinterpret_cast<itch::add_order_with_mpid const*>(hdr)); break;
+                    case 'C': handle_order_executed_with_price(reinterpret_cast<itch::order_executed_with_price const*>(hdr)); break;
+                    case 'D': handle_order_delete(reinterpret_cast<itch::order_delete const*>(hdr)); break;
+                    case 'E': handle_order_executed(reinterpret_cast<itch::order_executed const*>(hdr)); break;
+                    case 'U': handle_order_replace(reinterpret_cast<itch::order_replace const*>(hdr)); break;
+                    case 'X': handle_order_cancel(reinterpret_cast<itch::order_cancel const*>(hdr)); break;
+                    default: break;
+                }
+                // clang-format on
             }
-            // clang-format on
 
             buf += msg_len;
             bytes_processed += msg_len;
