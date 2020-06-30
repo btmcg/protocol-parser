@@ -1,6 +1,12 @@
 protocol-parser
 ===============
 
+Simple code that reads raw market data (currently only `ITCH
+<ftp://emi.nasdaq.com/ITCH>`_) and builds a real-time book. Various
+stats can be recorded and this project essentially acts as a testbed for
+experimentation in optimization.
+
+
 Cloning repo and submodules
 ---------------------------
 
