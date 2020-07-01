@@ -99,7 +99,7 @@ catch
 
     git submodule add -- https://github.com/catchorg/Catch2.git third_party/catch2/2.12.2
     cd third_party/catch2/2.12.2
-    git checkout -b v2.12.2
+    git checkout v2.12.2
 
 
 **Remove old submodule**
@@ -129,7 +129,7 @@ fmt
 
     git submodule add -- https://github.com/fmtlib/fmt.git third_party/fmt/6.2.1
     cd third_party/fmt/6.2.1
-    git checkout -b 6.2.1
+    git checkout 6.2.1
 
 **Remove old submodule**
 
