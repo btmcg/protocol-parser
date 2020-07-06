@@ -127,9 +127,9 @@ fmt
 
 .. code-block::
 
-    git submodule add -- https://github.com/fmtlib/fmt.git third_party/fmt/6.2.1
-    cd third_party/fmt/6.2.1
-    git checkout 6.2.1
+    git submodule add -- https://github.com/fmtlib/fmt.git third_party/fmt/7.0.0
+    cd third_party/fmt/7.0.0
+    git checkout 7.0.0
 
 **Remove old submodule**
 
@@ -138,9 +138,9 @@ fmt
     vim .gitmodules
     vim .git/config
     git add .gitmodules
-    git rm --cached third_party/fmt/6.2.0
-    rm -rf .git/modules/third_party/fmt/6.2.0
-    rm -rf third_party/fmt/6.2.0
+    git rm --cached third_party/fmt/6.2.1
+    rm -rf .git/modules/third_party/fmt/6.2.1
+    rm -rf third_party/fmt/6.2.1
 
 **Point makefile to new version**
 
