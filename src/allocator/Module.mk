@@ -1,4 +1,4 @@
-LOCAL_LIBRARIES := util
+MODULE_LIBRARIES := util
 
 $(call use-fmt)
 

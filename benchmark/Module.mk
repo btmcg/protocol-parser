@@ -1,6 +1,6 @@
-LOCAL_MODULE := benchmark-runner
-LOCAL_CPPFLAGS := -I.
-LOCAL_LIBRARIES := allocator
+MODULE_NAME := benchmark-runner
+MODULE_CPPFLAGS := -I.
+MODULE_LIBRARIES := allocator
 
 $(call use-fmt)
 $(call use-google-benchmark)

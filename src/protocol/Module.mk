@@ -1,5 +1,5 @@
-LOCAL_LIBRARIES := util
-LOCAL_SOURCE_FILES := $(call rwildcard,$(call get-path),*.cpp)
+MODULE_LIBRARIES := util
+MODULE_SOURCE_FILES := $(call rwildcard,$(call get-path),*.cpp)
 
 $(call use-fmt)
 

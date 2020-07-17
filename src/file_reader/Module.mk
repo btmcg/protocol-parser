@@ -1,5 +1,5 @@
-LOCAL_LDLIBS := -lz
-LOCAL_LIBRARIES := util
+MODULE_LDLIBS := -lz
+MODULE_LIBRARIES := util
 
 $(call use-fmt)
 
