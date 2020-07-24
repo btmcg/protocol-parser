@@ -1,4 +1,4 @@
-#include "version.hpp"
+#include "version.h"
 #include "file_reader/file_reader.hpp"
 #include "itch/parser.hpp"
 #include "util/compiler.hpp"
