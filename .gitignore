@@ -1,8 +1,9 @@
 # dependency files
 *.d
 
-# bin/lib output dirs
+# dist dirs
 bin/
+include/
 lib/
 
 # compiled object files
