@@ -1,6 +1,6 @@
 MODULE_LIBRARIES := util
-MODULE_SOURCE_FILES := $(call rwildcard,$(call get-path),*.cpp)
+MODULE_SOURCE_FILES := $(call rwildcard,$(get-path),*.cpp)
 
-$(call use-fmt)
+$(use-fmt)
 
-$(call add-static-library-module,$(call get-path))
+$(call add-static-library-module,$(get-path))
