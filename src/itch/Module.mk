@@ -1,4 +1,4 @@
-MODULE_LIBRARIES := allocator util
+MODULE_LIBRARIES := allocator protocol util
 
 $(use-fmt)
 
