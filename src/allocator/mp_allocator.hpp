@@ -28,7 +28,7 @@ public:
     template <typename Alloc>
     mp_allocator(Alloc& alloc) noexcept;
     mp_allocator<T> select_on_container_copy_construction() const;
-    value_type* allocate(size_type n, void* = nullptr);
+    value_type* allocate(size_type n, void* = nullptr) noexcept;
     void deallocate(value_type* ptr, size_type n) noexcept;
     template <typename U, typename... Args>
     void construct(U* p, Args&&... args);
@@ -63,7 +63,7 @@ mp_allocator<T>::select_on_container_copy_construction() const
 
 template <typename T>
 typename mp_allocator<T>::value_type*
-mp_allocator<T>::allocate(size_type n, void*)
+mp_allocator<T>::allocate(size_type n, void*) noexcept
 {
     if (n == 1)
         return static_cast<value_type*>(get_allocator().allocate_node());

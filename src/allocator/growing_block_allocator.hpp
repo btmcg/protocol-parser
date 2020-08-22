@@ -21,7 +21,7 @@ private:
 public:
     constexpr explicit growing_block_allocator(
             std::size_t block_size, LLAllocator alloc = LLAllocator()) noexcept;
-    memory_block allocate_block();
+    memory_block allocate_block() noexcept;
     constexpr void deallocate_block(memory_block block) const noexcept;
     constexpr std::size_t next_block_size() const noexcept;
     constexpr float growth_factor() const noexcept;
@@ -40,7 +40,7 @@ constexpr growing_block_allocator<LLAllocator, Num, Den>::growing_block_allocato
 
 template <typename LLAllocator, std::uint16_t Num, std::uint16_t Den>
 memory_block
-growing_block_allocator<LLAllocator, Num, Den>::allocate_block()
+growing_block_allocator<LLAllocator, Num, Den>::allocate_block() noexcept
 {
     void* memory = LLAllocator::allocate_node(block_size_, DefaultAlignment);
     memory_block block(memory, block_size_);

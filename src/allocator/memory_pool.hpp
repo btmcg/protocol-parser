@@ -7,6 +7,7 @@
 #include "memory_arena.hpp"
 #include "util/assert.hpp"
 #include <cstdlib>
+#include <exception> // std::terminate
 #include <new>
 #include <type_traits>
 #include <utility>
@@ -22,14 +23,14 @@ private:
     free_list free_list_;
 
 public:
-    inline memory_pool(std::size_t node_size, std::size_t count);
+    inline memory_pool(std::size_t node_size, std::size_t count) noexcept;
     ~memory_pool() noexcept = default;
     inline memory_pool(memory_pool&&) noexcept;
     memory_pool(memory_pool const&) noexcept = delete;
     inline memory_pool& operator=(memory_pool&&) noexcept;
     memory_pool& operator=(memory_pool const&) noexcept = delete;
-    inline void* allocate_node();
-    inline void* allocate_array(std::size_t n);
+    inline void* allocate_node() noexcept;
+    inline void* allocate_array(std::size_t n) noexcept;
     inline void deallocate_node(void* ptr) noexcept;
     inline void deallocate_array(void* ptr, std::size_t n) noexcept;
     inline std::size_t node_size() const noexcept;
@@ -39,12 +40,12 @@ public:
     inline allocator_type& get_allocator() noexcept;
 
 private:
-    inline void allocate_block();
+    inline void allocate_block() noexcept;
 };
 
 /**********************************************************************/
 
-memory_pool::memory_pool(std::size_t node_size, std::size_t count)
+memory_pool::memory_pool(std::size_t node_size, std::size_t count) noexcept
         : arena_(detail::round_up_to_align(node_size) * count)
         , free_list_(detail::round_up_to_align(node_size))
 {
@@ -67,7 +68,7 @@ memory_pool::operator=(memory_pool&& other) noexcept
 }
 
 void*
-memory_pool::allocate_node()
+memory_pool::allocate_node() noexcept
 {
     if (free_list_.empty())
         allocate_block();
@@ -76,14 +77,14 @@ memory_pool::allocate_node()
 }
 
 void*
-memory_pool::allocate_array(std::size_t n)
+memory_pool::allocate_array(std::size_t n) noexcept
 {
     void* mem = free_list_.empty() ? nullptr : free_list_.allocate(n * node_size());
     if (mem == nullptr) {
         allocate_block();
         mem = free_list_.allocate(n * node_size());
         if (mem == nullptr)
-            throw std::bad_alloc();
+            std::terminate();
     }
     return mem;
 }
@@ -133,7 +134,7 @@ memory_pool::get_allocator() noexcept
 // private
 
 void
-memory_pool::allocate_block()
+memory_pool::allocate_block() noexcept
 {
     memory_block mb = arena_.allocate_block();
     free_list_.insert(mb.memory, mb.size);

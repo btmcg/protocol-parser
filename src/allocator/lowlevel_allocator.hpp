@@ -1,22 +1,10 @@
 #pragma once
 
 #include <sys/mman.h>
-#include <cstdlib> // ::posix_memalign
+#include <cstdlib>   // ::posix_memalign
+#include <exception> // std::terminate
 #include <memory>
 #include <new>
-
-
-class bad_allocation : public std::bad_alloc
-{
-public:
-    bad_allocation() noexcept = default;
-
-    constexpr char const*
-    what() const noexcept override
-    {
-        return "lowlevel_allocator bad allocation";
-    }
-};
 
 
 template <typename Functor>
@@ -37,18 +25,17 @@ public:
     lowlevel_allocator& operator=(lowlevel_allocator const&) = delete;
 
     [[nodiscard]] constexpr void*
-    allocate_node(std::size_t size, std::size_t alignment) const
+    allocate_node(std::size_t size, std::size_t alignment) const noexcept
     {
         void* memory = Functor::allocate(size, alignment);
         if (memory == nullptr)
-            throw bad_allocation();
+            std::terminate();
 
         return memory;
     }
 
     constexpr void
-    deallocate_node(void* node, std::size_t size, std::size_t alignment) const
-            noexcept(noexcept(Functor::deallocate(node, size, alignment)))
+    deallocate_node(void* node, std::size_t size, std::size_t alignment) const noexcept
     {
         Functor::deallocate(node, size, alignment);
     }

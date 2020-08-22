@@ -1,5 +1,4 @@
 #include "memory_block_stack.hpp"
-#include <new> // ::new
 
 
 // whether or not an alignment is valid, i.e. a power of two not zero
@@ -47,8 +46,10 @@ void
 memory_block_stack::push(allocated_mb block) noexcept
 {
     DEBUG_ASSERT(is_aligned(block.memory, max_alignment));
-    node* next = ::new (block.memory) node(head_, block.size - node::offset);
-    head_ = next;
+    auto n = reinterpret_cast<node*>(block.memory);
+    n->prev = head_;
+    n->usable_size = block.size - node::offset;
+    head_ = n;
 }
 
 memory_block_stack::allocated_mb

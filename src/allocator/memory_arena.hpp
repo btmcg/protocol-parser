@@ -14,7 +14,7 @@ private:
     memory_block_stack used_;
 
 public:
-    constexpr explicit memory_arena(std::size_t block_size);
+    constexpr explicit memory_arena(std::size_t block_size) noexcept;
 
     /// Deallocates all memory blocks that where requested back to the
     /// BlockAllocator.
@@ -26,7 +26,7 @@ public:
     memory_arena& operator=(memory_arena const&) noexcept = delete;
     memory_arena& operator=(memory_arena&&) noexcept;
 
-    memory_block allocate_block();
+    memory_block allocate_block() noexcept;
     memory_block current_block() const noexcept;
     void deallocate_block() noexcept;
     constexpr bool owns(void const* ptr) const noexcept;
@@ -45,7 +45,7 @@ public:
 /**********************************************************************/
 
 template <typename BlockAllocator>
-constexpr memory_arena<BlockAllocator>::memory_arena(std::size_t block_size)
+constexpr memory_arena<BlockAllocator>::memory_arena(std::size_t block_size) noexcept
         : BlockAllocator(block_size)
 {
     // empty
@@ -77,7 +77,7 @@ memory_arena<BlockAllocator>::operator=(memory_arena&& other) noexcept
 
 template <typename BlockAllocator>
 memory_block
-memory_arena<BlockAllocator>::allocate_block()
+memory_arena<BlockAllocator>::allocate_block() noexcept
 {
     used_.push(BlockAllocator::allocate_block());
     DEBUG_ASSERT(!used_.empty());
