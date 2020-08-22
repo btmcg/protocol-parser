@@ -4,7 +4,7 @@
 #include "price_level.hpp"
 #include "allocator/memory_pool.hpp"
 #include "allocator/mp_allocator.hpp"
-#include <cstddef> // std::size_t
+#include <cstddef>    // std::size_t
 #include <functional> // std::greater, std::less
 #include <map>
 

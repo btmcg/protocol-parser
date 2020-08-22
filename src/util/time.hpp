@@ -96,8 +96,8 @@ private:
 
         __asm__ __volatile__("rdtscp"
                              : "=a"(lo_ticks), "=d"(hi_ticks) // output operands
-                             : "a"(0) // input operands
-                             : "%ebx", "%ecx" // clobbered registers
+                             : "a"(0)                         // input operands
+                             : "%ebx", "%ecx"                 // clobbered registers
         );
 
         static constexpr std::uint32_t bits = std::numeric_limits<std::uint32_t>::digits;

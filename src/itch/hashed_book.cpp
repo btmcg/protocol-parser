@@ -2,7 +2,7 @@
 #include "util/assert.hpp"
 #include <algorithm> // std::find_if
 #include <cstdint>
-#include <cstdio> // std::fprintf
+#include <cstdio>  // std::fprintf
 #include <cstdlib> // std::abort
 #include <exception>
 

@@ -2,7 +2,7 @@
 #include "allocator/mp_allocator.hpp"
 #include <benchmark/benchmark.h>
 #include <algorithm> // std::uniform_int_distribution
-#include <cstddef> // std::size_t
+#include <cstddef>   // std::size_t
 #include <cstdint>
 #include <functional> // std::equal_to
 #include <limits>

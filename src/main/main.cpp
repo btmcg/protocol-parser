@@ -5,7 +5,7 @@
 #include "util/time.hpp"
 #include <filesystem>
 #include <getopt.h>
-#include <cstdio> // std::fprintf
+#include <cstdio>  // std::fprintf
 #include <cstdlib> // std::exit
 #include <string>
 

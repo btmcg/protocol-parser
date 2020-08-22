@@ -7,7 +7,7 @@
 #include <endian.h>
 #include <filesystem>
 #include <algorithm> // std::max, std::min
-#include <cstddef> // std::size_t
+#include <cstddef>   // std::size_t
 #include <cstdint>
 #include <cstdio> // std::fclose, std::fopen
 #include <vector>

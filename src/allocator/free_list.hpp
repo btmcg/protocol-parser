@@ -3,8 +3,8 @@
 #include "detail.hpp"
 #include "util/assert.hpp"
 #include <algorithm> // std::max
-#include <climits> // CHAR_BIT
-#include <cstddef> // std::max_align_t, std::size_t
+#include <climits>   // CHAR_BIT
+#include <cstddef>   // std::max_align_t, std::size_t
 #include <cstdint>
 #include <cstring> // std::memcpy
 #include <utility>
@@ -61,10 +61,10 @@ namespace detail {
     // i.e. array
     struct interval
     {
-        std::uint8_t* prev = nullptr; // last before
+        std::uint8_t* prev = nullptr;  // last before
         std::uint8_t* first = nullptr; // first in
-        std::uint8_t* last = nullptr; // last in
-        std::uint8_t* next = nullptr; // first after
+        std::uint8_t* last = nullptr;  // last in
+        std::uint8_t* next = nullptr;  // first after
 
         // number of nodes in the interval
         constexpr std::size_t
