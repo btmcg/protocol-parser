@@ -118,7 +118,7 @@ file_reader::process_gz(Callable&& fn)
                 return false;
             case Z_MEM_ERROR:
                 fmt::print(stderr, "Z_MEM_ERROR\n");
-                (void)inflateEnd(&zstrm);
+                ::inflateEnd(&zstrm);
                 return false;
         }
         buf.bytes_written(zstrm.total_out - total_bytes_inflated);
