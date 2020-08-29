@@ -38,7 +38,7 @@ specified below.
 
 .. code-block::
 
-   go build golang/cppgen.go
+   go build -o golang/cppgen golang/cppgen.go
 
 
 build options

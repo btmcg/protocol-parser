@@ -20,6 +20,7 @@ benchmark/benchmark-runner
 test/test-runner
 
 # project executables
+golang/cppgen
 src/main/parser
 
 # third party code that is built and installed
