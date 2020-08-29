@@ -33,6 +33,14 @@ The raw itch data files can be found `here
 Building and running
 ====================
 
+First, build the cppgen binary for c++ code generation. Then run make as
+specified below.
+
+.. code-block::
+
+   go build golang/cppgen.go
+
+
 build options
 -------------
 
