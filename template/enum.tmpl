@@ -1,0 +1,35 @@
+{{- range .Enums -}}
+        enum class {{.ID}} : {{.Type}}
+        {
+            {{- range .EnumList}}
+            {{.Name}}, // {{.Comment}}
+            {{- end}}
+            Unknown,
+        };
+
+        [[nodiscard]] static constexpr char const*
+        to_string({{.ID}} e) noexcept
+        {
+            switch (e) {
+                {{- $id := .ID}}
+                {{- range .EnumList}}
+                case {{$id}}::{{.Name}}: return "{{.Name}}";
+                {{- end}}
+                case {{.ID}}::Unknown: return "unknown";
+            }
+            return "<unknown>";
+        }
+
+        [[nodiscard]] static {{.ID}}
+        from_string(char const* str, std::size_t len) noexcept
+        {
+            {{- $id := .ID}}
+            {{- range .EnumList}}
+            if ((sizeof("{{.Name}}") - 1) == len) && (std::memcmp("{{.Name}}", str, len) == 0)) {
+                return {{$id}}::{{.Name}};
+            }
+            {{- end}}
+
+            return {{.ID}}::Unknown;
+        }
+{{- end -}}

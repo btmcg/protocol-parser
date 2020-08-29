@@ -1,0 +1,5 @@
+{{- range .Constants -}}
+    {{- range .Definitions -}}
+    constexpr {{.Type}} {{.Name}} = {{.Value}};
+    {{- end -}}
+{{- end -}}

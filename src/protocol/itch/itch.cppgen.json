@@ -1,0 +1,347 @@
+{
+    "namespace": "itch",
+    "inline_namespace": "v5_0",
+    "constants": [
+        {
+            "definitions": [
+                { "name": "StockLen",       "datatype": "std::uint8_t", "value": "8" },
+                { "name": "TimestampLen",   "datatype": "std::uint8_t", "value": "6" }
+            ]
+        }
+    ],
+    "structs": [
+        {
+            "identifier": "header",
+            "packed": true,
+            "members": [
+                { "name": "length",             "datatype": "std::uint16_t"            },
+                { "name": "msg_type",           "datatype": "char"                     },
+                { "name": "stock_locate",       "datatype": "std::uint16_t"            },
+                { "name": "tracking_number",    "datatype": "std::uint16_t"            },
+                { "name": "timestamp",          "datatype": "std::uint8_t", "size": 6  }
+            ]
+        },
+        {
+            "identifier": "system_event",
+            "packed": true,
+            "members": [
+                { "name": "length",             "datatype": "std::uint16_t"            },
+                { "name": "msg_type",           "datatype": "char"                     },
+                { "name": "stock_locate",       "datatype": "std::uint16_t"            },
+                { "name": "tracking_number",    "datatype": "std::uint16_t"            },
+                { "name": "timestamp",          "datatype": "std::uint8_t", "size": 6  },
+                { "name": "event_code",         "datatype": "char"                     }
+            ]
+        },
+        {
+            "identifier": "stock_directory",
+            "packed": true,
+            "members": [
+                { "name": "length",                         "datatype": "std::uint16_t"           },
+                { "name": "msg_type",                       "datatype": "char"                    },
+                { "name": "stock_locate",                   "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",                "datatype": "std::uint16_t"           },
+                { "name": "timestamp",                      "datatype": "std::uint8_t", "size": 6 },
+                { "name": "stock",                          "datatype": "char",         "size": 8 },
+                { "name": "market_category",                "datatype": "char"                    },
+                { "name": "financial_status_indicator",     "datatype": "char"                    },
+                { "name": "round_lot_size",                 "datatype": "std::uint32_t"           },
+                { "name": "round_lots_only",                "datatype": "char"                    },
+                { "name": "issue_classification",           "datatype": "char"                    },
+                { "name": "issue_subtype",                  "datatype": "char",         "size": 2 },
+                { "name": "authenticity",                   "datatype": "char"                    },
+                { "name": "short_sale_threshold_indicator", "datatype": "char"                    },
+                { "name": "ipo_flag",                       "datatype": "char"                    },
+                { "name": "luld_reference_price_tier",      "datatype": "char"                    },
+                { "name": "etp_flag",                       "datatype": "char"                    },
+                { "name": "etp_leverage_factor",            "datatype": "std::uint32_t"           },
+                { "name": "inverse_indicator",              "datatype": "char"                    }
+            ]
+        },
+        {
+            "identifier": "stock_trading_action",
+            "packed": true,
+            "members": [
+                { "name": "length",             "datatype": "std::uint16_t"           },
+                { "name": "msg_type",           "datatype": "char"                    },
+                { "name": "stock_locate",       "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",    "datatype": "std::uint16_t"           },
+                { "name": "timestamp",          "datatype": "std::uint8_t", "size": 6 },
+                { "name": "stock",              "datatype": "char",         "size": 8 },
+                { "name": "trading_state",      "datatype": "char"                    },
+                { "name": "reserved",           "datatype": "char"                    },
+                { "name": "reason",             "datatype": "char",         "size": 4 }
+            ]
+        },
+        {
+            "identifier": "reg_sho_restriction",
+            "packed": true,
+            "members": [
+                { "name": "length",             "datatype": "std::uint16_t"           },
+                { "name": "msg_type",           "datatype": "char"                    },
+                { "name": "stock_locate",       "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",    "datatype": "std::uint16_t"           },
+                { "name": "timestamp",          "datatype": "std::uint8_t", "size": 6 },
+                { "name": "stock",              "datatype": "char",         "size": 8 },
+                { "name": "reg_sho_action",     "datatype": "char"                    }
+            ]
+        },
+        {
+            "identifier": "market_participant_position",
+            "packed": true,
+            "members": [
+                { "name": "length",                     "datatype": "std::uint16_t"           },
+                { "name": "msg_type",                   "datatype": "char"                    },
+                { "name": "stock_locate",               "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",            "datatype": "std::uint16_t"           },
+                { "name": "timestamp",                  "datatype": "std::uint8_t", "size": 6 },
+                { "name": "mpid",                       "datatype": "char",         "size": 4 },
+                { "name": "stock",                      "datatype": "char",         "size": 8 },
+                { "name": "primary_market_maker",       "datatype": "char"                    },
+                { "name": "market_maker_mode",          "datatype": "char"                    },
+                { "name": "market_participant_state",   "datatype": "char"                    }
+            ]
+        },
+        {
+            "identifier": "mwcb_decline_level",
+            "packed": true,
+            "members": [
+                { "name": "length",             "datatype": "std::uint16_t"           },
+                { "name": "msg_type",           "datatype": "char"                    },
+                { "name": "stock_locate",       "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",    "datatype": "std::uint16_t"           },
+                { "name": "timestamp",          "datatype": "std::uint8_t", "size": 6 },
+                { "name": "level1",             "datatype": "std::uint64_t"           },
+                { "name": "level2",             "datatype": "std::uint64_t"           },
+                { "name": "level3",             "datatype": "std::uint64_t"           }
+            ]
+        },
+        {
+            "identifier": "mwcb_status",
+            "packed": true,
+            "members": [
+                { "name": "length",             "datatype": "std::uint16_t"           },
+                { "name": "msg_type",           "datatype": "char"                    },
+                { "name": "stock_locate",       "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",    "datatype": "std::uint16_t"           },
+                { "name": "timestamp",          "datatype": "std::uint8_t", "size": 6 },
+                { "name": "breached_level",     "datatype": "char"                    }
+            ]
+        },
+        {
+            "identifier": "ipo_quoting_period_update",
+            "packed": true,
+            "members": [
+                { "name": "length",                             "datatype": "std::uint16_t"           },
+                { "name": "msg_type",                           "datatype": "char"                    },
+                { "name": "stock_locate",                       "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",                    "datatype": "std::uint16_t"           },
+                { "name": "timestamp",                          "datatype": "std::uint8_t", "size": 6 },
+                { "name": "stock",                              "datatype": "char",         "size": 8 },
+                { "name": "ipo_quotation_release_time",         "datatype": "std::uint32_t"           },
+                { "name": "ipo_quotation_release_qualifier",    "datatype": "char"                    },
+                { "name": "ipo_price",                          "datatype": "std::uint32_t"           }
+
+            ]
+        },
+        {
+            "identifier": "luld_auction_collar",
+            "packed": true,
+            "members": [
+                { "name": "length",                         "datatype": "std::uint16_t"           },
+                { "name": "msg_type",                       "datatype": "char"                    },
+                { "name": "stock_locate",                   "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",                "datatype": "std::uint16_t"           },
+                { "name": "timestamp",                      "datatype": "std::uint8_t", "size": 6 },
+                { "name": "stock",                          "datatype": "char",         "size": 8 },
+                { "name": "auction_collar_reference_price", "datatype": "std::uint32_t"           },
+                { "name": "upper_auction_collar_price",     "datatype": "std::uint32_t"           },
+                { "name": "lower_auction_collar_price",     "datatype": "std::uint32_t"           },
+                { "name": "auction_collar_extension",       "datatype": "std::uint32_t"           }
+
+            ]
+        },
+        {
+            "identifier": "operational_halt",
+            "packed": true,
+            "members": [
+                { "name": "length",                     "datatype": "std::uint16_t"           },
+                { "name": "msg_type",                   "datatype": "char"                    },
+                { "name": "stock_locate",               "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",            "datatype": "std::uint16_t"           },
+                { "name": "timestamp",                  "datatype": "std::uint8_t", "size": 6 },
+                { "name": "stock",                      "datatype": "char",         "size": 8 },
+                { "name": "market_code",                "datatype": "std::uint32_t"           },
+                { "name": "operational_halt_action",    "datatype": "std::uint32_t"           }
+            ]
+        },
+        {
+            "identifier": "add_order",
+            "packed": true,
+            "members": [
+                { "name": "length",                 "datatype": "std::uint16_t"           },
+                { "name": "msg_type",               "datatype": "char"                    },
+                { "name": "stock_locate",           "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",        "datatype": "std::uint16_t"           },
+                { "name": "timestamp",              "datatype": "std::uint8_t", "size": 6 },
+                { "name": "order_reference_number", "datatype": "std::uint64_t"           },
+                { "name": "buy_sell_indicator",     "datatype": "char"                    },
+                { "name": "shares",                 "datatype": "std::uint32_t"           },
+                { "name": "stock",                  "datatype": "char",         "size": 8 },
+                { "name": "price",                  "datatype": "std::uint32_t"           }
+            ]
+        },
+        {
+            "identifier": "add_order_with_mpid",
+            "packed": true,
+            "members": [
+                { "name": "length",                 "datatype": "std::uint16_t"           },
+                { "name": "msg_type",               "datatype": "char"                    },
+                { "name": "stock_locate",           "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",        "datatype": "std::uint16_t"           },
+                { "name": "timestamp",              "datatype": "std::uint8_t", "size": 6 },
+                { "name": "order_reference_number", "datatype": "std::uint64_t"           },
+                { "name": "buy_sell_indicator",     "datatype": "char"                    },
+                { "name": "shares",                 "datatype": "std::uint32_t"           },
+                { "name": "stock",                  "datatype": "char",         "size": 8 },
+                { "name": "price",                  "datatype": "std::uint32_t"           },
+                { "name": "attribution",            "datatype": "char",         "size": 4 }
+            ]
+        },
+        {
+            "identifier": "order_executed",
+            "packed": true,
+            "members": [
+                { "name": "length",                 "datatype": "std::uint16_t"           },
+                { "name": "msg_type",               "datatype": "char"                    },
+                { "name": "stock_locate",           "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",        "datatype": "std::uint16_t"           },
+                { "name": "timestamp",              "datatype": "std::uint8_t", "size": 6 },
+                { "name": "order_reference_number", "datatype": "std::uint64_t"           },
+                { "name": "executed_shares",        "datatype": "std::uint32_t"           },
+                { "name": "match_number",           "datatype": "std::uint64_t"           }
+            ]
+        },
+        {
+            "identifier": "order_executed_with_price",
+            "packed": true,
+            "members": [
+                { "name": "length",                 "datatype": "std::uint16_t"           },
+                { "name": "msg_type",               "datatype": "char"                    },
+                { "name": "stock_locate",           "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",        "datatype": "std::uint16_t"           },
+                { "name": "timestamp",              "datatype": "std::uint8_t", "size": 6 },
+                { "name": "order_reference_number", "datatype": "std::uint64_t"           },
+                { "name": "executed_shares",        "datatype": "std::uint32_t"           },
+                { "name": "match_number",           "datatype": "std::uint64_t"           },
+                { "name": "printable",              "datatype": "char"                    },
+                { "name": "execution_price",        "datatype": "std::uint32_t"           }
+            ]
+        },
+        {
+            "identifier": "order_cancel",
+            "packed": true,
+            "members": [
+                { "name": "length",                 "datatype": "std::uint16_t"           },
+                { "name": "msg_type",               "datatype": "char"                    },
+                { "name": "stock_locate",           "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",        "datatype": "std::uint16_t"           },
+                { "name": "timestamp",              "datatype": "std::uint8_t", "size": 6 },
+                { "name": "order_reference_number", "datatype": "std::uint64_t"           },
+                { "name": "cancelled_shares",       "datatype": "std::uint32_t"           }
+            ]
+        },
+        {
+            "identifier": "order_delete",
+            "packed": true,
+            "members": [
+                { "name": "length",                 "datatype": "std::uint16_t"           },
+                { "name": "msg_type",               "datatype": "char"                    },
+                { "name": "stock_locate",           "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",        "datatype": "std::uint16_t"           },
+                { "name": "timestamp",              "datatype": "std::uint8_t", "size": 6 },
+                { "name": "order_reference_number", "datatype": "std::uint64_t"           }
+            ]
+        },
+        {
+            "identifier": "order_replace",
+            "packed": true,
+            "members": [
+                { "name": "length",                             "datatype": "std::uint16_t"           },
+                { "name": "msg_type",                           "datatype": "char"                    },
+                { "name": "stock_locate",                       "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",                    "datatype": "std::uint16_t"           },
+                { "name": "timestamp",                          "datatype": "std::uint8_t", "size": 6 },
+                { "name": "original_order_reference_number",    "datatype": "std::uint64_t"           },
+                { "name": "new_order_reference_number",         "datatype": "std::uint64_t"           },
+                { "name": "shares",                             "datatype": "std::uint32_t"           },
+                { "name": "price",                              "datatype": "std::uint32_t"           }
+            ]
+        },
+        {
+            "identifier": "trade_non_cross",
+            "packed": true,
+            "members": [
+                { "name": "length",                 "datatype": "std::uint16_t"           },
+                { "name": "msg_type",               "datatype": "char"                    },
+                { "name": "stock_locate",           "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",        "datatype": "std::uint16_t"           },
+                { "name": "timestamp",              "datatype": "std::uint8_t", "size": 6 },
+                { "name": "order_reference_number", "datatype": "std::uint64_t"           },
+                { "name": "buy_sell_indicator",     "datatype": "char"                    },
+                { "name": "shares",                 "datatype": "std::uint32_t"           },
+                { "name": "stock",                  "datatype": "char",         "size": 8 },
+                { "name": "price",                  "datatype": "std::uint32_t"           },
+                { "name": "match_number",           "datatype": "std::uint64_t"           }
+            ]
+        },
+        {
+            "identifier": "trade_cross",
+            "packed": true,
+            "members": [
+                { "name": "length",             "datatype": "std::uint16_t"           },
+                { "name": "msg_type",           "datatype": "char"                    },
+                { "name": "stock_locate",       "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",    "datatype": "std::uint16_t"           },
+                { "name": "timestamp",          "datatype": "std::uint8_t", "size": 6 },
+                { "name": "shares",             "datatype": "std::uint64_t"           },
+                { "name": "stock",              "datatype": "char",         "size": 8 },
+                { "name": "cross_price",        "datatype": "std::uint32_t"           },
+                { "name": "match_number",       "datatype": "std::uint64_t"           },
+                { "name": "cross_type",         "datatype": "char"                    }
+            ]
+        },
+        {
+            "identifier": "broken_trade",
+            "packed": true,
+            "members": [
+                { "name": "length",             "datatype": "std::uint16_t"           },
+                { "name": "msg_type",           "datatype": "char"                    },
+                { "name": "stock_locate",       "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",    "datatype": "std::uint16_t"           },
+                { "name": "timestamp",          "datatype": "std::uint8_t", "size": 6 },
+                { "name": "match_number",       "datatype": "std::uint64_t"           }
+            ]
+        },
+        {
+            "identifier": "noii",
+            "packed": true,
+            "members": [
+                { "name": "length",                     "datatype": "std::uint16_t"           },
+                { "name": "msg_type",                   "datatype": "char"                    },
+                { "name": "stock_locate",               "datatype": "std::uint16_t"           },
+                { "name": "tracking_number",            "datatype": "std::uint16_t"           },
+                { "name": "timestamp",                  "datatype": "std::uint8_t", "size": 6 },
+                { "name": "paired_shares",              "datatype": "std::uint64_t"           },
+                { "name": "imbalance_shares",           "datatype": "std::uint64_t"           },
+                { "name": "imbalance_direction",        "datatype": "char"                    },
+                { "name": "stock",                      "datatype": "char",         "size": 8 },
+                { "name": "far_price",                  "datatype": "std::uint32_t"           },
+                { "name": "near_price",                 "datatype": "std::uint32_t"           },
+                { "name": "current_reference_price",    "datatype": "std::uint32_t"           },
+                { "name": "cross_type",                 "datatype": "char"                    },
+                { "name": "price_variation_indicator",  "datatype": "char"                    }
+            ]
+        }
+    ]
+}

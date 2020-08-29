@@ -1,6 +1,6 @@
 #pragma once
 
-#include "itch.hpp"
+#include "itch.cppgen.hpp"
 #include <endian.h>
 #include <fmt/chrono.h>
 #include <fmt/format.h>

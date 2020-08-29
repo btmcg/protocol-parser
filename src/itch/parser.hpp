@@ -3,7 +3,7 @@
 #include "core.hpp"
 #include "instrument.hpp"
 #include "protocol/itch/itch-fmt.hpp"
-#include "protocol/itch/itch.hpp"
+#include "protocol/itch/itch.cppgen.hpp"
 #include <endian.h>
 #include <filesystem>
 #include <algorithm> // std::max, std::min

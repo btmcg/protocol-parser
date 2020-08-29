@@ -1,0 +1,21 @@
+#pragma once
+
+#include <cstdint>
+{{if .Enums}}
+#include <cstring>
+{{end}}
+
+namespace {{.Namespace}} {
+{{if .InlineNamespace}}
+    inline namespace {{.InlineNamespace}} {
+{{end}}
+        {{template "constant.tmpl" .}}
+
+        {{template "enum.tmpl" . -}}
+        {{template "struct.tmpl" .}}
+
+{{if .InlineNamespace}}
+    } // namespace {{.InlineNamespace}}
+{{end}}
+
+} // namespace {{.Namespace}}

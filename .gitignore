@@ -25,3 +25,6 @@ src/main/parser
 # third party code that is built and installed
 third_party/google-benchmark-clang
 third_party/google-benchmark-gcc
+
+# generated code
+src/protocol/itch/itch.cppgen.hpp

@@ -1,0 +1,12 @@
+{{- range .Structs}}
+        struct {{.ID}}
+        {
+        {{- range .Members}}
+            {{if .Size -}}
+                {{.Type}} {{.Name}}[{{.Size}}];
+            {{- else -}}
+                {{.Type}} {{.Name}};
+            {{- end}}
+        {{- end}}
+        } {{if .Packed}} __attribute__((packed)){{end}};
+{{- end -}}
