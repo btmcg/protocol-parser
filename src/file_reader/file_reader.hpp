@@ -106,21 +106,11 @@ file_reader::process_gz(Callable&& fn)
 
         ++stats_.inflate_count;
         ret = ::inflate(&zstrm, Z_NO_FLUSH);
-        switch (ret) {
-            case Z_STREAM_ERROR:
-                fmt::print(stderr, "Z_STREAM_ERROR\n");
-                return false;
-            case Z_NEED_DICT:
-                fmt::print(stderr, "Z_NEED_DICT\n");
-                return false;
-            case Z_DATA_ERROR:
-                fmt::print(stderr, "Z_DATA_ERROR\n");
-                return false;
-            case Z_MEM_ERROR:
-                fmt::print(stderr, "Z_MEM_ERROR\n");
-                ::inflateEnd(&zstrm);
-                return false;
+        if (ret != Z_OK && ret != Z_STREAM_END) {
+            fmt::print(stderr, "zlib inflate() failure: {}\n", ::zError(ret));
+            return false;
         }
+
         buf.bytes_written(zstrm.total_out - total_bytes_inflated);
         total_bytes_inflated = zstrm.total_out;
 
