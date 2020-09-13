@@ -47,7 +47,7 @@ catch
     vim nrmake/third_party.mk
 
 
-google benchmark v1.5.1
+google benchmark v1.5.2
 -----------------------
 
 **Build and install**
@@ -55,16 +55,16 @@ google benchmark v1.5.1
 .. code-block::
 
     # from protocol-parser root
-    git clone --branch=v1.5.1 --depth=1 https://github.com/google/benchmark.git gb
+    git clone --branch=v1.5.2 --depth=1 https://github.com/google/benchmark.git gb
     cd gb
 
-    cmake . -DBENCHMARK_ENABLE_GTEST_TESTS=OFF -DBENCHMARK_ENABLE_TESTING=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_INSTALL_PREFIX=../third_party/google-benchmark-gcc/1.5.1
+    cmake . -DBENCHMARK_ENABLE_GTEST_TESTS=OFF -DBENCHMARK_ENABLE_TESTING=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_INSTALL_PREFIX=../third_party/google-benchmark-gcc/1.5.2
     make install -j
 
     # now build with clang
     rm -rf CMakeFiles src/generated
 
-    cmake . -DBENCHMARK_ENABLE_GTEST_TESTS=OFF -DBENCHMARK_ENABLE_TESTING=OFF -DBENCHMARK_USE_LIBCXX=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DCMAKE_INSTALL_PREFIX=../third_party/google-benchmark-clang/1.5.1
+    cmake . -DBENCHMARK_ENABLE_GTEST_TESTS=OFF -DBENCHMARK_ENABLE_TESTING=OFF -DBENCHMARK_USE_LIBCXX=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DCMAKE_INSTALL_PREFIX=../third_party/google-benchmark-clang/1.5.2
     make install -j
 
     cd ..
