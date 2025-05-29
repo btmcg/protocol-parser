@@ -24,9 +24,9 @@ catch
 
 .. code-block::
 
-    git submodule add -- https://github.com/catchorg/Catch2.git third_party/catch2/2.12.2
-    cd third_party/catch2/2.12.2
-    git checkout v2.12.2
+    git submodule add -- https://github.com/catchorg/Catch2.git third_party/catch2/2.13.10
+    cd third_party/catch2/2.13.10
+    git checkout v2.13.10
 
 
 **Remove old submodule**
